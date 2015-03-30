@@ -1,16 +1,11 @@
 
 function Level()
 {	
-	this.levelMap = [
-		'cccccccccccccccccccccccccccccc',
-		'x............................x',
-		'x............................x',
-		'x...........................ex',
-		'x..........................lll',
-		'x.>.................llllllllll',
-		'llllllwwwlllllwwwwwlllllllllll',
-		'llllllwwwlllllwwwwwlllllllllll'
-	];
+	// Server to load levels from
+	this.server = "http://www.ivarclemens.nl/platform_game/ldb/";
+
+	this.levelMap = [[0]];
+	
 
 
 	this.setup = function()
@@ -19,12 +14,14 @@ function Level()
 		this.levelHeight = this.levelMap.length;
 		this.levelWidth = this.levelMap[0].length;
 		
-		this.game.setLevelBounds({
-			x: 32,
-			y: 32,
-			width: this.levelWidth * 32 - 64,
-			height: this.levelHeight * 32 - 64
-		});
+		if('game' in this) {
+			this.game.setLevelBounds({
+				x: 32,
+				y: 32,
+				width: this.levelWidth * 32 - 64,
+				height: this.levelHeight * 32 - 64
+			});
+		}
 		
 		// Create collision boxes
 		this.collisionBoxes = this.generateCollisionBoxes();	
@@ -71,31 +68,15 @@ function Level()
 	/**
 	 * Draws a single sprite in the grid
 	 */
-	this.drawSprite = function(context, x, y, sprite, neighbours)
+	this.drawSprite = function(context, x, y, sprite)
 	{
 		box = {x: x * 32, y: y * 32, width: 32, height: 32};
-		spriteName = '';
 		
-		if(sprite == 'c') {
-			spriteName = 'cloud';
-		} else if(sprite == 'l') {
-			if(neighbours.top == 'w' || neighbours.top == 'l')
-				spriteName = 'grass_center';
-			else
-				spriteName = 'grass';
-		} else if(sprite == 'w') {
-			if(neighbours.top == 'w')
-				spriteName = this.animate('water_', 2);
-			else
-				spriteName = this.animate('water_top_', 2);
-		} else if(sprite == 'e') {
-			spriteName = 'sign_exit';
-		} else if(sprite == '>') {
-			spriteName = 'sign_right';
-		}
-		
-		if(spriteName != '')		
-			this.game.spriteManager.drawSprite(context, box, spriteName);
+		var frames = this.game.spriteManager.getFrameCount(sprite);
+		var deltaT = this.game.timestamp / 140;
+		var frame = Math.floor(deltaT % frames);
+			
+		return this.game.spriteManager.drawSprite(context, box, sprite, frame);
 	}
 
 
@@ -106,13 +87,61 @@ function Level()
 	{
 		for(var i = 0; i < this.levelHeight; i++) {
 			for(var j = 0; j < this.levelWidth; j++) {
-				this.drawSprite(context, j, i, this.levelMap[i][j], {
-					left: j > 0?this.levelMap[i][j - 1]:' ',
-					right: j < (this.levelWidth - 1)?this.levelMap[i][j + 1]: ' ',
-					top: i > 0?this.levelMap[i - 1][j]:' ',
-					bottom: i < (this.levelHeight - 1)?this.levelMap[i + 1][j]:' '
-				});
+				this.drawSprite(context, j, i, this.levelMap[i][j]);
 			}
 		}
 	}
+}
+
+
+/**
+ * Clears the current level, filling it completely with air
+ */
+Level.prototype.resetLevel = function(width, height)
+{
+	this.levelMap = [];
+	
+	for(var j = 0; j < height; j++) {
+		this.levelMap[j] = [];
+		
+		for(var i = 0; i < width; i++) {		
+			if(i == 0 || j == 0 || i == (width -  1) || j == (height - 1)) {
+				this.levelMap[j][i] = 1;
+			} else {
+				this.levelMap[j][i] = 0;
+			}
+		}
+	}
+	
+	this.setup();
+}
+
+
+/**
+ * Loads the level with the given name from the server
+ */
+Level.prototype.loadLevel = function(name)
+{
+	jQuery.ajax({
+		url: this.server + "/get_level.php?name=" + name,
+		dataType: 'json'
+	}).done(function(data) {
+		this.levelMap = data;
+	}.bind(this));
+	
+	this.setup();
+}
+
+
+/**
+ * Save the level to the server
+ */
+Level.prototype.saveLevel = function(name)
+{
+	jQuery.ajax({
+		url:  this.server + "/set_level.php?name=" + name, 
+		data: JSON.stringify(this.levelMap),
+		contentType: 'text/plain',
+		method: 'POST'
+	});
 }

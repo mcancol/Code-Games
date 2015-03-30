@@ -1,5 +1,5 @@
 
-function Input()
+function Keyboard()
 {
 	this.KEY_BACKSPACE = 8;
 	this.KEY_TAB = 9;

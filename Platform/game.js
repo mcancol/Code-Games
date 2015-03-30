@@ -8,17 +8,28 @@ function Game(element, width, height)
 	
 	window.requestAnimationFrame(this.update.bind(this));
 
-	this.input = new Input();
+	this.input = new Keyboard();
 	this.objects = {};
 	
 	this.scroll = {x: 0, y: 0};
 	this.deadzone = {w: 128};
+	
+	this.editMode = false;
 }
 
 Game.prototype.gameover = function()
 {
 
 };
+
+Game.prototype.startEditMode = function()
+{
+	this.editMode = true;
+	
+	// Reset all objects to their default states
+	for(var key in this.objects)
+		this.objects[key].setup();	
+}
 
 Game.prototype.setSize = function(width, height)
 {
@@ -38,6 +49,10 @@ Game.prototype.setLevelBounds = function(bounds)
  */
 Game.prototype.updateTranslation = function()
 {
+	// Do not scroll in edit mode
+	if(this.editMode)
+		return;
+	
 	var playerX = this.objects['player'].x;
 
 	if(this.canvas.width >= this.levelBounds.width) {
@@ -83,8 +98,11 @@ Game.prototype.update = function(timestamp)
 	/**
 	 * Handle input, update physics and scrolling
 	 */
-	for(var key in this.objects)
-		this.objects[key].update(this.input);
+	if(!this.editMode)
+	{
+		for(var key in this.objects)
+			this.objects[key].update(this.input);
+	}
 	
 	this.updateTranslation();
 
@@ -104,6 +122,11 @@ Game.prototype.update = function(timestamp)
 	window.requestAnimationFrame(this.update.bind(this));
 };
 
+
+/******************************
+ * Adding objects to the game *
+ ******************************/
+
 Game.prototype.addObject = function(name, object)
 {
 	object.game = this;
@@ -115,3 +138,4 @@ Game.prototype.getObject = function(name)
 {
 	return this.objects[name];
 };
+
