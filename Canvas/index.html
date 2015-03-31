@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>Canvas Demo</title>
+		<meta charset="utf8" />
+		
+		<script>
+			function fullscreen(element)
+			{
+				if(element.requestFullscreen)
+					return element.requestFullscreen();
+				else if(element.webkitRequestFullscreen)
+					return element.webkitRequestFullscreen();
+				else if(element.mozRequestFullscreen)
+					return element.mozRequestFullscreen();
+				else if(element.msRequestFullscreen)
+					return element.msRequestFullscreen();
+				else
+					return false;
+			}
+		
+		
+			var canvas = document.getElementById("canvas");			
+			fullscreen(canvas);
+		</script>
+	</head>
+	
+	<body>
+		<canvas id="canvas" style="border: 1px solid black">
+		</canvas>
+	</body>
+</html>

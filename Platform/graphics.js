@@ -1,22 +1,24 @@
 
 var spriteTable = [
-	{key: [1, 2], src: 'grassLeft'},
-	{key: [1, 1], src: 'grassMid'},
-	{key: [1, 3], src: 'grassRight'},
+	{key: [0, 1], src: 'clipping', collision: true},
+
+	{key: [1, 2], src: 'grassLeft', collision: true},
+	{key: [1, 1], src: 'grassMid', collision: true},
+	{key: [1, 3], src: 'grassRight', collision: true},
 					
-	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2},
-	{key: [2, 2], src: 'liquidWater', frames: 2},
+	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: "Water"},
+	{key: [2, 2], src: 'liquidWater', frames: 2, collision: "Water"},
 	
-	{key: [3, 1], src: 'plant'},
-	{key: [3, 2], src: 'pineSapling'},
-	{key: [3, 3], src: 'pineSaplingAlt'},
+	{key: [3, 1], src: 'plant', collision: false},
+	{key: [3, 2], src: 'pineSapling', collision: false},
+	{key: [3, 3], src: 'pineSaplingAlt', collision: false},
 	
-	{key: [4, 1], src: 'spikes'},				
+	{key: [4, 1], src: 'spikes', collision: "Spikes"},
 	{key: [4, 2], src: 'springboardDown'},
 	{key: [4, 3], src: 'springboardUp'},
 	
-	{key: [3, 4], src: 'signRight'},
-	{key: [3, 5], src: 'signExit'},
+	{key: [3, 4], src: 'signRight', collision: false},
+	{key: [3, 5], src: 'signExit', collision: false},
 ];
 			
 
@@ -26,22 +28,6 @@ function SpriteManager()
 	var imageMap = {};
 	
 	this.loadFromSpriteTable(spriteTable);	
-
-	imageMap['metal'] = 'tiles/metalCenter.png';
-	imageMap['cloud'] = 'tiles/cloud1.png';
-
-	imageMap['sign_exit'] = 'tiles/signExit.png';
-	imageMap['sign_right'] = 'tiles/signRight.png';	
-	
-	imageMap['grass'] = 'tiles/grassMid.png';
-	imageMap['grass_center'] = 'tiles/grassCenter.png';
-	imageMap['grass_left'] = 'tiles/grassLeft.png';
-	imageMap['grass_right'] = 'tiles/grassRight.png';
-	
-	imageMap['water_1'] = 'tiles/liquidWater_1.png';
-	imageMap['water_2'] = 'tiles/liquidWater_2.png';
-	imageMap['water_top_1'] = 'tiles/liquidWaterTop_mid_1.png';
-	imageMap['water_top_2'] = 'tiles/liquidWaterTop_mid_2.png';
 	
 	for(var i = 1; i < 4; i++) {
 		imageMap['player_idle_left_' + i] = 'tiles/sara/idle/l/' + i + '.png';
@@ -70,16 +56,21 @@ function SpriteManager()
 		if(!(name in this.sprites))
 			return;
 	
+		var sprite = this.sprites[name];
+		
+		if(frame in sprite)
+			sprite = sprite[frame];
+	
 		if(transform) {
 			context.save();
 			context.translate(box.x + box.width / 2, box.y + box.height / 2);
 			
 			transform(context);
 			
-			context.drawImage(this.sprites[name][frame], -box.width / 2, -box.height / 2, box.width, box.height);
+			context.drawImage(sprite, -box.width / 2, -box.height / 2, box.width, box.height);
 			context.restore();
-		} else {		
-			context.drawImage(this.sprites[name][frame], box.x, box.y, box.width, box.height);
+		} else {
+			context.drawImage(sprite, box.x, box.y, box.width, box.height);			
 		}
 	}
 }
@@ -96,8 +87,6 @@ SpriteManager.prototype.getFrameCount = function(sprite)
 
 SpriteManager.prototype.loadFromSpriteTable =  function(spriteTable)
 {
-	console.log(spriteTable.length);
-	
 	/** Load sprites from sprite table **/
 	for(var i = 0; i < spriteTable.length; i++) {
 		var key = spriteTable[i]['key'];		

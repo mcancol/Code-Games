@@ -9,15 +9,10 @@ function Editor(element, width, height)
 	
 	this.game.spriteManager = new SpriteManager();
 	
-	this.layer =  {
-		'level': new Level()
-	}
+	var level = new Level();
+	level.loadLevel("demo");
 	
-	this.layer['level'].loadLevel("demo");
-	this.layer['level'].resetLevel(20, 10);
-	this.layer['level'].saveLevel("demo");
-	
-	this.game.addObject('level', this.layer['level']);
+	this.game.addObject('level', level);
 	
 	this.currentSprite = 'l';
 	
@@ -30,47 +25,55 @@ Editor.prototype.setSprite = function(sprite)
 	this.currentSprite = sprite;
 }
 
+
 /************************************
  * Handle mouse movement and clicks *
  ************************************/
 
  
  
-Editor.prototype.mouseMove = function(position)
+Editor.prototype.mouseMove = function(event)
 {
-	if(this.mouse['down']) {
-		var coords = {x: Math.floor(position.x / 32),
-				  y: Math.floor(position.y / 32)};
+	var coords = {x: Math.floor(event.x / 32),
+	 			  y: Math.floor(event.y / 32)};
 
-		this.layer['level'].levelMap[coords.y][coords.x] = this.currentSprite;
-	}
+	if(event.buttons & 1)
+		this.game.getObject("level").setSprite(coords, this.currentSprite);
+	else if(event.buttons & 2)
+		this.game.getObject("level").setSprite(coords, 0);
 }
 
-Editor.prototype.mouseDown = function(position)
+Editor.prototype.mouseDown = function(event)
 {
-	this.mouse['down']  = true;
+	this.mouse = event;
 }
 
-Editor.prototype.mouseUp = function(position)
+Editor.prototype.mouseUp = function(event)
 {
-	var coords = {x: Math.floor(position.x / 32),
-			  y: Math.floor(position.y / 32)};
+	var coords = {x: Math.floor(event.x / 32),
+				  y: Math.floor(event.y / 32)};
 
-	this.layer['level'].levelMap[coords.y][coords.x] = this.currentSprite;
-	
-	this.mouse['down'] = false;
+	if(this.mouse.buttons & 1)
+		this.game.getObject("level").setSprite(coords, this.currentSprite);
+	else if(this.mouse.buttons & 2)
+		this.game.getObject("level").setSprite(coords, 0);
 }
 
 Editor.prototype.setupMouse = function()
 {
 	var canvas = this.canvas;
-	this.mouse = {down: false};
 	
 	var positionFromEvent = function(event) {
 		var rect = canvas.getBoundingClientRect();		
-		return {x: event.clientX - rect.left, y:  event.clientY - rect.top};
+		
+		event['x'] = event.clientX - rect.left;
+		event['y'] = event.clientY - rect.top;
+		
+		return event;
 	}
 
+	document.addEventListener("contextmenu", function(event) { event.preventDefault(); return false; }, false);
+	
 	this.canvas.addEventListener('mousemove', function(event) { 
 		this.mouseMove(positionFromEvent(event));
 	}.bind(this));
