@@ -86,6 +86,9 @@ function Level()
 		var deltaT = this.game.timestamp / 140;
 		var frame = Math.floor(deltaT % frames);
 
+		if(sprite == 1 && this.game && !this.game.editMode)
+			return;
+		
 		return this.game.spriteManager.drawSprite(context, box, sprite, frame);
 	}
 
