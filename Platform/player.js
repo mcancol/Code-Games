@@ -205,7 +205,7 @@ function Player()
 			sprite = this.animate('player_idle_left_', 3);
 		}
 		
-		this.game.spriteManager.drawSprite(context, this, sprite, function(context) {			
+		this.game.spriteManager.drawSprite(context, this, sprite, 0, function(context) {			
 			context.scale(1, this.scale);
 		}.bind(this));
 	}

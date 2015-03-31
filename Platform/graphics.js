@@ -13,7 +13,7 @@ var spriteTable = [
 	{key: [3, 2], src: 'pineSapling', collision: false},
 	{key: [3, 3], src: 'pineSaplingAlt', collision: false},
 	
-	{key: [4, 1], src: 'spikes', collision: "Spikes"},
+	{key: [4, 1], src: 'spikes', collision: "Water"},
 	{key: [4, 2], src: 'springboardDown'},
 	{key: [4, 3], src: 'springboardUp'},
 	
