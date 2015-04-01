@@ -1,26 +1,58 @@
 
+var topBox = [{x: 0, y: 0, width: 32, height: 16, type: true}];
+var bottomBox = [{x: 0, y: 16, width: 32, height: 16, type: true}];
+
+var stairsUp = [];
+var stairsDown = [];
+
+for(var i = 0; i < 32; i++) {
+	stairsUp.push({x: i, y: 32 - i, width: 32 - i, height: 2, type: 'Stairs'});
+	stairsDown.push({x: 0, y: 32 - i, width: 32 - i, height: 2, type: 'Stairs'});
+}
+
+
 var spriteTable = [
 	{key: [0, 1], src: 'clipping', collision: true},
 
-	{key: [1, 2], src: 'grassLeft', collision: true},
-	{key: [1, 1], src: 'grassMid', collision: true},
-	{key: [1, 3], src: 'grassRight', collision: true},
-					
+	/* Grass */
+	{key: [1, 1], src: 'grass/grassLeft', collision: true},
+	{key: [1, 2], src: 'grass/grassMid', collision: true},
+	{key: [1, 3], src: 'grass/grassRight', collision: true},	
+	{key: [1, 4], src: 'grass/grassCenter', collision: true},
+	{key: [1, 5], src: 'grass/grassCliff_left', collision: true},	
+	{key: [1, 6], src: 'grass/grassCliff_right', collision: true},
+	{key: [1, 7], src: 'grass/grassCliffAlt_left', collision: true},	
+	{key: [1, 8], src: 'grass/grassCliffAlt_right', collision: true},
+	{key: [1, 9], src: 'grass/grassCorner_left', collision: true},	
+	{key: [1, 10], src: 'grass/grassCorner_right', collision: true},
+	{key: [1, 11], src: 'grass/grassHill_left', collision: stairsDown},
+	{key: [1, 12], src: 'grass/grassHill_right', collision: stairsUp},
+	{key: [1, 13], src: 'grass/grassHalf', collision: true},
+	{key: [1, 14], src: 'grass/grassHalf_left', collision: topBox},
+	{key: [1, 15], src: 'grass/grassHalf_mid', collision: topBox},
+	{key: [1, 16], src: 'grass/grassHalf_right', collision: topBox},
+
+	{key: [1, 20], src: 'metalCenter', collision: true},
+	
 	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: "Water"},
 	{key: [2, 2], src: 'liquidWater', frames: 2, collision: "Water"},
 	
 	{key: [3, 1], src: 'plant', collision: false},
 	{key: [3, 2], src: 'pineSapling', collision: false},
 	{key: [3, 3], src: 'pineSaplingAlt', collision: false},
+	{key: [3, 4], src: 'cactus', collision: false},
 	
 	{key: [4, 1], src: 'spikes', collision: "Water"},
-	{key: [4, 2], src: 'springboardDown'},
-	{key: [4, 3], src: 'springboardUp'},
+	{key: [4, 2], src: 'doorOpen', collision: 'Door'},
+	{key: [4, 3], src: 'doorOpenTop', collision: false},
 	
-	{key: [3, 4], src: 'signRight', collision: false},
-	{key: [3, 5], src: 'signExit', collision: false},
-];
-			
+	
+	{key: [5, 4], src: 'signRight', collision: false},
+	{key: [5, 5], src: 'signExit', collision: false},
+
+	{key: [6, 1], src: 'cloud1-left', collision: true},
+	{key: [6, 2], src: 'cloud1-right', collision: true},	
+];			
 
 function SpriteManager()
 {

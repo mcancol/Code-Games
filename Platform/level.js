@@ -44,10 +44,9 @@ function Level()
 					if(!type)
 						continue;
 					
-					if(type == true)
-						type = "Impassable";
+					var box = {x: j * 32, y: i * 32, width: 32, height: 32, type: type};
 					
-					boxes.push({x: j * 32, y: i * 32, width: 32, height: 32, type: type});
+					boxes.push(box);
 				}
 			}
 		}

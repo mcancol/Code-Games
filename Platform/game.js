@@ -13,7 +13,7 @@ function Game(element, width, height)
 	
 	this.scroll = {x: 0, y: 0};
 	this.deadzone = {w: 128};
-	
+		
 	this.editMode = false;
 }
 
@@ -49,9 +49,18 @@ Game.prototype.setLevelBounds = function(bounds)
  */
 Game.prototype.updateTranslation = function()
 {
-	// Do not scroll in edit mode
-	if(this.editMode)
+	// Do not use player to scroll in edit mode
+	if(this.editMode) {
+		if(this.input.keys[this.input.KEY_LEFT])
+			this.scroll.x -= 8;
+		if(this.input.keys[this.input.KEY_RIGHT])
+			this.scroll.x += 8;
+		
+		if(this.scroll.x < 0)
+			this.scroll.x = 0;
+		
 		return;
+	}
 	
 	var playerX = this.objects['player'].x;
 

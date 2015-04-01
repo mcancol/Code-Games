@@ -18,6 +18,7 @@ function collisionCheck(objectA, objectB)
 	
 	// Collision information object
 	ci = {normal: {x: 0, y: 0}};
+	ci.type = objectB.type;
 	
 	// Compute collision normal in X
 	if(gapXA < gapXB) {
@@ -36,6 +37,34 @@ function collisionCheck(objectA, objectB)
 	ci.axis = Math.abs(ci.normal.x) < Math.abs(ci.normal.y)?'x':'y';
 	
 	return ci;	
+}
+
+
+function detectCollisionArray(objectA, objectsB, callback, offset)
+{
+	for(var key in objectsB) {	
+		if(offset) {
+			// Copy box for collision detection
+			var box = {x: objectsB[key].x + offset.x, 
+					   y: objectsB[key].y + offset.y, 
+					   width: objectsB[key].width, 
+					   height: objectsB[key].height, 
+					   type: objectsB[key].type};		
+		} else {
+			var box = objectsB[key];
+		}
+		
+		var ci = collisionCheck(objectA, box);
+		
+		if(!ci)
+			continue;
+		
+		if(typeof ci.type == "object") {
+			detectCollisionArray(objectA, ci.type, callback, box);			
+		} else {
+			callback(ci);
+		}
+	}
 }
 
 

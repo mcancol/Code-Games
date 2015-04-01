@@ -34,7 +34,7 @@ Editor.prototype.setSprite = function(sprite)
  
 Editor.prototype.mouseMove = function(event)
 {
-	var coords = {x: Math.floor(event.x / 32),
+	var coords = {x: Math.floor((this.game.scroll.x + event.x) / 32),
 	 			  y: Math.floor(event.y / 32)};
 
 	if(event.buttons & 1)
@@ -50,7 +50,7 @@ Editor.prototype.mouseDown = function(event)
 
 Editor.prototype.mouseUp = function(event)
 {
-	var coords = {x: Math.floor(event.x / 32),
+	var coords = {x: Math.floor((this.game.scroll.x + event.x) / 32),
 				  y: Math.floor(event.y / 32)};
 
 	if(this.mouse.buttons & 1)

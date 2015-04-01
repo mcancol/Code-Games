@@ -17,7 +17,7 @@ function Player()
 		this.velX = 0;
 		this.velY = 0;
 		
-		this.speed = 3;
+		this.speed = 3.5;
 		this.jumping = false;
 		this.grounded = false;		
 		
@@ -95,16 +95,9 @@ function Player()
 		
 		// Check and resolve collisions
 		var level = this.game.getObject("level");		
-						
-		for(var key in level.collisionBoxes) {
-			var box = level.collisionBoxes[key];
-			var ci = collisionCheck(this, box);
 
-			// No collision, skip box
-			if(!ci)
-				continue;
-
-			if(box.type == 'Impassable') 
+		detectCollisionArray(this, level.collisionBoxes, function(ci) {
+			if(ci.type == true) 
 			{
 				if(ci.axis == 'y' || Math.abs(ci.normal.y) < 2) {
 					this.y += ci.normal.y;
@@ -119,7 +112,24 @@ function Player()
 				}
 			}
 			
-			if(box.type == 'Water')
+			if(ci.type == 'Door' && Math.abs(this.velY) < 0.4 && Math.abs(this.velX) < 0.1) 
+			{				
+				this.velY = 0;
+				this.velY = 0;
+				
+				var teleport = this.findTeleportDestination(this.x, this.y);
+				this.y += teleport.y - this.y;
+				this.x = teleport.x;
+			}
+			
+			if(ci.type == 'Stairs')
+			{
+				this.y += ci.normal.y;
+				this.velY = 0;
+				this.grounded = true;
+			}
+			
+			if(ci.type == 'Water')
 			{
 				if(ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
 					this.y += ci.normal.y;
@@ -130,11 +140,25 @@ function Player()
 						this.alive = false;
 					}					
 				}
+			}			
+		}.bind(this));
+	}
+
+
+	this.findTeleportDestination = function(x, y)
+	{
+		var map = this.game.getObject('level').levelMap;
+		
+		for(var j = 0; j < map.length; j++) {
+			for(var i = Math.floor(x / 32); i < map[0].length; i++) {
+				if(map[j][i] == 5 * 256 + 4 || map[j][i] == 5 * 256 + 5) {
+					return {x: i * 32, y: j * 32};
+				}
 			}
-		}		
-	} 
-	 
-	 
+		}
+	}
+	
+
 	/**
 	 * Handle input and kinematics
 	 */
