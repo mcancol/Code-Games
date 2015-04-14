@@ -5,6 +5,8 @@
 		
 		<meta charset="utf8" />
 		
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		
 		<script src="jquery-2.1.3.min.js"></script>
 		<script src="compat.js"></script>
 		<script src="math.js"></script>
@@ -15,17 +17,9 @@
 		<script src="level.js"></script>
 		
 		<style>
-			div.center {
-				margin-left: auto;
-				margin-right: auto;
-			}
-		
-			div#game-div {
-				width: 768px;
-			}
-		
+	
 			#game-canvas {
-				border: 1px solid black;
+				border: 1px solid gray;
 				width: 768px;
 			}
 			
@@ -33,8 +27,19 @@
 	</head>
 
 	<body>
-		<div class="center" id="game-div">
-			<canvas id="game-canvas"></canvas>
+		<div class="container">
+			<div class="panel panel-primary" id="loading-screen">		
+				<div class="panel-heading">
+					Loading
+				</div>
+				<div class="panel-body">
+					Pre-loading game content, please wait.
+				</div>
+			</div>
+		</div>
+	
+		<div class="container">
+			<canvas id="game-canvas" class="center-block"></canvas>
 		</div>
 
 		<script>
@@ -49,8 +54,8 @@
 			game.addObject("player", new Player());			
 		</script>
 		
-		<div style="float: right">
+		<p class="text-center">
 			<small>Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23</small>
-		</div>
+		</p>
 	</body>
 </html>
