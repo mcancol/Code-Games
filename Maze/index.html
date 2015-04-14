@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Platform game</title>
+		
+		<meta charset="utf8" />
+		
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		
+		<script src="jquery-2.1.3.min.js"></script>
+		<script src="compat.js"></script>
+		<script src="math.js"></script>
+		<script src="game.js"></script>		
+		<script src="input.js"></script>		
+		<script src="player.js"></script>
+		<script src="level.js"></script>
+		
+		<style>
+	
+			#game-canvas {
+				border: 1px solid gray;
+				width: 768px;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+			
+		<div class="container">
+			<canvas id="game-canvas" class="center-block"></canvas>
+		</div>
+
+		<script>
+			var game = new Game("game-canvas", 32 * 24, 32 * 8);
+			
+			var widthwall = 20;
+			var widthspace = 320;
+			
+			var level = new Level();
+			//level.loadLevel("demo");
+			
+
+			game.addObject("level", level);
+			game.addObject("player", new Player());			
+		</script>
+		
+		<p class="text-center">
+			<small>Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23</small>
+		</p>
+	</body>
+</html>
