@@ -36,10 +36,10 @@ function Player()
 		
 		// Move to the left
 		if(input.keys[input.KEY_LEFT]) {
-			// update x,y
 			if(!this.left)
 				x -= 2;
 			this.left = true;
+			this.playerAngle = 180;
 		} else { this.left = false; }
 		
 		// Move to the right
@@ -47,6 +47,7 @@ function Player()
 			if(!this.right)
 				x += 2;
 			this.right = true;
+			this.playerAngle = 0;
 		} else { this.right = false; }
 				
 		// Move up
@@ -54,6 +55,7 @@ function Player()
 			if(!this.up)
 				y -= 2;
 			this.up = true;
+			this.playerAngle = -90;
 		} else { this.up = false; }
 		
 		// Move down
@@ -61,6 +63,7 @@ function Player()
 			if(!this.down)
 				y += 2;
 			this.down = true;
+			this.playerAngle = 90;
 		} else { this.down = false; }
 	
 		
@@ -107,6 +110,12 @@ function Player()
 			y = (this.y-1)*(widthspace+widthwall)/2 + widthwall;
 			h = widthspace;
 		}
-		context.drawImage(this.playerImage, x, y, w, h);
+		
+		context.save();
+		context.translate(x + w / 2, y + h / 2);
+		context.rotate(this.playerAngle * Math.PI / 180.0);
+		
+		context.drawImage(this.playerImage, -w / 2, -h / 2, w, h);
+		context.restore();
 	}
 }
