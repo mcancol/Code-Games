@@ -68,7 +68,7 @@ function Player()
 	
 		
 		// Check if move is valid
-		if(level.levelMap [(this.y + y) / 2][(this.x + x) / 2] == 1)
+		if(level.levelMap[(this.y + y) / 2][(this.x + x) / 2] == 1)
 			return;
 		
 		if(level.levelMap[y][x] == 2)
