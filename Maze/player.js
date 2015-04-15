@@ -1,14 +1,27 @@
 
-
 function Player()
 {
 	// Depends on sprite
 	this.width = 32;
 	this.height = 46;
 	
+	
+	// Keeps track of whether the moves are being sent
+	this.sendingInProgress = false;
+	
+	// List of moves to be sent to the server
+	this.moveBuffer = {};
+	
+	// Number of the current move
+	this.moveCounter = 0;
+
+
+	/**
+	 * Sets up the player object
+	 */
 	this.setup = function()
 	{
-		// Position
+		// Find player start position
 		var level = this.game.getObject("level");
 		
 		for(var i = 0; i < level.levelMap.length; i++) {
@@ -19,14 +32,17 @@ function Player()
 				}
 			}
 		}
-		this.faceRight = true;
-		
+
+		// Load sprite
 		this.playerImage = new Image();
 		this.playerImage.src = "player.png";
-		
 	}
-	
-	this.handleInput = function(input)
+
+
+	/**
+	 * Handles player movement
+	 */
+	this.update = function(input)
 	{
 		var level = this.game.getObject("level");
 		
@@ -74,17 +90,55 @@ function Player()
 		if(level.levelMap[y][x] == 2)
 			return;
 		
-		this.x = x;
-		this.y = y;
+
+		// Player has moved
+		if(this.x != x || this.y != y)
+		{
+			this.x = x;
+			this.y = y;
+
+			// Store move in the move-buffer
+			var move = {
+				id: this.moveCounter++,
+				timestamp: Date.now() / 1000,
+				x: x,
+				y: y
+			};
+			
+			this.moveBuffer[move.id] = move;
+			this.transmitMoves();
+		}
 	}
 	
-	
+
 	/**
-	 * Handle input
+	 * Attempts to send all moves from the moveBuffer to the server
 	 */
-	this.update = function(input)
+	this.transmitMoves = function()
 	{
-		this.handleInput(input);
+		if(this.sendingInProgress)
+			return;
+
+		this.sendingInProcess = true;
+
+		// Send moves to server
+		jQuery.ajax({
+			url: datasink + "?game=" + gameStart + "&level=" + playerId,
+			data: JSON.stringify(this.moveBuffer),
+			contentType: 'text/plain',
+			dataType: 'json',
+			method: 'POST'
+		}).done(function(result) {
+			// Remove moves from buffer that were successfully sent
+			for(var i in result) {
+				if(result[i] in this.moveBuffer)
+					delete(this.moveBuffer[ result[i] ]);
+			}
+			
+			this.sendingInProcess = false;
+		}.bind(this)).fail(function() {
+			this.sendingInProcess = false;
+		}.bind(this));
 	}
 
 	
@@ -93,7 +147,6 @@ function Player()
 	 */
 	this.draw = function(context)
 	{
-		
 		if(this.x % 2 == 0){
 			x = this.x*(widthspace+widthwall)/2;
 			w = widthwall;
