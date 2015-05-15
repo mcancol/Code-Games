@@ -44,7 +44,7 @@
 				</div>
 			</div>
 
-			<div class="panel panel-primary" id="level-error">
+			<div class="panel panel-danger" id="level-error">
 				<div class="panel-heading">
 					Could not load level
 				</div>
@@ -74,15 +74,17 @@
 					levelName = "level1";
 				
 				var level = new Level();
-				level.loadLevel(levelName).then(function(response) {
-					$("#loading-screen").hide();			
+				level.loadLevel(levelName).then(function(response) {					
 					game.addObject("level", level);
 					game.addObject("player", new Player());
 					
-					$("#game-canvas").show();
+					$("#loading-screen").fadeOut(500, function() {
+						$("#game-canvas").fadeIn(250);
+					});
 				}, function(error) {
-					$("#loading-screen").hide();
-					$("#level-error").show();
+					$("#loading-screen").fadeOut(500, function() {
+						$("#level-error").fadeIn(250);
+					});					
 				});
 			}());
 		</script>
