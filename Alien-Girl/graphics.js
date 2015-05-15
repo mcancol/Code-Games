@@ -96,6 +96,15 @@ var spriteTable = [
 	{key: [9, 3], src: 'numbers/3', collision: false},
 	{key: [9, 4], src: 'numbers/4', collision: false},
 	{key: [9, 5], src: 'numbers/5', collision: false},
+	
+	{key: [10, 0], src: 'fly/fly', frames: 2, collision: 'Fly'},
+	{key: [10, 1], src: 'fly/fly_dead', collision: true},
+
+	{key: [10, 3], src: 'bee/bee', frames: 2, collision: 'Bee'},
+	{key: [10, 4], src: 'bee/bee_dead', collision: true},
+	
+	
+
 ];			
 
 function SpriteManager()
