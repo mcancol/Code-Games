@@ -32,6 +32,26 @@ var spriteTable = [
 	{key: [1, 15], src: 'grass/grassHalf_mid', collision: topBox},
 	{key: [1, 16], src: 'grass/grassHalf_right', collision: topBox},
 
+
+	/* Snow */
+	{key: [1, 32], src: 'snow/snowLeft', collision: true},
+	{key: [1, 33], src: 'snow/snowMid', collision: true},
+	{key: [1, 34], src: 'snow/snowRight', collision: true},	
+	{key: [1, 35], src: 'snow/snowCenter', collision: true},
+	{key: [1, 36], src: 'snow/snowCliff_left', collision: true},	
+	{key: [1, 37], src: 'snow/snowCliff_right', collision: true},
+	{key: [1, 38], src: 'snow/snowCliffAlt_left', collision: true},	
+	{key: [1, 39], src: 'snow/snowCliffAlt_right', collision: true},
+	{key: [1, 40], src: 'snow/snowCorner_left', collision: true},	
+	{key: [1, 41], src: 'snow/snowCorner_right', collision: true},
+	{key: [1, 42], src: 'snow/snowHill_left', collision: stairsDown},
+	{key: [1, 43], src: 'snow/snowHill_right', collision: stairsUp},
+	{key: [1, 44], src: 'snow/snowHalf', collision: true},
+	{key: [1, 45], src: 'snow/snowHalf_left', collision: topBox},
+	{key: [1, 46], src: 'snow/snowHalf_mid', collision: topBox},
+	{key: [1, 47], src: 'snow/snowHalf_right', collision: topBox},
+	
+	
 	{key: [1, 20], src: 'metalCenter', collision: true},
 	
 	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: "Water"},
