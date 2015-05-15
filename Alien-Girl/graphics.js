@@ -51,6 +51,25 @@ var spriteTable = [
 	{key: [1, 47], src: 'snow/snowHalf_right', collision: topBox},
 	
 	
+	/* Planet */
+	{key: [1, 48], src: 'planet/planetLeft', collision: true},
+	{key: [1, 49], src: 'planet/planetMid', collision: true},
+	{key: [1, 50], src: 'planet/planetRight', collision: true},	
+	{key: [1, 51], src: 'planet/planetCenter', collision: true},
+	{key: [1, 52], src: 'planet/planetCliff_left', collision: true},	
+	{key: [1, 53], src: 'planet/planetCliff_right', collision: true},
+	{key: [1, 54], src: 'planet/planetCliffAlt_left', collision: true},	
+	{key: [1, 55], src: 'planet/planetCliffAlt_right', collision: true},
+	{key: [1, 56], src: 'planet/planetCorner_left', collision: true},	
+	{key: [1, 57], src: 'planet/planetCorner_right', collision: true},
+	{key: [1, 58], src: 'planet/planetHill_left', collision: stairsDown},
+	{key: [1, 59], src: 'planet/planetHill_right', collision: stairsUp},
+	{key: [1, 60], src: 'planet/planetHalf', collision: true},
+	{key: [1, 61], src: 'planet/planetHalf_left', collision: topBox},
+	{key: [1, 62], src: 'planet/planetHalf_mid', collision: topBox},
+	{key: [1, 63], src: 'planet/planetHalf_right', collision: topBox},	
+	
+	
 	{key: [1, 20], src: 'metalCenter', collision: true},
 	
 	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: "Water"},
