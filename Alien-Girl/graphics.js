@@ -6,10 +6,9 @@ var stairsUp = [];
 var stairsDown = [];
 
 for(var i = 0; i < 32; i++) {
-	stairsUp.push({x: i, y: 32 - i, width: 32 - i, height: 2, type: 'Stairs'});
-	stairsDown.push({x: 0, y: 32 - i, width: 32 - i, height: 2, type: 'Stairs'});
+	stairsUp.push({x: i, y: 32 - i, width: 32 - i, height: 2, type: 'StairsUp'});
+	stairsDown.push({x: 0, y: 32 - i, width: 32 - i, height: 2, type: 'StairsDown'});
 }
-
 
 var spriteTable = [
 	{key: [0, 1], src: 'clipping', collision: true},

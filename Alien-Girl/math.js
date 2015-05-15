@@ -1,5 +1,30 @@
 
 /**
+ * Returns the distance to and type of the ground object 
+ * directly underneath the player
+ */
+function findGround(player, level)
+{
+	var x_left = Math.floor(player.x / 32);
+	var x_right = Math.floor((player.x + 31) / 32);
+	
+	var y = Math.floor(player.y / 32);
+
+	var height = level.getHeight();
+	
+	for(var i = y; i < height; i++) {
+		var code_left = level.levelMap[i][x_left];
+		var code_right = level.levelMap[i][x_right];
+		
+		if(code_left >= 288 && code_left <= 303 || code_right >= 288 && code_right <= 303) {
+			return {x: x_left, y: i, dist: (i * 32 - player.y), type: 'Snow'};
+		}		
+	}
+	
+	return null;
+}
+
+/**
  * Checks whether two objects are colliding and returns
  * a possible resolution strategy.
  */

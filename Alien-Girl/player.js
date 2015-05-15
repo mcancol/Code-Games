@@ -43,7 +43,6 @@ function Player()
 			fly: code == 2,			
 		};
 	}
-		
 	
 	
 	this.handleInput = function(input)
@@ -98,19 +97,28 @@ function Player()
 				this.velX++;
 	}
 	
-	
+		
 	/**
 	 * Update kinematics
 	 */
 	this.updateKinematics = function()
 	{
-		permitted = this.getPermittedActions();
-		
 		if(!this.alive)
 			return;
+
+		permitted = this.getPermittedActions();
+		var level = this.game.getObject("level");	
+		
+		// Find distance to and type of ground
+		var ground = findGround(this, level);
 		
 		// Gravity and friction
-		this.velX *= this.friction;
+		if(ground && ground.type == "Snow") {
+			this.velX *= 0.95;
+		} else {
+			this.velX *= this.friction;
+		}
+		
 		this.velY += this.gravity;
 		this.grounded = false;
 		
@@ -118,11 +126,10 @@ function Player()
 		this.x += this.velX;
 		this.y += this.velY;		
 		
-		// Check and resolve collisions
-		var level = this.game.getObject("level");		
-
+		
+		// Check and resolve collisions		
 		detectCollisionArray(this, level.collisionBoxes, function(ci) {
-			if(ci.type == true) 
+			if(ci.type == true)
 			{
 				if(ci.axis == 'y' || Math.abs(ci.normal.y) < 2) {
 					this.y += ci.normal.y;
@@ -147,13 +154,20 @@ function Player()
 				this.x = teleport.x;
 			}
 			
-			if(ci.type == 'Stairs')
+			if(ci.type == 'StairsUp' || ci.type == 'StairsDown')
 			{
+				if(ground && ground.type == 'Snow') {
+					if(ci.type == 'StairsDown')
+						this.velX += this.gravity;
+					else
+						this.velX -= this.gravity;
+				} 
+				
 				this.y += ci.normal.y;
 				this.velY = 0;
 				this.grounded = true;
 			}
-			
+					
 			if(ci.type == 'Water')
 			{
 				if(permitted.walk_on_water && ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
