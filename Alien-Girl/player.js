@@ -1,5 +1,4 @@
 
-
 function Player()
 {
 	// Depends on sprite
@@ -29,8 +28,32 @@ function Player()
 		this.alive = true;
 	}
 	
+	
+	this.getPermittedActions = function()
+	{
+		var x = Math.floor(this.x / 32);
+		var y = Math.floor(this.y / 32);
+		
+		var level = this.game.getObject("level");
+		var code = level.levelMap[0][x] - 2304;
+
+		return {
+			walk_on_water: code == 1,
+			walk_upside_down: code == 3 || code == 1,
+			fly: code == 2,			
+		};
+	}
+		
+	
+	
 	this.handleInput = function(input)
 	{
+		permitted = this.getPermittedActions();
+		
+		if(!permitted.walk_upside_down && this.gravity < 0)
+			this.gravity *= -1;
+		
+		
 		// Jump away from gravity
 		if(input.keys[input.KEY_SPACE]) {
 			if(!this.jumping && this.grounded) {
@@ -42,22 +65,22 @@ function Player()
 		
 		// Flip gravity if up and down are pressed at the same time
 		if(input.keys[input.KEY_UP] && input.keys[input.KEY_DOWN])
-		{
+		{			
 			// Allow wait at least 200ms before next flip
-			if(!this.lastFlip || this.game.timestamp - this.lastFlip > 200)
+			if(permitted.walk_upside_down && (!this.lastFlip || this.game.timestamp - this.lastFlip > 200))
 			{
 				this.lastFlip = this.game.timestamp			
 				this.gravity *= -1;
 			}
-		} else {			
+		} else {
 			// Flying (under normal gravity)
-			if(input.keys[input.KEY_UP]) 
+			if(permitted.fly && input.keys[input.KEY_UP]) 
 			{
 				this.velY = -this.speed * 0.5;
 			}
 		
 			// Flying (when gravity is inversed)
-			if(input.keys[input.KEY_DOWN]) 
+			if(permitted.fly && input.keys[input.KEY_DOWN]) 
 			{
 				this.velY = this.speed * 0.5;
 			}			
@@ -81,6 +104,8 @@ function Player()
 	 */
 	this.updateKinematics = function()
 	{
+		permitted = this.getPermittedActions();
+		
 		if(!this.alive)
 			return;
 		
@@ -131,7 +156,7 @@ function Player()
 			
 			if(ci.type == 'Water')
 			{
-				if(ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
+				if(permitted.walk_on_water && ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
 					this.y += ci.normal.y;
 					this.velY = 0;
 					this.grounded = true;

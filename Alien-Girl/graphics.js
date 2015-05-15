@@ -51,7 +51,13 @@ var spriteTable = [
 	{key: [5, 5], src: 'signExit', collision: false},
 
 	{key: [6, 1], src: 'cloud1-left', collision: true},
-	{key: [6, 2], src: 'cloud1-right', collision: true},	
+	{key: [6, 2], src: 'cloud1-right', collision: true},
+	
+	{key: [9, 1], src: 'numbers/1', collision: false},
+	{key: [9, 2], src: 'numbers/2', collision: false},
+	{key: [9, 3], src: 'numbers/3', collision: false},
+	{key: [9, 4], src: 'numbers/4', collision: false},
+	{key: [9, 5], src: 'numbers/5', collision: false},
 ];			
 
 function SpriteManager()

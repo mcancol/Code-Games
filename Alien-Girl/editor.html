@@ -45,7 +45,15 @@
 					return;
 				}
 
-				editor.game.getObject("level").loadLevel(level_name);
+				$("#status").html("Loading level, please wait...");
+
+				editor.game
+					.getObject("level")
+					.loadLevel(level_name)
+					.then(
+						function() { $("#status").html("Level loaded..."); },
+						function(error) { $("#status").html("Error loading level: " + error); }
+					);					
 			}
 			
 			function save() {
@@ -56,10 +64,17 @@
 					return;
 				}
 
-				editor.game.getObject("level").saveLevel(level_name);			
+				$("#status").html("Saving level, please wait...");
+				
+				editor.game
+					.getObject("level")
+					.saveLevel(level_name)
+					.then(
+						function() { $("#status").html("Level saved..."); }, 
+						function(error) { $("#status").html("Error saving level: " + error); }
+					);
 			}
 		</script>
-
 	</head>
 
 	<body>
@@ -71,12 +86,13 @@
 		
 				<form class="navbar-form navbar-left">
 					<div class="form-group">
-						<input id="level_name" type="text" class="form-control" placeholder="Level name">
+						<input id="level_name" type="text" class="form-control" value="demo" placeholder="Level name">
 					</div>
-					<button onclick="load()" class="btn btn-warning">Load</button>
-					<button onclick="save()" class="btn btn-danger">Save</button>
+					<button type="button" onclick="load()" class="btn btn-warning">Load</button>
+					<button type="button" onclick="save()" class="btn btn-danger">Save</button>
 				</form>
-					
+
+				<p class="navbar-text" id="status"></p>
 			</div>
 		</nav>
 		
@@ -88,8 +104,13 @@
 		</div>
 
 		<script>
-			var editor = new Editor("game-canvas", 32 * 24, 32 * 8);
-			var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
+			var server = "http://www.ivarclemens.nl/platform_game/";
+			var editor;
+			
+			(function() {
+				editor = new Editor("game-canvas", 32 * 24, 32 * 10);
+				var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
+			}());
 		</script>
 
 		

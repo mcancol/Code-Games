@@ -1,9 +1,6 @@
 
 function Level()
 {	
-	// Server to load levels from
-	this.server = "http://www.ivarclemens.nl/platform_game/ldb/";
-
 	this.levelMap = [[0]];
 	this.collisionTypes = {};
 
@@ -22,13 +19,12 @@ function Level()
 			var key = spriteTable[i]['key'];			
 			this.collisionTypes[key[0] * 256 + key[1]] = spriteTable[i]['collision'];
 		}
-		
-		
+
 		// Create collision boxes
 		this.collisionBoxes = this.generateCollisionBoxes();	
 	}
-	
-	
+
+
 	/**
 	 * Compresses the level geometry into collision boxes
 	 */
@@ -50,14 +46,10 @@ function Level()
 				}
 			}
 		}
-
-		console.log(boxes);
-		
+	
 		return boxes;
 	}
 	
-	
-
 	
 	this.update = function(input)
 	{
@@ -176,25 +168,47 @@ Level.prototype.resetLevel = function(width, height)
  */
 Level.prototype.loadLevel = function(name)
 {
-	jQuery.ajax({
-		url: this.server + "/get_level.php?name=" + name,
-		dataType: 'json'
-	}).done(function(data) {
-		this.levelMap = data;
-		this.setup();
-	}.bind(this));
+	var level = this;
+		
+	return new Promise(function(resolve, reject) {	
+		if(typeof(server) == 'undefined' || !server)
+			reject();
+	
+		jQuery.ajax({
+			url: server + "ldb/get_level.php?name=" + name,
+			dataType: 'json'
+		}).done(function(data) {
+			this.levelMap = data;
+			this.setup();
+
+			resolve();
+		}.bind(level)).fail(function(response) {
+			reject(response.responseText);
+		});
+	});
 }
 
 
 /**
  * Save the level to the server
  */
-Level.prototype.saveLevel = function(name)
+Level.prototype.saveLevel = function(name, callback)
 {
-	jQuery.ajax({
-		url:  this.server + "/set_level.php?name=" + name, 
-		data: JSON.stringify(this.levelMap),
-		contentType: 'text/plain',
-		method: 'POST'
+	var level = this;
+	
+	return new Promise(function(resolve, reject) {
+		if(typeof(server) == 'undefined' || !server)
+			reject();		
+		
+		jQuery.ajax({
+			url: server + "ldb/set_level.php?name=" + name, 
+			data: JSON.stringify(level.levelMap),
+			contentType: 'text/plain',
+			method: 'POST'
+		}).done(function(data) {
+			resolve();
+		}.bind(level)).fail(function(response) {
+			reject(response.responseText);
+		});			
 	});
 }

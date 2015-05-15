@@ -62,10 +62,13 @@ Game.prototype.updateTranslation = function()
 		return;
 	}
 	
+	if(!this.objects['player'])
+		return;
+	
 	var playerX = this.objects['player'].x;
 
 	if(this.canvas.width >= this.levelBounds.width) {
-		this.scroll.x = (this.canvas.width - this.levelBounds.width) / 2;
+		this.scroll.x = (this.canvas.width - this.levelBounds.width) / 2 - this.levelBounds.x;
 	} else {		
 		// Compute boundaries of dead-zone in screen coordinates
 		var deadzone_x_min = (this.canvas.width - this.deadzone.w) / 2;
@@ -86,7 +89,9 @@ Game.prototype.updateTranslation = function()
 			this.scroll.x = this.levelBounds.x;
 		if(this.scroll.x > (this.levelBounds.x + this.levelBounds.width) - this.canvas.width)
 			this.scroll.x = (this.levelBounds.x + this.levelBounds.width) - this.canvas.width;			
-	}	
+	}
+	
+	this.scroll.y = this.levelBounds.y;
 }
 
 
