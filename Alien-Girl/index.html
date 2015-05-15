@@ -15,6 +15,7 @@
 		<script src="input.js"></script>		
 		<script src="player.js"></script>
 		<script src="level.js"></script>
+		<script src="url.js"></script>
 				
 		<style>
 			#game-canvas {
@@ -66,8 +67,14 @@
 
 				game.spriteManager = new SpriteManager();
 				
+				var levelName = querySt("level");
+				
+				console.log(levelName);
+				if(!levelName || levelName == "")
+					levelName = "level1";
+				
 				var level = new Level();
-				level.loadLevel("level1").then(function(response) {
+				level.loadLevel(levelName).then(function(response) {
 					$("#loading-screen").hide();			
 					game.addObject("level", level);
 					game.addObject("player", new Player());
