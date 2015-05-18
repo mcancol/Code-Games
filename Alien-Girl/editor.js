@@ -10,7 +10,7 @@ function Editor(element, width, height)
 	this.game.spriteManager = new SpriteManager();
 	
 	var level = new Level();
-	level.loadLevel("demo");
+	level.loadLevel("level1");
 	
 	this.game.addObject('level', level);
 	

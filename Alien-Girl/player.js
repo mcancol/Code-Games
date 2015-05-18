@@ -1,5 +1,4 @@
 
-
 function Player()
 {
 	// Depends on sprite
@@ -29,8 +28,31 @@ function Player()
 		this.alive = true;
 	}
 	
+	
+	this.getPermittedActions = function()
+	{
+		var x = Math.floor(this.x / 32);
+		var y = Math.floor(this.y / 32);
+		
+		var level = this.game.getObject("level");
+		var code = level.levelMap[0][x] - 2304;
+
+		return {
+			walk_on_water: code == 1,
+			walk_upside_down: code == 3 || code == 1,
+			fly: code == 2,			
+		};
+	}
+	
+	
 	this.handleInput = function(input)
 	{
+		permitted = this.getPermittedActions();
+		
+		if(!permitted.walk_upside_down && this.gravity < 0)
+			this.gravity *= -1;
+		
+		
 		// Jump away from gravity
 		if(input.keys[input.KEY_SPACE]) {
 			if(!this.jumping && this.grounded) {
@@ -42,22 +64,22 @@ function Player()
 		
 		// Flip gravity if up and down are pressed at the same time
 		if(input.keys[input.KEY_UP] && input.keys[input.KEY_DOWN])
-		{
+		{			
 			// Allow wait at least 200ms before next flip
-			if(!this.lastFlip || this.game.timestamp - this.lastFlip > 200)
+			if(permitted.walk_upside_down && (!this.lastFlip || this.game.timestamp - this.lastFlip > 200))
 			{
 				this.lastFlip = this.game.timestamp			
 				this.gravity *= -1;
 			}
-		} else {			
+		} else {
 			// Flying (under normal gravity)
-			if(input.keys[input.KEY_UP]) 
+			if(permitted.fly && input.keys[input.KEY_UP]) 
 			{
 				this.velY = -this.speed * 0.5;
 			}
 		
 			// Flying (when gravity is inversed)
-			if(input.keys[input.KEY_DOWN]) 
+			if(permitted.fly && input.keys[input.KEY_DOWN]) 
 			{
 				this.velY = this.speed * 0.5;
 			}			
@@ -75,7 +97,7 @@ function Player()
 				this.velX++;
 	}
 	
-	
+		
 	/**
 	 * Update kinematics
 	 */
@@ -83,9 +105,20 @@ function Player()
 	{
 		if(!this.alive)
 			return;
+
+		permitted = this.getPermittedActions();
+		var level = this.game.getObject("level");	
+		
+		// Find distance to and type of ground
+		var ground = findGround(this, level);
 		
 		// Gravity and friction
-		this.velX *= this.friction;
+		if(ground && ground.type == "Snow") {
+			this.velX *= 0.95;
+		} else {
+			this.velX *= this.friction;
+		}
+		
 		this.velY += this.gravity;
 		this.grounded = false;
 		
@@ -93,11 +126,10 @@ function Player()
 		this.x += this.velX;
 		this.y += this.velY;		
 		
-		// Check and resolve collisions
-		var level = this.game.getObject("level");		
-
+		
+		// Check and resolve collisions		
 		detectCollisionArray(this, level.collisionBoxes, function(ci) {
-			if(ci.type == true) 
+			if(ci.type == true)
 			{
 				if(ci.axis == 'y' || Math.abs(ci.normal.y) < 2) {
 					this.y += ci.normal.y;
@@ -122,16 +154,23 @@ function Player()
 				this.x = teleport.x;
 			}
 			
-			if(ci.type == 'Stairs')
+			if(ci.type == 'StairsUp' || ci.type == 'StairsDown')
 			{
+				if(ground && ground.type == 'Snow') {
+					if(ci.type == 'StairsDown')
+						this.velX += this.gravity;
+					else
+						this.velX -= this.gravity;
+				} 
+				
 				this.y += ci.normal.y;
 				this.velY = 0;
 				this.grounded = true;
 			}
-			
+					
 			if(ci.type == 'Water')
 			{
-				if(ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
+				if(permitted.walk_on_water && ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
 					this.y += ci.normal.y;
 					this.velY = 0;
 					this.grounded = true;

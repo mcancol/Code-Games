@@ -15,20 +15,27 @@
 		<script src="input.js"></script>		
 		<script src="player.js"></script>
 		<script src="level.js"></script>
-		
+		<script src="url.js"></script>
+				
 		<style>
-	
 			#game-canvas {
 				border: 1px solid gray;
 				width: 768px;
 			}
+
+			#game-canvas {
+				display: none;
+			}
 			
+			#level-error {
+				display: none;
+			}
 		</style>
 	</head>
 
 	<body>
 		<div class="container">
-			<div class="panel panel-primary" id="loading-screen">		
+			<div class="panel panel-primary" id="loading-screen">
 				<div class="panel-heading">
 					Loading
 				</div>
@@ -36,22 +43,50 @@
 					Pre-loading game content, please wait.
 				</div>
 			</div>
+
+			<div class="panel panel-danger" id="level-error">
+				<div class="panel-heading">
+					Could not load level
+				</div>
+				<div class="panel-body">
+					Unable to load the specified level
+				</div>
+			</div>
 		</div>
-	
+
+		
 		<div class="container">
 			<canvas id="game-canvas" class="center-block"></canvas>
 		</div>
 
 		<script>
-			var game = new Game("game-canvas", 32 * 24, 32 * 8);
-			
-			var level = new Level();
-			level.loadLevel("demo");
-			
-			game.spriteManager = new SpriteManager();
+			var server = "http://www.ivarclemens.nl/platform_game/";
+		
+			(function() {
+				var game = new Game("game-canvas", 32 * 24, 32 * 9);
 
-			game.addObject("level", level);
-			game.addObject("player", new Player());			
+				game.spriteManager = new SpriteManager();
+				
+				var levelName = querySt("level");
+				
+				console.log(levelName);
+				if(!levelName || levelName == "")
+					levelName = "level1";
+				
+				var level = new Level();
+				level.loadLevel(levelName).then(function(response) {					
+					game.addObject("level", level);
+					game.addObject("player", new Player());
+					
+					$("#loading-screen").fadeOut(500, function() {
+						$("#game-canvas").fadeIn(250);
+					});
+				}, function(error) {
+					$("#loading-screen").fadeOut(500, function() {
+						$("#level-error").fadeIn(250);
+					});					
+				});
+			}());
 		</script>
 		
 		<p class="text-center">
