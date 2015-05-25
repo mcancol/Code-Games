@@ -6,7 +6,7 @@
 function findGround(player, level)
 {
 	var x_left = Math.floor(player.x / 32);
-	var x_right = Math.floor((player.x + 31) / 32);
+	var x_right = Math.floor((player.x + player.width) / 32);
 	
 	var y = Math.floor(player.y / 32);
 
