@@ -60,8 +60,7 @@ function Player()
 		
 		if(!permitted.walk_upside_down && this.gravity < 0)
 			this.gravity *= -1;
-		
-		
+
 		// Jump away from gravity
 		if(input.keys[input.KEY_SPACE]) {
 			if(!this.jumping && this.grounded) {
@@ -130,9 +129,7 @@ function Player()
 		
 		this.velY += this.gravity;
 		this.grounded = ground && (ground.dist < this.height);
-		
-		console.log(this.grounded);
-		
+			
 		// Update position
 		this.x += this.velX;
 		this.y += this.velY;		
