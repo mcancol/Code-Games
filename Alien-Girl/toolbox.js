@@ -1,3 +1,4 @@
+
 function SpriteBox(element, editor, spriteTable)
 {
 	this.element = document.getElementById(element);

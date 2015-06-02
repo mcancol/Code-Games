@@ -1,9 +1,15 @@
-
+/**
+ * Implements various aspects related to the player:
+ *  - Movement (input handling)
+ *  - Kinematics
+ *  - Visual representation (drawing) 
+ */
 function Player()
 {
 	// Depends on sprite
 	this.width = 32;
 	this.height = 46;
+
 	
 	this.setup = function()
 	{
@@ -23,6 +29,9 @@ function Player()
 		// Physics parameters
 		this.gravity = 0.3;
 		this.friction = 0.8;
+		
+		this.slideAccelerationSnow = 0.5;
+		this.frictionSnow = 0.95;		
 		
 		this.scale = 1;
 		this.alive = true;
@@ -51,8 +60,7 @@ function Player()
 		
 		if(!permitted.walk_upside_down && this.gravity < 0)
 			this.gravity *= -1;
-		
-		
+
 		// Jump away from gravity
 		if(input.keys[input.KEY_SPACE]) {
 			if(!this.jumping && this.grounded) {
@@ -78,7 +86,7 @@ function Player()
 				this.velY = -this.speed * 0.5;
 			}
 		
-			// Flying (when gravity is inversed)
+			// Flying (when gravity is inverted)
 			if(permitted.fly && input.keys[input.KEY_DOWN]) 
 			{
 				this.velY = this.speed * 0.5;
@@ -111,17 +119,17 @@ function Player()
 		
 		// Find distance to and type of ground
 		var ground = findGround(this, level);
-		
+			
 		// Gravity and friction
 		if(ground && ground.type == "Snow") {
-			this.velX *= 0.95;
+			this.velX *= this.frictionSnow;
 		} else {
 			this.velX *= this.friction;
 		}
 		
 		this.velY += this.gravity;
-		this.grounded = false;
-		
+		this.grounded = ground && (ground.dist < this.height);
+			
 		// Update position
 		this.x += this.velX;
 		this.y += this.velY;		
@@ -158,9 +166,9 @@ function Player()
 			{
 				if(ground && ground.type == 'Snow') {
 					if(ci.type == 'StairsDown')
-						this.velX += this.gravity;
+						this.velX += this.slideAccelerationSnow;
 					else
-						this.velX -= this.gravity;
+						this.velX -= this.slideAccelerationSnow;
 				} 
 				
 				this.y += ci.normal.y;
