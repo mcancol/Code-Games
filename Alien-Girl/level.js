@@ -120,7 +120,7 @@ Level.prototype.setSprite = function(coords, sprite)
 		return false;
 
 	// Expand level if not big enough
-	if(this.levelMap.length < coords.y || 
+	if(this.levelMap.length < ( 1 + coords.y) || 
 	   this.levelMap[0].length < coords.x) {
 		
 		// Required dimensions
