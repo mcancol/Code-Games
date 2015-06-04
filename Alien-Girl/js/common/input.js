@@ -16,18 +16,18 @@ function Keyboard()
 	this.KEY_SHIFT = 16;
 	this.KEY_CTRL = 17;
 	this.KEY_ALT = 18;
-	
+
 	this.KEY_PAUSE = 19;
 	this.KEY_CAPS = 20;
 	this.KEY_ESCAPE = 27;
 
 	this.KEY_SPACE = 32;
-	
+
 	this.KEY_LEFT = 37;
 	this.KEY_UP = 38;
 	this.KEY_RIGHT = 39;
-	this.KEY_DOWN = 40;	
-	
+	this.KEY_DOWN = 40;
+
 	this.KEY_A = 65;
 	this.KEY_B = 66;
 	this.KEY_C = 67;
@@ -49,22 +49,22 @@ function Keyboard()
 	this.KEY_S = 83;
 	this.KEY_T = 84;
 	this.KEY_U = 85;
-	this.KEY_V = 86;	
+	this.KEY_V = 86;
 	this.KEY_W = 87;
 	this.KEY_X = 88;
 	this.KEY_Y = 89;
 	this.KEY_Z = 90;
-	
+
 	this.keys = {};
-	
+
 	this.keydown = function(event) {
 		this.keys[event.keyCode] = true;
 	};
-	
+
 	this.keyup = function(event) {
 		this.keys[event.keyCode] = false;
 	};
-	
+
 	document.body.addEventListener("keydown", this.keydown.bind(this));
 	document.body.addEventListener("keyup", this.keyup.bind(this));;
 }
@@ -89,7 +89,7 @@ function createMoveEvent(name, type, event, canvas)
 			y: event.clientY - rect.top,
 			buttons: event.buttons
 		},
-		
+
 		bubbles: false,
 		cancellable: true
 	});
@@ -97,37 +97,38 @@ function createMoveEvent(name, type, event, canvas)
 
 
 /**
- * Catches mouse movement and touch events and dispatches a 
+ * Catches mouse movement and touch events and dispatches a
  * common event to the specified element;
  */
 function Mouse(canvas)
 {
 	this.canvas = canvas;
-	
+
 	this.mouseclick = function(event)
 	{
 		var evt = createMoveEvent("game-move", "mouse", event, this.canvas);
 		this.canvas.dispatchEvent(evt);
-		event.preventDefault();		
+		event.preventDefault();
 	}
-	
+
 	this.mousemove = function(event) {
 		var evt = createMoveEvent("game-move", "mouse", event, this.canvas);
 		this.canvas.dispatchEvent(evt);
 		event.preventDefault();
 	}
-	
+
 	this.touchmove = function(event) {
 		var first = event.changedTouches[0];
 		first.buttons = 0;
-		
+
 		var evt = createMoveEvent("game-move", "touch", first, this.canvas);
 		this.canvas.dispatchEvent(evt);
 		event.preventDefault();
 	}
-	
-	document.body.addEventListener("mousemove", this.mousemove.bind(this));
-	document.body.addEventListener("touchmove", this.touchmove.bind(this), true);
-	
-	document.body.addEventListener("mousedown", this.mouseclick.bind(this));
+
+	this.element = this.canvas;
+
+	this.element.addEventListener("mousemove", this.mousemove.bind(this));
+	this.element.addEventListener("touchmove", this.touchmove.bind(this), true);
+	this.element.addEventListener("mousedown", this.mouseclick.bind(this));
 }

@@ -1,0 +1,25 @@
+
+#game-canvas {
+  display: none;
+  border: 1px solid gray;
+  width: 768px;
+}
+
+#level-error {
+  display: none;
+}
+
+#game-canvas {
+  border: 1px solid black;
+  width: 768px;
+}
+
+img.sprite {
+  height: 32px;
+  border: 2px solid white;
+}
+
+img.selected {
+  height: 32px;
+  border: 2px solid red;
+}
