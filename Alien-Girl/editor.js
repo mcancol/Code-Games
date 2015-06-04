@@ -9,6 +9,8 @@ function Editor(element, width, height)
 	
 	this.game.spriteManager = new SpriteManager();
 	
+	this.mouse = new Mouse(this.canvas);
+	
 	var level = new Level();
 	level.loadLevel("level1");
 	
@@ -30,16 +32,17 @@ Editor.prototype.setSprite = function(sprite)
  * Handle mouse movement and clicks *
  ************************************/
 
- 
- 
+  
 Editor.prototype.mouseMove = function(event)
 {
-	var coords = {x: Math.floor((this.game.scroll.x + event.x) / 32),
-	 			  y: Math.floor(event.y / 32)};
+	var coords = {x: Math.floor((this.game.scroll.x + event.detail.x) / 32),
+	 			  y: Math.floor(event.detail.y / 32)};
 
-	if(event.buttons & 1)
+	console.log(event.detail);
+				  
+	if(event.detail.buttons & 1)
 		this.game.getObject("level").setSprite(coords, this.currentSprite);
-	else if(event.buttons & 2)
+	else if(event.detail.buttons & 2)
 		this.game.getObject("level").setSprite(coords, 0);
 }
 
@@ -63,26 +66,48 @@ Editor.prototype.setupMouse = function()
 {
 	var canvas = this.canvas;
 	
-	var positionFromEvent = function(event) {
-		var rect = canvas.getBoundingClientRect();		
-		
-		event['x'] = event.clientX - rect.left;
-		event['y'] = event.clientY - rect.top;
-		
-		return event;
-	}
-
 	document.addEventListener("contextmenu", function(event) { event.preventDefault(); return false; }, false);
 	
-	this.canvas.addEventListener('mousemove', function(event) { 
-		this.mouseMove(positionFromEvent(event));
-	}.bind(this));
+	this.canvas.addEventListener("game-move", this.mouseMove.bind(this));
 	
-	this.canvas.addEventListener('mousedown', function(event) {
+	
+	/*this.canvas.addEventListener('mousedown', function(event) {
 		this.mouseDown(positionFromEvent(event));
 	}.bind(this));
 	
 	this.canvas.addEventListener('mouseup', function(event) { 
 		this.mouseUp(positionFromEvent(event));
-	}.bind(this));	
+	}.bind(this));	*/
 }
+
+
+
+
+/*
+	
+	this.mousemove = function(event)
+	{
+		if(event.detail.type == 'mouse' && event.detail.buttons != 1)
+			return;
+		
+		var width = (widthspace + widthwall);
+		
+		// Compute position in grid		
+		var x = event.detail.x / width;
+		var y = event.detail.y / width;
+		
+		// Ignore walls
+		if(x - Math.floor(x) < widthwall / width)
+			return;
+		
+		if(y - Math.floor(y) < widthwall / width)
+			return;
+		
+		// Round grid position and convert to level coordinates
+		x = Math.floor(x) * 2 + 1;
+		y = Math.floor(y) * 2 + 1;
+
+		// Propose move
+		this.move(x, y);
+	}
+*/
