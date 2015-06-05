@@ -76,7 +76,7 @@ var spriteTable = [
 	{key: [2, 2], src: 'liquidWater', frames: 2, collision: "Water"},
 
 	{key: [2, 3], src: 'water_high', frames: 2, collision: "Water"},
-	{key: [2, 4], src: 'water_low1', frames: 1, collision: "Water"},
+	{key: [2, 4], src: 'water_low', frames: 2, collision: "Water"},
 
 	{key: [3, 1], src: 'plant', collision: false},
 	{key: [3, 2], src: 'pineSapling', collision: false},
