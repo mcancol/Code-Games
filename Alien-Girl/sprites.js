@@ -12,6 +12,7 @@ for(var i = 0; i < 32; i++) {
 
 var spriteTable = [
 	{key: [0, 1], src: 'clipping', collision: true},
+	{key: [0, 2], src: 'sara/idle/r/1', collision: false},
 
 	/* Grass */
 	{key: [1, 1], src: 'grass/grassLeft', collision: true},

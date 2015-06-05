@@ -21,12 +21,15 @@
 		<script src="graphics.js"></script>
 		<script src="game.js"></script>
 
+		<script src="level_loader.js"></script>
+
 		<script src="player.js"></script>
 		<script src="level.js"></script>
 		<script src="sprites.js"></script>
 
 		<script>
 			var editor = null;
+			var loader = null;
 
 			function load() {
 				var level_name = $("#level_name").val();
@@ -38,9 +41,8 @@
 
 				$("#status").html("Loading level, please wait...");
 
-				editor.game
-					.getObject("level")
-					.loadLevel(level_name)
+				var loader = new LevelLoader(editor.game);
+				loader.loadLevel(level_name)
 					.then(
 						function() { $("#status").html("Level loaded..."); },
 						function(error) { $("#status").html("Error loading level: " + error); }
@@ -159,34 +161,35 @@
 				 * Initialize game
 				 */
 				if(editMode) {
-					editor = new Editor(canvas_id, 32 * width, 32 * (height + 2), $("#level_name").val());
+					editor = new Editor(canvas_id, 32 * width, 32 * (height + 2));
+					var game = editor.game;
 					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
-
-					$("#loading-screen").hide();
-					$("#game-canvas").show();
 				} else {
 					$("nav").hide();
 
 					var game = new Game(canvas_id, 32 * width, 32 * height);
 					game.spriteManager = new SpriteManager();
-
-					/**
-				 	 * Initialize level and player objects
-				 	 */
-					var level = new Level();
-					level.loadLevel(levelName).then(function(response) {
-						game.addObject("level", level);
-						game.addObject("player", new Player());
-
-						$("#loading-screen").fadeOut(500, function() {
-							$("#game-canvas").fadeIn(250);
-						});
-					}, function(error) {
-						$("#loading-screen").fadeOut(500, function() {
-							$("#level-error").fadeIn(250);
-						});
-					});
 				}
+
+
+				loader = new LevelLoader(game);
+
+
+				/**
+			 	 * Initialize level and player objects
+			 	 */
+				loader.loadLevel(levelName).then(function(response) {
+					$("#loading-screen").fadeOut(500, function() {
+						$("#game-canvas").fadeIn(250);
+					});
+				}, function(error) {
+					console.log("loadLevel() failed " + error);
+
+					$("#loading-screen").fadeOut(500, function() {
+						$("#level-error").fadeIn(250);
+					});
+				});
+
 			}());
 		</script>
 

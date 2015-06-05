@@ -1,5 +1,5 @@
 
-function Editor(element, width, height, levelName)
+function Editor(element, width, height)
 {
 	this.game = new Game(element, width, height);
 	this.game.startEditMode();
@@ -10,11 +10,6 @@ function Editor(element, width, height, levelName)
 	this.game.spriteManager = new SpriteManager();
 
 	this.mouse = new Mouse(this.canvas);
-
-	var level = new Level();
-	level.loadLevel(levelName);
-
-	this.game.addObject('level', level);
 
 	this.currentSprite = 'l';
 
