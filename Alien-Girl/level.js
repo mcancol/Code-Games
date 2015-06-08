@@ -4,6 +4,8 @@ function Level(levelMap)
 	this.levelMap = levelMap;
 	this.collisionTypes = {};
 
+	this.lines = [];
+
 
 	this.setup = function()
 	{
@@ -11,40 +13,144 @@ function Level(levelMap)
 			var key = spriteTable[i]['key'];
 			this.collisionTypes[key[0] * 256 + key[1]] = spriteTable[i]['collision'];
 		}
-
-		// Create collision boxes
-		this.collisionBoxes = this.generateCollisionBoxes();
-	}
-
-
-	/**
-	 * Compresses the level geometry into collision boxes
-	 */
-	this.generateCollisionBoxes = function()
-	{
-		var boxes = [];
-
-		for(var i = 0; i < this.getHeight(); i++) {
-			for(var j = 0; j < this.getWidth(); j++) {
-				if(this.levelMap[i][j] in this.collisionTypes) {
-					var type = this.collisionTypes[this.levelMap[i][j]];
-
-					if(!type)
-						continue;
-
-					var box = {x: j * 32, y: i * 32, width: 32, height: 32, type: type};
-
-					boxes.push(box);
-				}
-			}
-		}
-
-		return boxes;
 	}
 
 
 	this.update = function(input)
 	{
+	}
+
+
+	this.worldToLevelCoords = function(worldCoord)
+	{
+		return {
+			x: Math.floor(worldCoord.x / 32),
+			y: Math.floor(worldCoord.y / 32)
+		};
+	}
+
+
+	this.sensor = function(origin, dir, length, func)
+	{
+		var o = this.worldToLevelCoords(origin);
+
+		var result = this.spriteSensor(o, dir, length / 32, function(hit)
+		{
+			// Coordinates of top left corner
+			hit.x = hit.sx * 32;
+			hit.y = hit.sy * 32;
+
+			// Fix the x coordinate for vertical sensors
+			if(dir.x == 0)
+				hit.x = origin.x;
+
+			// Fix the y coordinate for horizontal sensors
+			if(dir.y == 0)
+				hit.y = origin.y;
+
+			if(dir.x < 0)
+				hit.x += 32;
+
+			if(hit.type == 'hillDown' && dir.y == 0) {
+				hit.x += (hit.sy * 32 - origin.y) + 32;
+			}
+
+			if(hit.type == 'hillDown' && dir.x == 0) {
+				hit.y += (hit.sx * 32 - origin.x) + 32;
+			}
+
+			if(hit.type == 'hillUp' && dir.y == 0) {
+				hit.x -= (hit.sy * 32 - origin.y) + 32;
+			}
+
+			if(hit.type == 'hillUp' && dir.x == 0) {
+				hit.y -= (hit.sx * 32 - origin.x);
+			}
+
+			// Compute difference
+			hit.dx = hit.x - origin.x;
+			hit.dy = hit.y - origin.y;
+
+			// Do not report hits in opposite direction
+			if(dir.x != 0 && dir.x * hit.dx <= 0)
+				return false;
+			//if(dir.x != 0 && dir.x * hit.dx <= 0 || dir.y != 0 && dir.y * hit.dy <= 0)
+				//return false;
+
+			// Invoke callback
+			hit = func(hit);
+
+			if(hit)
+				return hit;
+		});
+
+		// Draw result
+		if(dir.x != 0)
+			this.lines.push({ a: origin, b: result, color: 'blue' });
+		else
+			this.lines.push({ a: origin, b: result, color: 'red' });
+
+		return result;
+	}
+
+	this.drawDebugLines = function()
+	{
+		for(var i = 0; i < this.lines.length; i++)
+			this.drawLine(this.lines[i].a, this.lines[i].b, this.lines[i].color);
+		this.lines = [];
+	}
+
+
+	this.drawLine = function(a, b, color)
+	{
+		var ctx = this.game.context;
+
+		ctx.beginPath();
+		ctx.moveTo(a.x, a.y);
+		ctx.lineTo(b.x, b.y);
+		ctx.closePath();
+		ctx.strokeStyle = color;
+		ctx.stroke();
+	}
+
+
+	this.spriteSensor = function(origin, dir, length, func)
+	{
+		for(i = 0; i < Math.ceil(length); i++)
+		{
+			var l = {
+				sx: origin.x + dir.x * i,
+				sy: origin.y + dir.y * i
+			};
+
+			/**
+			 * Out of bounds, return 'Bounds'
+			 */
+			if(l.sy < 0 || l.sy >= this.getHeight() || l.sx < 0 || l.sx >= this.getWidth())
+				return {
+					type: 'Bounds',
+					sx: clamp(l.sx, 0, this.getWidth()),
+					sy: clamp(l.sy, 0, this.getHeight())
+				};
+
+			// Get sprite number
+			var sprite = this.levelMap[l.sy][l.sx];
+
+			if(sprite in this.collisionTypes) {
+				// Add type of collision to hit object
+				l.type = this.collisionTypes[sprite];
+
+				// Invoke callback, it will return the hit if it was accepted
+				var hit = func(l);
+
+				// If we hit something, return it, otherwise continue
+				if(hit)
+					return hit;
+			}
+		}
+
+		// We did not hit anything, return false
+		return { type: false };
 	}
 
 
@@ -86,6 +192,8 @@ function Level(levelMap)
 				this.drawSprite(context, j, i, this.levelMap[i][j]);
 			}
 		}
+
+		this.drawDebugLines();
 	}
 }
 

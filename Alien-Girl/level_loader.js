@@ -135,7 +135,6 @@ function LevelLoader(game)
           if(!this.game.editMode)
             level.levelMap[y][x] = 0;
         }
-
       }
     }
 
