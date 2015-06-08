@@ -109,24 +109,24 @@ function Player()
 	}
 
 
+	/**
+	 * Takes a list of sensors and returns the closest and furthest sensors
+	 */
 	this.combineSensors = function(sensors, limit)
 	{
-		var minY = false;
-		var maxY = false;
-
-		var minSensor = '';
-		var maxSensor = '';
+		var minSensor = false;
+		var maxSensor = false;
 
 		for(var i = 0; i < sensors.length; i++) {
-			if(sensors[i] && sensors[i].type && sensors[i].dy < limit) {
-				if(!minY || sensors[i].y < minY) {
-					minY = sensors[i].y;
+			if(sensors[i] &&
+				 sensors[i].type &&
+				 sensors[i].dy < limit) {
+
+				if(!minSensor || sensors[i].y < minSensor.y)
 					minSensor = sensors[i];
-				}
-				if(!maxY || sensors[i].y > maxY) {
-					maxY = sensors[i].y;
+
+				if(!maxSensor || sensors[i].y < maxSensor.y)
 					maxSensor = sensors[i];
-				}
 			}
 		}
 
@@ -144,25 +144,15 @@ function Player()
 			{ x: this.x + this.sensor_right, y: this.y + this.height - 10 },
 			{ x: 0, y: 1 }, 256, function(hit) { return hit; });
 
-		this.grounded = false;
+		combined = this.combineSensors([hit_left, hit_right], 10);
 
-		combined = this.combineSensors([hit_left, hit_right]);
-
-		var collide_left = (hit_left && hit_left.type != false && hit_left.dy < 10);
-		var collide_right = (hit_right && hit_right.type != false && hit_right.dy < 10);
-
-		if(collide_left && collide_right) {
-			this.y = Math.min(hit_right.y, hit_left.y) - this.height
-		} else if(collide_left) {
-			this.y = hit_left.y - this.height;
-		} else if(collide_right) {
-			this.y = hit_right.y - this.height;
-		}
-
-		if(collide_left || collide_right) {
+		if(combined.min) {
+			this.y = combined.min.y - this.height;
 			this.velY = 0;
 			this.grounded = true;
 			this.jumping = false;
+		} else {
+			this.grounded = false;
 		}
 	}
 
@@ -177,10 +167,12 @@ function Player()
 			{ x: this.x + this.sensor_right, y: this.y + 10 },
 			{ x: 0, y: -1 }, 256, function(hit) { return hit; });
 
-		var collide_left = (hit_left && hit_left.type != false && hit_left.dy < 10);
-		var collide_right = (hit_right && hit_right.type != false && hit_right.dy < 10);
+		combined = this.combineSensors([hit_left, hit_right], 10);
 
-
+		if(combined.max && combined.max.dy > -4) {
+			this.y = combined.max.y - 6;
+			this.velY = 0;
+		}
 	}
 
 

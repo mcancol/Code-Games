@@ -30,6 +30,14 @@ function Level(levelMap)
 	}
 
 
+	/**
+	* Pixel level sensor line for collision detection.
+	*
+	* Starts a sensor line at _origin_ in direction _dir_
+	* and calls the function _func_ for all collisions until
+	* the distance is greater than _length_ or the function
+	* _func_ returns a value.
+	 */
 	this.sensor = function(origin, dir, length, func)
 	{
 		var o = this.worldToLevelCoords(origin);
@@ -41,30 +49,33 @@ function Level(levelMap)
 			hit.y = hit.sy * 32;
 
 			// Fix the x coordinate for vertical sensors
-			if(dir.x == 0)
-				hit.x = origin.x;
+			if(dir.x == 0) hit.x = origin.x;
 
 			// Fix the y coordinate for horizontal sensors
-			if(dir.y == 0)
-				hit.y = origin.y;
+			if(dir.y == 0) hit.y = origin.y;
 
-			if(dir.x < 0)
-				hit.x += 32;
+			// Collide with right most edge for leftward sensors
+			if(dir.x < 0) hit.x += 32;
 
-			if(hit.type == 'hillDown' && dir.y == 0) {
-				hit.x += (hit.sy * 32 - origin.y) + 32;
+			// Collide with bottom edge for upward sensors
+			if(dir.y < 0)	hit.y += 32;
+
+			// Half blocks
+			if(hit.type == 'topHalf') {
+				if(dir.y < 0) hit.y -= 14;
+				if(dir.x != 0 && origin.y - hit.sy * 32 > 18) return false;
 			}
 
-			if(hit.type == 'hillDown' && dir.x == 0) {
-				hit.y += (hit.sx * 32 - origin.x) + 32;
+			// Ramp down
+			if(hit.type == 'hillDown') {
+				if(dir.y == 0) hit.x += (hit.sy * 32 - origin.y) + 32;
+				if(dir.x == 0) hit.y += (hit.sx * 32 - origin.x) + 32;
 			}
 
+			// Ramp up
 			if(hit.type == 'hillUp' && dir.y == 0) {
-				hit.x -= (hit.sy * 32 - origin.y) + 32;
-			}
-
-			if(hit.type == 'hillUp' && dir.x == 0) {
-				hit.y -= (hit.sx * 32 - origin.x);
+				if(dir.y == 0) hit.x -= (hit.sy * 32 - origin.y) + 32;
+				if(dir.x == 0) hit.y -= (hit.sx * 32 - origin.x);
 			}
 
 			// Compute difference
@@ -74,8 +85,6 @@ function Level(levelMap)
 			// Do not report hits in opposite direction
 			if(dir.x != 0 && dir.x * hit.dx <= 0)
 				return false;
-			//if(dir.x != 0 && dir.x * hit.dx <= 0 || dir.y != 0 && dir.y * hit.dy <= 0)
-				//return false;
 
 			// Invoke callback
 			hit = func(hit);
@@ -114,6 +123,14 @@ function Level(levelMap)
 	}
 
 
+	/**
+	 * Sprite level sensor line for collision detection.
+	 *
+	 * Starts a sensor line at _origin_ in direction _dir_
+	 * and calls the function _func_ for all collisions until
+	 * the distance is greater than _length_ or the function
+	 * _func_ returns a value.
+	 */
 	this.spriteSensor = function(origin, dir, length, func)
 	{
 		for(i = 0; i < Math.ceil(length); i++)

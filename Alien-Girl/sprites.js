@@ -27,10 +27,10 @@ var spriteTable = [
 	{key: [1, 10], src: 'grass/grassCorner_right', collision: true},
 	{key: [1, 11], src: 'grass/grassHill_left', collision: 'hillUp'},
 	{key: [1, 12], src: 'grass/grassHill_right', collision: 'hillDown'},
-	{key: [1, 13], src: 'grass/grassHalf', collision: true},
-	{key: [1, 14], src: 'grass/grassHalf_left', collision: topBox},
-	{key: [1, 15], src: 'grass/grassHalf_mid', collision: topBox},
-	{key: [1, 16], src: 'grass/grassHalf_right', collision: topBox},
+	{key: [1, 13], src: 'grass/grassHalf', collision: 'topHalf'},
+	{key: [1, 14], src: 'grass/grassHalf_left', collision: 'topHalf'},
+	{key: [1, 15], src: 'grass/grassHalf_mid', collision: 'topHalf'},
+	{key: [1, 16], src: 'grass/grassHalf_right', collision: 'topHalf'},
 
 
 	/* Snow */
@@ -46,10 +46,10 @@ var spriteTable = [
 	{key: [1, 41], src: 'snow/snowCorner_right', collision: true},
 	{key: [1, 42], src: 'snow/snowHill_left', collision: 'hillUp'},
 	{key: [1, 43], src: 'snow/snowHill_right', collision: 'hillDown'},
-	{key: [1, 44], src: 'snow/snowHalf', collision: true},
-	{key: [1, 45], src: 'snow/snowHalf_left', collision: topBox},
-	{key: [1, 46], src: 'snow/snowHalf_mid', collision: topBox},
-	{key: [1, 47], src: 'snow/snowHalf_right', collision: topBox},
+	{key: [1, 44], src: 'snow/snowHalf', collision: 'topHalf'},
+	{key: [1, 45], src: 'snow/snowHalf_left', collision: 'topHalf'},
+	{key: [1, 46], src: 'snow/snowHalf_mid', collision: 'topHalf'},
+	{key: [1, 47], src: 'snow/snowHalf_right', collision: 'topHalf'},
 
 
 	/* Planet */
@@ -65,10 +65,10 @@ var spriteTable = [
 	{key: [1, 57], src: 'planet/planetCorner_right', collision: true},
 	{key: [1, 58], src: 'planet/planetHill_left', collision: stairsDown},
 	{key: [1, 59], src: 'planet/planetHill_right', collision: stairsUp},
-	{key: [1, 60], src: 'planet/planetHalf', collision: true},
-	{key: [1, 61], src: 'planet/planetHalf_left', collision: topBox},
-	{key: [1, 62], src: 'planet/planetHalf_mid', collision: topBox},
-	{key: [1, 63], src: 'planet/planetHalf_right', collision: topBox},
+	{key: [1, 60], src: 'planet/planetHalf', collision: 'topHalf'},
+	{key: [1, 61], src: 'planet/planetHalf_left', collision: 'topHalf'},
+	{key: [1, 62], src: 'planet/planetHalf_mid', collision: 'topHalf'},
+	{key: [1, 63], src: 'planet/planetHalf_right', collision: 'topHalf'},
 
 
 	{key: [1, 20], src: 'metalCenter', collision: true},
