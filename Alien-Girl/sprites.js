@@ -10,6 +10,14 @@ for(var i = 0; i < 32; i++) {
 	stairsDown.push({x: 0, y: 32 - i, width: 32 - i, height: 2, type: 'StairsDown'});
 }
 
+
+function isSlippery(sprite)
+{
+	return sprite >= 288 && sprite <= 303;
+}
+
+
+
 var spriteTable = [
 	{key: [0, 1], src: 'clipping', collision: true},
 	{key: [0, 2], src: 'sara/idle/r/1', collision: false},

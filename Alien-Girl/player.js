@@ -29,12 +29,17 @@ function Player()
 		this.jumping = false;
 		this.grounded = false;
 
+		this.ground = { slippery: false, type: true }
+
 		// Physics parameters
 		this.gravity = 0.3;
-		this.friction = 0.8;
+		this.friction = this.frictionDefault;
 
 		this.slideAccelerationSnow = 0.5;
-		this.frictionSnow = 0.95;
+
+		this.frictionDefault = 0.8;
+		this.frictionDown = 0.7;
+		this.frictionSnow = 0.99;
 
 		this.scale = 1;
 		this.alive = true;
@@ -103,9 +108,26 @@ function Player()
 		}
 
 		// Move to the right
-		if(input.keys[input.KEY_RIGHT])
+		if(input.keys[input.KEY_RIGHT]) {
 			if(this.velX < this.speed)
 				this.velX++;
+		} else if(this.ground.slippery && !input.keys[input.KEY_DOWN]) {
+			if(this.ground.type == 'hillDown')
+				if(this.velX > 0.5 * -this.speed)
+					this.velX -= 0.25;
+			if(this.ground.type == 'hillUp')
+				if(this.velX < 0.5 * this.speed)
+					this.velX += 0.25;
+		}
+
+		// Change friction when pressing down
+		if(input.keys[input.KEY_DOWN]) {
+			this.friction = this.frictionDown;
+		} else if(this.ground.slippery) {
+			this.friction = this.frictionSnow;
+		} else {
+			this.friction = this.frictionDefault;
+		}
 	}
 
 
@@ -152,6 +174,9 @@ function Player()
 			this.velY = 0;
 			this.grounded = true;
 			this.jumping = false;
+
+			this.ground.slippery = isSlippery(combined.min.sprite);
+			this.ground.type = combined.min.type;
 		} else if(dirY < 0 && combined.max && combined.max.dy > -10) {
 			this.y = combined.max.y;
 			this.velY = 0;
@@ -222,13 +247,7 @@ function Player()
 		permitted = this.getPermittedActions();
 		var level = this.game.getObject("level");
 
-		// Gravity and friction
-		//if(ground && ground.type == "Snow") {
-			this.velX *= this.frictionSnow;
-		//} else {
-			this.velX *= this.friction;
-		//}
-
+		this.velX *= this.friction;
 		this.velY += this.gravity;
 
 		// Update position

@@ -73,7 +73,7 @@ function Level(levelMap)
 			}
 
 			// Ramp up
-			if(hit.type == 'hillUp' && dir.y == 0) {
+			if(hit.type == 'hillUp') {
 				if(dir.y == 0) hit.x -= (hit.sy * 32 - origin.y) + 32;
 				if(dir.x == 0) hit.y -= (hit.sx * 32 - origin.x);
 			}
@@ -158,6 +158,7 @@ function Level(levelMap)
 
 			if(sprite in this.collisionTypes) {
 				// Add type of collision to hit object
+				l.sprite = sprite;
 				l.type = this.collisionTypes[sprite];
 
 				// Invoke callback, it will return the hit if it was accepted
