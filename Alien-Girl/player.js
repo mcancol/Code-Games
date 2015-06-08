@@ -112,22 +112,20 @@ function Player()
 	/**
 	 * Takes a list of sensors and returns the closest and furthest sensors
 	 */
-	this.combineSensors = function(sensors, limit)
+	this.combineSensors = function(sensors)
 	{
 		var minSensor = false;
 		var maxSensor = false;
 
 		for(var i = 0; i < sensors.length; i++) {
-			if(sensors[i] &&
-				 sensors[i].type &&
-				 sensors[i].dy < limit) {
+			if(!sensors[i] || !sensors[i].type)
+				continue;
 
-				if(!minSensor || sensors[i].y < minSensor.y)
-					minSensor = sensors[i];
+			if(!minSensor || sensors[i].y < minSensor.y)
+				minSensor = sensors[i];
 
-				if(!maxSensor || sensors[i].y < maxSensor.y)
-					maxSensor = sensors[i];
-			}
+			if(!maxSensor || sensors[i].y > maxSensor.y)
+				maxSensor = sensors[i];
 		}
 
 		return { min: minSensor, max: maxSensor };
@@ -136,18 +134,26 @@ function Player()
 
 	this.collideVerticalDown = function(level)
 	{
+		var dirY = Math.sign(this.gravity);
+		var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
+
 		var hit_left = level.sensor(
-			{ x: this.x + this.sensor_left, y: this.y + this.height - 10 },
-			{ x: 0, y: 1 }, 256, function(hit) { return hit; });
+			{ x: this.x + this.sensor_left, y: oriY },
+			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
 
 		var hit_right = level.sensor(
-			{ x: this.x + this.sensor_right, y: this.y + this.height - 10 },
-			{ x: 0, y: 1 }, 256, function(hit) { return hit; });
+			{ x: this.x + this.sensor_right, y: oriY },
+			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
 
-		combined = this.combineSensors([hit_left, hit_right], 10);
+		combined = this.combineSensors([hit_left, hit_right]);
 
-		if(combined.min) {
+		if(dirY > 0 && combined.min && combined.min.dy < 10) {
 			this.y = combined.min.y - this.height;
+			this.velY = 0;
+			this.grounded = true;
+			this.jumping = false;
+		} else if(dirY < 0 && combined.max && combined.max.dy > -10) {
+			this.y = combined.max.y;
 			this.velY = 0;
 			this.grounded = true;
 			this.jumping = false;
@@ -159,18 +165,24 @@ function Player()
 
 	this.collideVerticalUp = function(level)
 	{
+		var dirY = -Math.sign(this.gravity);
+		var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
+
 		var hit_left = level.sensor(
-			{ x: this.x + this.sensor_left, y: this.y + 10 },
-			{ x: 0, y: -1 }, 256, function(hit) { return hit; });
+			{ x: this.x + this.sensor_left, y: oriY },
+			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
 
 		var hit_right = level.sensor(
-			{ x: this.x + this.sensor_right, y: this.y + 10 },
-			{ x: 0, y: -1 }, 256, function(hit) { return hit; });
+			{ x: this.x + this.sensor_right, y: oriY },
+			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
 
-		combined = this.combineSensors([hit_left, hit_right], 10);
+		var combined = this.combineSensors([hit_left, hit_right]);
 
-		if(combined.max && combined.max.dy > -4) {
+		if(dirY < 0 && combined.max && combined.max.dy > -4) {
 			this.y = combined.max.y - 6;
+			this.velY = 0;
+		} else if(dirY > 0 && combined.min && combined.min.dy < 4) {
+			this.y = combined.min.y - this.height + 6;
 			this.velY = 0;
 		}
 	}

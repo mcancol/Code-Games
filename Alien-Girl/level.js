@@ -86,6 +86,9 @@ function Level(levelMap)
 			if(dir.x != 0 && dir.x * hit.dx <= 0)
 				return false;
 
+			//if(dir.y != 0 && dir.y * hit.dy <= 0)
+			//	return false;
+
 			// Invoke callback
 			hit = func(hit);
 
