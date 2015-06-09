@@ -173,7 +173,17 @@ function Player(x, y)
 
 		combined = this.combineSensors([hit_left, hit_right]);
 
+
 		if(dirY > 0 && combined.min && combined.min.dy < 10) {
+
+			if(combined.min.type == 'water' && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
+				if(combined.min.dy < -16)
+					this.alive = false;
+				else {
+					return;
+				}
+			}
+
 			this.y = combined.min.y - this.height;
 			this.velY = 0;
 			this.grounded = true;
@@ -263,32 +273,6 @@ function Player(x, y)
 		this.collideVerticalDown(level);
 		this.collideVerticalUp(level);
 		this.collideHorizontal(level);
-
-
-		/*
-			if(ci.type == 'Door' && Math.abs(this.velY) < 0.4 && Math.abs(this.velX) < 0.1)
-			{
-				this.velY = 0;
-				this.velY = 0;
-
-				var teleport = this.findTeleportDestination(this.x, this.y);
-				this.y += teleport.y - this.y;
-				this.x = teleport.x;
-			}
-
-			if(ci.type == 'Water')
-			{
-				if(permitted.walk_on_water && ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
-					this.y += ci.normal.y;
-					this.velY = 0;
-					this.grounded = true;
-				} else {
-					if(ci.normal.y < -16) {
-						this.alive = false;
-					}
-				}
-			}
-		}.bind(this));*/
 	}
 
 
