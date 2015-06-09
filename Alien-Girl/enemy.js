@@ -32,10 +32,15 @@ function Enemy(x, y)
   {
     var player = this.game.getObject("player");
 
+    var player_underneath =
+      player.x + player.width / 2 >= this.x &&
+      player.x + player.width / 2 <= this.x + this.width &&
+      player.y > this.y;
+
+    var player_went_past = (player.x - 2 * player.width) > this.baseX;
+
     /** Move towards player when player is underneath **/
-    if(player.x + player.width / 2 >= this.x &&
-       player.x + player.width / 2 <= this.x + this.width &&
-       player.y > this.y) {
+    if(player_underneath || player_went_past) {
 
       this.targetX = player.x;
       this.targetY = player.y;
@@ -50,9 +55,9 @@ function Enemy(x, y)
     /** Check collision with player **/
     var collision = collisionCheck(this, player);
     if(this.alive && collision) {
-      if(collision.normal.y < 0)
+      if(collision.normal.y < 0 || player_went_past)
         player.alive = false;
-        else
+      else
         this.alive = false;
     }
   }

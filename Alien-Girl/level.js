@@ -21,6 +21,9 @@ function Level(levelMap)
 	}
 
 
+	/**
+	 * Converts world coordinates to level (sprite) coordinates
+	 */
 	this.worldToLevelCoords = function(worldCoord)
 	{
 		return {
