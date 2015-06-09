@@ -27,6 +27,10 @@
 				padding: 0px;
 			}
 
+			#button {
+				padding: 10px;
+			}
+
 			#game-canvas {
 				border: 1px solid gray;
 				display: none;
@@ -54,7 +58,9 @@
 			</div>
 		</div>
 
-		<button id="enter-exit-fs" onclick="enterFullscreen()">Toggle fullscreen</button>
+		<div id="button">
+			<button id="enter-exit-fs" class="btn btn-primary" onclick="enterFullscreen()">Toggle fullscreen</button>
+		</div>
 
 		<div id="fullscreen">
 			<canvas id="game-canvas"></canvas>
