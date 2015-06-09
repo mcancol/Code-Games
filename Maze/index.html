@@ -2,27 +2,27 @@
 <html>
 	<head>
 		<title>Platform game</title>
-		
+
 		<meta charset="utf8" />
-		
+
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-		
-		<script src="jquery-2.1.3.min.js"></script>
-		<script src="compat.js"></script>
-		<script src="game.js"></script>
-		<script src="input.js"></script>
-		<script src="player.js"></script>
-		<script src="level.js"></script>
-		
+
+		<script src="js/jquery-2.1.3.min.js"></script>
+		<script src="js/compat.js"></script>
+		<script src="js/game.js"></script>
+		<script src="js/input.js"></script>
+		<script src="js/player.js"></script>
+		<script src="js/level.js"></script>
+
 		<script>
 			function getAddress()
 			{
-				var url = window.location.href;				
+				var url = window.location.href;
 				var parts = url.split(/[\?]+/);
-				
-				return parts[0];				
+
+				return parts[0];
 			}
-		
+
 			function querySt(Key) {
 		    	var url = window.location.href;
 		    	KeysValues = url.split(/[\?&]+/);
@@ -32,17 +32,17 @@
 			            return KeyValue[1];
 			        }
 		    	}
-				
+
 				return false;
-			}			
+			}
 		</script>
-		
+
 		<style>
 			#game-canvas {
 				border: 1px solid gray;
 				display: none;
-			}			
-			
+			}
+
 			#player-error {
 				display: none;
 			}
@@ -72,14 +72,14 @@
 			var widthwall = 2;
 			var widthspace = 32;
 			var datasink = "http://www.ivarclemens.nl/maze_game/sink.php";
-			
+
 			var gameStart = false;
 			var playerId = false;
-		
+
 			(function() {
 				gameStart = querySt("game");
 				playerId = querySt("player");
-			
+
 				if(!playerId) {
 					$("#player-error").show();
 					return;
@@ -90,15 +90,15 @@
 					gameStart = Math.floor(Date.now() / 1000);
 					window.location.href = getAddress() + "?game=" + gameStart + "&player=" + playerId;
 					return;
-				} 
-				
+				}
+
 				// Everything is fine, start the game
 				$("#game-canvas").show();
-				
+
 				var game = new Game("game-canvas", 32 * 24, 32 * 8);
 				var level = new Level();
 				game.addObject("level", level);
-				game.addObject("player", new Player());				
+				game.addObject("player", new Player());
 			}());
 		</script>
 	</body>
