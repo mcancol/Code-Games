@@ -139,7 +139,7 @@ function Level()
 	this.setup = function()
 	{			
 		this.bombImage = new Image();
-		this.bombImage.src = "bomb.png";
+		this.bombImage.src = "images/bomb.png";
 		
 		if('game' in this) {
 			var bounds = {

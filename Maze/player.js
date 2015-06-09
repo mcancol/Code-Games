@@ -35,7 +35,7 @@ function Player()
 
 		// Load sprite
 		this.playerImage = new Image();
-		this.playerImage.src = "player.png";
+		this.playerImage.src = "images/player.png";
 	}
 
 
