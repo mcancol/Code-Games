@@ -3,7 +3,7 @@
 	var requestAnimationFrame =
 		window.requestAnimationFrame || window.mozRequestAnimationFrame ||
 		window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-	
+
 	window.requestAnimationFrame = requestAnimationFrame;
 })();
 
@@ -14,5 +14,5 @@
 if(!Date.now) {
 	Date.now = function() {
 		return new Date().getTime();
-	}	
+	}
 }
