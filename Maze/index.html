@@ -12,34 +12,17 @@
 		<script src="js/common/input.js"></script>
 		<script src="js/common/url.js"></script>
 
+		<script src="js/fullscreen.js"></script>
 		<script src="js/game.js"></script>
 		<script src="js/player.js"></script>
 		<script src="js/level.js"></script>
 
-		<script>
-			function getAddress()
-			{
-				var url = window.location.href;
-				var parts = url.split(/[\?]+/);
-
-				return parts[0];
-			}
-
-			function querySt(Key) {
-		    	var url = window.location.href;
-		    	KeysValues = url.split(/[\?&]+/);
-		    	for (i = 0; i < KeysValues.length; i++) {
-		    	    KeyValue = KeysValues[i].split("=");
-			        if (KeyValue[0] == Key) {
-			            return KeyValue[1];
-			        }
-		    	}
-
-				return false;
-			}
-		</script>
-
 		<style>
+			body {
+				margin: 0px;
+				padding: 0px;
+			}
+
 			#game-canvas {
 				border: 1px solid gray;
 				display: none;
@@ -59,28 +42,32 @@
 				</div>
 				<div class="panel-body">
 					The game cannot be started because the player has not been set.
+					You can start as
+					<a href="?player=1">Player 1</a>,
+					<a href="?player=2">Player 2</a>, or perhaps as
+					<a href="?player=3">Player 3</a>.
 				</div>
 			</div>
 		</div>
 
+		<button id="enter-exit-fs" onclick="enterFullscreen()">Toggle fullscreen</button>
 
-		<div class="container">
-			<canvas id="game-canvas" class="center-block"></canvas>
+		<div id="fullscreen">
+			<canvas id="game-canvas"></canvas>
 		</div>
-
 
 		<script>
 			// Global variables
 			var widthwall = 2;
-			var widthspace = 32;
+			var widthspace = 44;
 			var datasink = "http://www.ivarclemens.nl/maze_game/sink.php";
 
 			var gameStart = false;
 			var playerId = false;
 
 			(function() {
-				gameStart = querySt("game");
-				playerId = querySt("player");
+				gameStart = getQueryField("game");
+				playerId = getQueryField("player");
 
 				if(!playerId) {
 					$("#player-error").show();
