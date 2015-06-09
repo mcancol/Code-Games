@@ -81,8 +81,8 @@ var spriteTable = [
 
 	{key: [1, 20], src: 'metalCenter', collision: true},
 
-	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: "Water"},
-	{key: [2, 2], src: 'liquidWater', frames: 2, collision: "Water"},
+	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: "water"},
+	{key: [2, 2], src: 'liquidWater', frames: 2, collision: "water"},
 
 	{key: [2, 3], src: 'water_high', frames: 2, collision: "Water"},
 	{key: [2, 4], src: 'water_low', frames: 2, collision: "Water"},
@@ -92,7 +92,7 @@ var spriteTable = [
 	{key: [3, 3], src: 'pineSaplingAlt', collision: false},
 	{key: [3, 4], src: 'cactus', collision: false},
 
-	{key: [4, 1], src: 'spikes', collision: "Water"},
+	{key: [4, 1], src: 'spikes', collision: "water"},
 	{key: [4, 2], src: 'doorOpen', collision: 'Door'},
 	{key: [4, 3], src: 'doorOpenTop', collision: false},
 

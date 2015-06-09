@@ -4,11 +4,14 @@
  *  - Kinematics
  *  - Visual representation (drawing)
  */
-function Player()
+function Player(x, y)
 {
 	// Depends on sprite
 	this.width = 32;
 	this.height = 46;
+
+	this.baseX = x;
+	this.baseY = y;
 
 	this.sensor_left = 6;
 	this.sensor_right = 23;
@@ -17,8 +20,8 @@ function Player()
 	this.setup = function()
 	{
 		// Position
-		this.x = 32;
-		this.y = 128;
+		this.x = this.baseX;
+		this.y = this.baseY;
 		this.faceRight = true;
 
 		// Velocities
@@ -37,9 +40,10 @@ function Player()
 
 		this.slideAccelerationSnow = 0.5;
 
-		this.frictionDefault = 0.8;
-		this.frictionDown = 0.7;
-		this.frictionSnow = 0.99;
+		// Friction values for
+		this.frictionDefault = 0.8;		// normal ground
+		this.frictionDown = 0.7;			// when down is pressed
+		this.frictionSnow = 0.99;			// when on snow
 
 		this.scale = 1;
 		this.alive = true;
@@ -272,20 +276,6 @@ function Player()
 				this.x = teleport.x;
 			}
 
-			if(ci.type == 'StairsUp' || ci.type == 'StairsDown')
-			{
-				if(ground && ground.type == 'Snow') {
-					if(ci.type == 'StairsDown')
-						this.velX += this.slideAccelerationSnow;
-					else
-						this.velX -= this.slideAccelerationSnow;
-				}
-
-				this.y += ci.normal.y;
-				this.velY = 0;
-				this.grounded = true;
-			}
-
 			if(ci.type == 'Water')
 			{
 				if(permitted.walk_on_water && ci.axis == 'y' && Math.abs(this.velX) > 0.1 && !this.jumping) {
@@ -331,7 +321,7 @@ function Player()
 
 		if(!this.alive && Math.abs(this.scale) < 0.01) {
 			// Recreate character after it died
-			this.setup();
+			this.game.gameover();
 		}
 	}
 
