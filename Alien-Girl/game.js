@@ -21,7 +21,9 @@ function Game(element, width, height)
 
 Game.prototype.gameover = function()
 {
-
+	// Reset all objects to their default states
+	for(var key in this.objects)
+		this.objects[key].setup();
 };
 
 Game.prototype.startEditMode = function()
