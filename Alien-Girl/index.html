@@ -123,6 +123,7 @@
 
 		<script>
 			var server = "http://www.ivarclemens.nl/platform_game/";
+			var gameStart = false;
 
 			(function() {
 				/**
@@ -143,6 +144,17 @@
 				 * Determine whether edit-mode is enabled
 				 */
 				var editMode = getQueryField("edit");
+
+				/**
+				 * Determine unique ID used to save data
+				 */
+				gameStart = getQueryField("game");
+				if(!gameStart && !editMode) {
+					gameStart = Math.floor(Date.now() / 1000);
+					document.location.href = updateQueryString({game: gameStart});
+
+					return;
+				}
 
 				/**
 				 * Determine name of level to load
