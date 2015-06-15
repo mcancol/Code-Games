@@ -238,7 +238,6 @@ function Player(x, y)
 			this.x = this.x + hit.dx - 10;
 		}
 
-
 		var hit = level.sensor(
 			{ x: this.x + 10, y: this.y + this.height - 20 },
 			{ x: -1, y: 0 }, 256, function(hit) { return hit; });

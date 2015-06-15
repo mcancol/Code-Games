@@ -1,4 +1,7 @@
 
+/**
+ * Returns whether a given sprite should be slippery
+ */
 function isSlippery(sprite)
 {
 	return (sprite >= 288 && sprite <= 303) ||	// Snow
