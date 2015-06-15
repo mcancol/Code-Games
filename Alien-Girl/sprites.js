@@ -1,7 +1,8 @@
 
 function isSlippery(sprite)
 {
-	return sprite >= 288 && sprite <= 303;
+	return (sprite >= 288 && sprite <= 303) ||	// Snow
+			   (sprite >= 304 && sprite <= 319);		// Planet
 }
 
 var spriteTable = [
