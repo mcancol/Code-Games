@@ -203,33 +203,36 @@ function Player()
 
 		var width = (widthspace + widthwall);
 
+		// Compute age of last touch event
 		var age = Date.now() - this.lastTouchTime;
 		this.lastTouchTime = Date.now();
 
-		if(age > 200) {
-			this.initialTouchPosition = {x: event.detail.x, y: event.detail.y};
+		// If no touch has been registered for the last second, start again
+		if(age > 1000) {
+			this.initialTouchPosition = {
+				x: event.detail.x / width,
+				y: event.detail.y / width};
 			return false;
 		}
 
 		// Compute mouse movement direction
 		var delta = {
-			x: (event.detail.x - this.initialTouchPosition.x) / width,
-			y: (event.detail.y - this.initialTouchPosition.y) / width
+			x: event.detail.x / width - this.initialTouchPosition.x,
+			y: event.detail.y / width - this.initialTouchPosition.y
 		};
 
-		var direction = false;
 
 		if(Math.abs(delta.x) > Math.abs(delta.y)) {
-			if(Math.abs(delta.x) > 0.8)
-				direction = {x: delta.x, y: 0};
+			if(Math.abs(delta.x) >= 1.0) {
+				this.moveDirection(delta.x, 0);
+				this.initialTouchPosition.x += delta.x;
+			}
 		} else {
-			if(Math.abs(delta.y) > 0.8)
-				direction = {x: 0, y: delta.y};
-		}
-
-		if(direction) {
-			if(this.moveDirection(direction.x, direction.y))
-				this.lastTouchTime = 0;
+			if(Math.abs(delta.y) >= 1.0) {
+				console.log(delta.y);
+				this.moveDirection(0, delta.y);
+				this.initialTouchPosition.y += delta.y;
+			}
 		}
 	}
 
