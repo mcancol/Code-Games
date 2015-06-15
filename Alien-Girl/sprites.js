@@ -1,22 +1,8 @@
 
-var topBox = [{x: 0, y: 0, width: 32, height: 16, type: true}];
-var bottomBox = [{x: 0, y: 16, width: 32, height: 16, type: true}];
-
-var stairsUp = [];
-var stairsDown = [];
-
-for(var i = 0; i < 32; i++) {
-	stairsUp.push({x: i, y: 32 - i, width: 32 - i, height: 2, type: 'StairsUp'});
-	stairsDown.push({x: 0, y: 32 - i, width: 32 - i, height: 2, type: 'StairsDown'});
-}
-
-
 function isSlippery(sprite)
 {
 	return sprite >= 288 && sprite <= 303;
 }
-
-
 
 var spriteTable = [
 	{key: [0, 1], src: 'clipping', collision: true},
@@ -71,8 +57,8 @@ var spriteTable = [
 	{key: [1, 55], src: 'planet/planetCliffAlt_right', collision: true},
 	{key: [1, 56], src: 'planet/planetCorner_left', collision: true},
 	{key: [1, 57], src: 'planet/planetCorner_right', collision: true},
-	{key: [1, 58], src: 'planet/planetHill_left', collision: stairsDown},
-	{key: [1, 59], src: 'planet/planetHill_right', collision: stairsUp},
+	{key: [1, 58], src: 'planet/planetHill_left', collision: 'hillUp'},
+	{key: [1, 59], src: 'planet/planetHill_right', collision: 'hillDown'},
 	{key: [1, 60], src: 'planet/planetHalf', collision: 'topHalf'},
 	{key: [1, 61], src: 'planet/planetHalf_left', collision: 'topHalf'},
 	{key: [1, 62], src: 'planet/planetHalf_mid', collision: 'topHalf'},
@@ -81,18 +67,18 @@ var spriteTable = [
 
 	{key: [1, 20], src: 'metalCenter', collision: true},
 
-	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: "water"},
-	{key: [2, 2], src: 'liquidWater', frames: 2, collision: "water"},
+	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: 'water'},
+	{key: [2, 2], src: 'liquidWater', frames: 2, collision: 'water'},
 
-	{key: [2, 3], src: 'water_high', frames: 2, collision: "Water"},
-	{key: [2, 4], src: 'water_low', frames: 2, collision: "Water"},
+	{key: [2, 3], src: 'water_high', frames: 2, collision: 'water'},
+	{key: [2, 4], src: 'water_low', frames: 2, collision: 'water'},
 
 	{key: [3, 1], src: 'plant', collision: false},
 	{key: [3, 2], src: 'pineSapling', collision: false},
 	{key: [3, 3], src: 'pineSaplingAlt', collision: false},
 	{key: [3, 4], src: 'cactus', collision: false},
 
-	{key: [4, 1], src: 'spikes', collision: "water"},
+	{key: [4, 1], src: 'spikes', collision: 'water'},
 	{key: [4, 2], src: 'doorOpen', collision: 'Door'},
 	{key: [4, 3], src: 'doorOpenTop', collision: false},
 

@@ -141,9 +141,10 @@
 				/****************************************************/
 
 				/**
-				 * Determine whether edit-mode is enabled
+				 * Determine whether edit- and/or debug-mode is enabled
 				 */
 				var editMode = getQueryField("edit");
+				var debugMode = getQueryField("debug");
 
 				/**
 				 * Determine unique ID used to save data
@@ -182,6 +183,7 @@
 					$("nav").hide();
 
 					var game = new Game(canvas_id, 32 * width, 32 * height);
+					game.debugMode = debugMode;
 					game.spriteManager = new SpriteManager();
 				}
 

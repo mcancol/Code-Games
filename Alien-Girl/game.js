@@ -17,6 +17,7 @@ function Game(element, width, height)
 	this.levelBounds = {x: 0, y: 0, width: 32, height: 32 };
 
 	this.editMode = false;
+	this.debugMode = false;
 }
 
 Game.prototype.gameover = function()

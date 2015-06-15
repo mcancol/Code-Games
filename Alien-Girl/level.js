@@ -100,10 +100,12 @@ function Level(levelMap)
 		});
 
 		// Draw result
-		if(dir.x != 0)
-			this.lines.push({ a: origin, b: result, color: 'blue' });
-		else
-			this.lines.push({ a: origin, b: result, color: 'red' });
+		if(this.game.debugMode) {
+			if(dir.x != 0)
+				this.lines.push({ a: origin, b: result, color: 'blue' });
+			else
+				this.lines.push({ a: origin, b: result, color: 'red' });
+		}
 
 		return result;
 	}
@@ -222,12 +224,18 @@ function Level(levelMap)
 }
 
 
+/**
+ * Returns the height of the level in sprites
+ */
 Level.prototype.getHeight = function()
 {
 	return this.levelMap.length;
 }
 
 
+/**
+ * Returns the width of the level in sprites
+ */
 Level.prototype.getWidth = function()
 {
 	return this.levelMap[0].length;
