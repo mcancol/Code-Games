@@ -16,6 +16,13 @@ function Player()
 	this.moveCounter = 0;
 
 
+	// Time and position of last touch
+	this.lastTouchTime = 0;
+
+	// Position of initial touch
+	this.initialTouchPosition = {x: 0, y: 0};
+
+
 	/**
 	 * Sets up the player object
 	 */
@@ -84,7 +91,24 @@ function Player()
 
 
 	/**
-	 * Move player
+	 * Attempt to moves the player one block in the
+	 * specified direction
+	 */
+	this.moveDirection = function(dx, dy)
+	{
+		// Normalize delta
+		if(dx != 0)
+			dx /= Math.abs(dx);
+		if(dy != 0)
+			dy /= Math.abs(dy);
+
+		// Attempt to move player
+		return this.move(this.x + dx * 2, this.y + dy * 2)
+	}
+
+
+	/**
+	 * Move player, returns whether the proposed move is valid
 	 */
 	this.move = function(x, y)
 	{
@@ -93,7 +117,7 @@ function Player()
 		var delta = Math.abs(this.x - x) + Math.abs(this.y - y);
 
 		if(delta != 2)
-			return;
+			return false;
 
 		// Set player angle
 		if(this.x < x)
@@ -107,10 +131,10 @@ function Player()
 
 		// Check if move is valid
 		if(level.levelMap[(this.y + y) / 2][(this.x + x) / 2] == 1)
-			return;
+			return false;
 
 		if(level.levelMap[y][x] == 2)
-			return;
+			return false;
 
 
 		// Player has moved
@@ -129,17 +153,21 @@ function Player()
 
 			this.moveBuffer[move.id] = move;
 			this.transmitMoves();
+
+			return true;
 		}
+
+		return false;
 	}
 
 
 	/**
-	 * Handle mouse move
+	 * Move the player to the position of a click / touch
 	 */
-	this.mousemove = function(event)
+	this.moveMouseCoordinates = function(event)
 	{
 		if(event.detail.type == 'mouse' && event.detail.buttons != 1)
-			return;
+			return false;
 
 		var width = (widthspace + widthwall);
 
@@ -149,18 +177,76 @@ function Player()
 
 		// Ignore walls
 		if(x - Math.floor(x) < widthwall / width)
-			return;
+			return false;
 
 		if(y - Math.floor(y) < widthwall / width)
-			return;
+			return false;
 
 		// Round grid position and convert to level coordinates
 		x = Math.floor(x) * 2 + 1;
 		y = Math.floor(y) * 2 + 1;
 
 		// Propose move
-		this.move(x, y);
+		return this.move(x, y);
 	}
+
+
+	/**
+	 * Move the player along with the (dragging) mouse movement
+	 */
+	this.moveMouseDirection = function(event)
+	{
+		if(event.detail.type == 'mouse' && event.detail.buttons != 1) {
+			this.lastTouchTime = 0;
+			return false;
+		}
+
+		var width = (widthspace + widthwall);
+
+		var age = Date.now() - this.lastTouchTime;
+		this.lastTouchTime = Date.now();
+
+		if(age > 200) {
+			this.initialTouchPosition = {x: event.detail.x, y: event.detail.y};
+			return false;
+		}
+
+		// Compute mouse movement direction
+		var delta = {
+			x: (event.detail.x - this.initialTouchPosition.x) / width,
+			y: (event.detail.y - this.initialTouchPosition.y) / width
+		};
+
+		var direction = false;
+
+		if(Math.abs(delta.x) > Math.abs(delta.y)) {
+			if(Math.abs(delta.x) > 0.8)
+				direction = {x: delta.x, y: 0};
+		} else {
+			if(Math.abs(delta.y) > 0.8)
+				direction = {x: 0, y: delta.y};
+		}
+
+		if(direction) {
+			if(this.moveDirection(direction.x, direction.y))
+				this.lastTouchTime = 0;
+		}
+	}
+
+
+	/**
+	 * Handle mouse move
+	 */
+	this.mousemove = function(event)
+	{
+		if(this.moveMouseDirection(event))
+			return true;
+
+		return false;
+	}
+
+	// moveDirection
+
 
 
 	/**
