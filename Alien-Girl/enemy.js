@@ -55,9 +55,10 @@ function Enemy(x, y)
     var collision = collisionCheck(this, player);
     if(this.alive && collision) {
       if(collision.normal.y < 0 || player_went_past) {
-        player.alive = false;
+        player.kill("enemy");
       } else {
         this.alive = false;
+        player.events.push("KILLED_ENEMY");
 
         // Reset rotation
         this.rotation = 0;

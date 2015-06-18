@@ -16,6 +16,11 @@ function Player(x, y)
 	this.sensor_left = 6;
 	this.sensor_right = 23;
 
+	this.sink = new Sink(server + "/sink.php", gameStart, $("#level_name"));
+	this.sink.transmitEvery = 20;
+
+	this.events = [];
+
 
 	this.setup = function()
 	{
@@ -47,6 +52,40 @@ function Player(x, y)
 
 		this.scale = 1;
 		this.alive = true;
+
+		this.events.push("RESTART");
+	}
+
+
+	/**
+	 * Terminates the player
+	 *
+	 * @param {String} Reason the player was killed
+	 */
+	this.kill = function(reason)
+	{
+		if(this.alive) {
+			this.events.push("DIED_" + reason.toUpperCase());
+			this.sendPosition();
+		}
+
+		this.alive = false;
+	}
+
+
+	/**
+	 * Send position to server
+	 */
+	this.sendPosition = function()
+	{
+		this.sink.appendData({
+			timestamp: Date.now() / 1000,
+			x: this.x / 32,
+			y: this.y / 32,
+			event: JSON.stringify(this.events)
+		});
+
+		this.events = [];
 	}
 
 
@@ -70,8 +109,10 @@ function Player(x, y)
 	{
 		permitted = this.getPermittedActions();
 
-		if(!permitted.walk_upside_down && this.gravity < 0)
+		if(!permitted.walk_upside_down && this.gravity < 0) {
+			this.events.push("GRAVITY_NORMAL");
 			this.gravity *= -1;
+		}
 
 		// Jump away from gravity
 		if(input.keys[input.KEY_SPACE]) {
@@ -90,6 +131,11 @@ function Player(x, y)
 			{
 				this.lastFlip = this.game.timestamp
 				this.gravity *= -1;
+
+				if(this.gravity < 0)
+					this.events.push("GRAVITY_INVERTED")
+				else
+					this.events.push("GRAVITY_NORMAL");
 			}
 		} else {
 			// Flying (under normal gravity)
@@ -182,7 +228,7 @@ function Player(x, y)
 			// If on water and we cannot walk on water, sink and die.
 			if(on_water && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
 				if(combined.min.dy < -8)
-					this.alive = false;
+					this.kill("water");
 				return;
 			}
 
@@ -259,6 +305,9 @@ function Player(x, y)
 		if(!this.alive)
 			return;
 
+		var oriX = this.x;
+		var oriY = this.y;
+
 		permitted = this.getPermittedActions();
 		var level = this.game.getObject("level");
 
@@ -269,11 +318,13 @@ function Player(x, y)
 		this.x += this.velX;
 		this.y += this.velY;
 
-
 		/** Resolve vertical collisions **/
 		this.collideVerticalDown(level);
 		this.collideVerticalUp(level);
 		this.collideHorizontal(level);
+
+		if(oriX != this.x || oriY != this.y || this.events.count != 0)
+			this.sendPosition();
 	}
 
 
