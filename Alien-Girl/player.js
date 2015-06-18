@@ -173,16 +173,20 @@ function Player(x, y)
 
 		combined = this.combineSensors([hit_left, hit_right]);
 
+		// Determine if player is on water
+		on_water =
+			hit_left && hit_left.type == 'water' &&
+			hit_right && hit_right.type == 'water';
+
 		if(dirY > 0 && combined.min && combined.min.dy < 10) {
-			if(combined.min.type == 'water' && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
+			// If on water and we cannot walk on water, sink and die.
+			if(on_water && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
 				if(combined.min.dy < -8)
 					this.alive = false;
-				
 				return;
 			}
 
 			this.y = combined.min.y - this.height;
-			console.log("Updated position: " + this.y);
 			this.velY = 0;
 			this.grounded = true;
 			this.jumping = false;
