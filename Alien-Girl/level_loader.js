@@ -38,7 +38,7 @@ function LevelLoader(game)
       return;
 
     for(var i = 0; i < enemies.length; i++) {
-      var enemy = new Enemy(enemies[i].x, enemies[i].y);
+      var enemy = new Enemy(enemies[i].x, enemies[i].y, enemies[i].type);
       this.game.addObject('enemy_' + i, enemy);
     }
   }

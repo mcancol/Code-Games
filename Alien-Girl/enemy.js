@@ -1,6 +1,6 @@
 
 
-function Enemy(x, y)
+function Enemy(x, y, sprite)
 {
   this.baseX = x;
   this.baseY = y;
@@ -12,6 +12,7 @@ function Enemy(x, y)
   this.gravity = 0.3;
   this.alive = true;
 
+  this.sprite = sprite;
 
   this.setup = function()
   {
@@ -115,11 +116,10 @@ function Enemy(x, y)
     var frame = Math.floor((this.game.timestamp / 120) % 2);
 
     if(this.alive) {
-      sprite = SpriteManager.keyToInteger([10, 3]);
-      this.game.spriteManager.drawSprite(context, this, sprite, frame);
+      //sprite = SpriteManager.keyToInteger([10, 3]);
+      this.game.spriteManager.drawSprite(context, this, this.sprite, frame);
     } else {
-      sprite = SpriteManager.keyToInteger([10, 4]);
-      this.game.spriteManager.drawSprite(context, this, sprite, 0, function(context) {
+      this.game.spriteManager.drawSprite(context, this, this.sprite + 1, 0, function(context) {
         context.rotate(this.rotation);
       }.bind(this));
     }
