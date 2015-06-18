@@ -173,18 +173,16 @@ function Player(x, y)
 
 		combined = this.combineSensors([hit_left, hit_right]);
 
-
 		if(dirY > 0 && combined.min && combined.min.dy < 10) {
-
 			if(combined.min.type == 'water' && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
-				if(combined.min.dy < -16)
+				if(combined.min.dy < -8)
 					this.alive = false;
-				else {
-					return;
-				}
+				
+				return;
 			}
 
 			this.y = combined.min.y - this.height;
+			console.log("Updated position: " + this.y);
 			this.velY = 0;
 			this.grounded = true;
 			this.jumping = false;
