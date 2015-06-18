@@ -41,7 +41,6 @@ function Enemy(x, y)
 
     /** Move towards player when player is underneath **/
     if(player_underneath || player_went_past) {
-
       this.targetX = player.x;
       this.targetY = player.y;
     } else {
@@ -55,10 +54,18 @@ function Enemy(x, y)
     /** Check collision with player **/
     var collision = collisionCheck(this, player);
     if(this.alive && collision) {
-      if(collision.normal.y < 0 || player_went_past)
+      if(collision.normal.y < 0 || player_went_past) {
         player.alive = false;
-      else
+      } else {
         this.alive = false;
+
+        // Reset rotation
+        this.rotation = 0;
+
+        // Player kills the bee, make sure it falls with the same speed
+        // as the player, otherwise the player will pass it.
+        this.velY = player.velY;
+      }
     }
   }
 
@@ -84,6 +91,8 @@ function Enemy(x, y)
 
     this.velY += this.gravity;
     this.y += this.velY;
+
+    this.rotation = lerp(this.rotation, Math.PI, 0.025);
   }
 
 
@@ -109,7 +118,9 @@ function Enemy(x, y)
       this.game.spriteManager.drawSprite(context, this, sprite, frame);
     } else {
       sprite = SpriteManager.keyToInteger([10, 4]);
-      this.game.spriteManager.drawSprite(context, this, sprite, 0);
+      this.game.spriteManager.drawSprite(context, this, sprite, 0, function(context) {
+        context.rotate(this.rotation);
+      }.bind(this));
     }
   }
 }
