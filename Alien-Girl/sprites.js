@@ -71,11 +71,14 @@ var spriteTable = [
 
 	{key: [1, 20], src: 'metalCenter', collision: true},
 
-	{key: [2, 1], src: 'liquidWaterTop_mid', frames: 2, collision: 'water'},
-	{key: [2, 2], src: 'liquidWater', frames: 2, collision: 'water'},
+	{key: [2, 1], src: 'water/normal_waves_top', frames: 6, collision: 'water'},
+	{key: [2, 2], src: 'water/normal_waves_body', frames: 6, collision: true},
 
-	{key: [2, 3], src: 'water_high', frames: 2, collision: 'water'},
-	{key: [2, 4], src: 'water_low', frames: 2, collision: 'water'},
+	{key: [2, 3], src: 'water/big_waves_top', frames: 3, collision: 'water'},
+	{key: [2, 4], src: 'water/no_waves_top', frames: 7, collision: 'water'},
+
+	{key: [2, 5], src: 'water/big_waves_body', frames: 3, collision: true},
+	{key: [2, 6], src: 'water/no_waves_body', frames: 7, collision: true},
 
 	{key: [3, 1], src: 'plant', collision: false},
 	{key: [3, 2], src: 'pineSapling', collision: false},
