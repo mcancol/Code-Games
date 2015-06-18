@@ -37,6 +37,25 @@ function getQueryField(field) {
 
 
 /**
+ * Returns the values for all fields in the query string
+ * @param {String} URL that contains the query string
+ */
+function getQueryFields(url)
+{
+	fieldValues = url.split(/[\?&]+/);
+	values = {};
+
+	for(var i = 1; i < fieldValues.length; i++)
+	{
+		fieldValue = fieldValues[i].split("=");
+		values[fieldValue[0]] = fieldValue[1];
+	}
+
+	return values;
+}
+
+
+/**
  * Changes the query string
  *
  * @param {Object} Associative array with field to update
@@ -47,8 +66,7 @@ function updateQueryString(updates)
 	var url = window.location.href;
 
 	// Extract all field-value pairs
-  fieldValues = url.split(/[\?&]+/);
-	delete fieldValues[0];
+  fieldValues = getQueryFields(url);
 
 	// Copy updates into fieldValues object
 	for(field in updates) {

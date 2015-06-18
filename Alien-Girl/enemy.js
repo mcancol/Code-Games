@@ -1,6 +1,6 @@
 
 
-function Enemy(x, y)
+function Enemy(x, y, sprite)
 {
   this.baseX = x;
   this.baseY = y;
@@ -12,6 +12,7 @@ function Enemy(x, y)
   this.gravity = 0.3;
   this.alive = true;
 
+  this.sprite = sprite;
 
   this.setup = function()
   {
@@ -41,7 +42,6 @@ function Enemy(x, y)
 
     /** Move towards player when player is underneath **/
     if(player_underneath || player_went_past) {
-
       this.targetX = player.x;
       this.targetY = player.y;
     } else {
@@ -55,10 +55,19 @@ function Enemy(x, y)
     /** Check collision with player **/
     var collision = collisionCheck(this, player);
     if(this.alive && collision) {
-      if(collision.normal.y < 0 || player_went_past)
-        player.alive = false;
-      else
+      if(collision.normal.y < 0 || player_went_past) {
+        player.kill("enemy");
+      } else {
         this.alive = false;
+        player.events.push("KILLED_ENEMY");
+
+        // Reset rotation
+        this.rotation = 0;
+
+        // Player kills the bee, make sure it falls with the same speed
+        // as the player, otherwise the player will pass it.
+        this.velY = player.velY;
+      }
     }
   }
 
@@ -84,6 +93,8 @@ function Enemy(x, y)
 
     this.velY += this.gravity;
     this.y += this.velY;
+
+    this.rotation = lerp(this.rotation, Math.PI, 0.025);
   }
 
 
@@ -105,11 +116,12 @@ function Enemy(x, y)
     var frame = Math.floor((this.game.timestamp / 120) % 2);
 
     if(this.alive) {
-      sprite = SpriteManager.keyToInteger([10, 3]);
-      this.game.spriteManager.drawSprite(context, this, sprite, frame);
+      //sprite = SpriteManager.keyToInteger([10, 3]);
+      this.game.spriteManager.drawSprite(context, this, this.sprite, frame);
     } else {
-      sprite = SpriteManager.keyToInteger([10, 4]);
-      this.game.spriteManager.drawSprite(context, this, sprite, 0);
+      this.game.spriteManager.drawSprite(context, this, this.sprite + 1, 0, function(context) {
+        context.rotate(this.rotation);
+      }.bind(this));
     }
   }
 }
