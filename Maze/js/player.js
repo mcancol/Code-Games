@@ -22,6 +22,10 @@ function Player()
 	// Position of initial touch
 	this.initialTouchPosition = {x: 0, y: 0};
 
+	// Mouse movement mode
+	this.mode = "coord";
+	this.modeWedge = true;
+
 
 	/**
 	 * Sets up the player object
@@ -186,8 +190,36 @@ function Player()
 		x = Math.floor(x) * 2 + 1;
 		y = Math.floor(y) * 2 + 1;
 
-		// Propose move
-		return this.move(x, y);
+		if(this.modeWedge) {
+			var dx = x - this.x;
+			var dy = y - this.y;
+
+			x = this.x;
+			y = this.y;
+
+			if(Math.abs(dy) > Math.abs(dx)) {
+				if(dy < 0)
+					y = this.y - 2;
+				else if(dy > 0)
+					y = this.y + 2;
+			} else {
+				if(dx < 0)
+					x = this.x - 2;
+				else if(dx > 0)
+					x = this.x + 2;
+			}
+		}
+
+		var timeSinceLastMove = Date.now() - this.lastTouchTime
+
+		if(!this.modeWedge || timeSinceLastMove > 150) {
+			var result = this.move(x, y);
+
+			if(result)
+				this.lastTouchTime = Date.now();
+
+			return result;
+		}
 	}
 
 
@@ -242,14 +274,14 @@ function Player()
 	 */
 	this.mousemove = function(event)
 	{
-		if(this.moveMouseDirection(event))
+		if(this.mode == "coord" && this.moveMouseCoordinates(event))
+			return true;
+
+		if(this.mode == "direction" && this.moveMouseDirection(event))
 			return true;
 
 		return false;
 	}
-
-	// moveDirection
-
 
 
 	/**
