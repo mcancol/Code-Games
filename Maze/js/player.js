@@ -16,17 +16,6 @@ function Player()
 	this.moveCounter = 0;
 
 
-	// Time and position of last touch
-	this.lastTouchTime = 0;
-
-	// Position of initial touch
-	this.initialTouchPosition = {x: 0, y: 0};
-
-	// Mouse movement mode
-	this.mode = "coord";
-	this.modeWedge = true;
-
-
 	/**
 	 * Sets up the player object
 	 */
@@ -47,8 +36,6 @@ function Player()
 		// Load sprite
 		this.playerImage = new Image();
 		this.playerImage.src = "images/player.png";
-
-		this.game.canvas.addEventListener("game-move", this.mousemove.bind(this));
 	}
 
 
@@ -57,40 +44,6 @@ function Player()
 	 */
 	this.update = function(input)
 	{
-		var level = this.game.getObject("level");
-
-		var x = this.x;
-		var y = this.y;
-
-		// Move to the left
-		if(input.keys[input.KEY_LEFT]) {
-			if(!this.left)
-				x -= 2;
-			this.left = true;
-		} else { this.left = false; }
-
-		// Move to the right
-		if(input.keys[input.KEY_RIGHT]){
-			if(!this.right)
-				x += 2;
-			this.right = true;
-		} else { this.right = false; }
-
-		// Move up
-		if(input.keys[input.KEY_UP]){
-			if(!this.up)
-				y -= 2;
-			this.up = true;
-		} else { this.up = false; }
-
-		// Move down
-		if(input.keys[input.KEY_DOWN]){
-			if(!this.down)
-				y += 2;
-			this.down = true;
-		} else { this.down = false; }
-
-		this.move(x, y);
 	}
 
 
@@ -160,125 +113,6 @@ function Player()
 
 			return true;
 		}
-
-		return false;
-	}
-
-
-	/**
-	 * Move the player to the position of a click / touch
-	 */
-	this.moveMouseCoordinates = function(event)
-	{
-		if(event.detail.type == 'mouse' && event.detail.buttons != 1)
-			return false;
-
-		var width = (widthspace + widthwall);
-
-		// Compute position in grid
-		var x = event.detail.x / width;
-		var y = event.detail.y / width;
-
-		// Ignore walls
-		if(x - Math.floor(x) < widthwall / width)
-			return false;
-
-		if(y - Math.floor(y) < widthwall / width)
-			return false;
-
-		// Round grid position and convert to level coordinates
-		x = Math.floor(x) * 2 + 1;
-		y = Math.floor(y) * 2 + 1;
-
-		if(this.modeWedge) {
-			var dx = x - this.x;
-			var dy = y - this.y;
-
-			x = this.x;
-			y = this.y;
-
-			if(Math.abs(dy) > Math.abs(dx)) {
-				if(dy < 0)
-					y = this.y - 2;
-				else if(dy > 0)
-					y = this.y + 2;
-			} else {
-				if(dx < 0)
-					x = this.x - 2;
-				else if(dx > 0)
-					x = this.x + 2;
-			}
-		}
-
-		var timeSinceLastMove = Date.now() - this.lastTouchTime
-
-		if(!this.modeWedge || timeSinceLastMove > 150) {
-			var result = this.move(x, y);
-
-			if(result)
-				this.lastTouchTime = Date.now();
-
-			return result;
-		}
-	}
-
-
-	/**
-	 * Move the player along with the (dragging) mouse movement
-	 */
-	this.moveMouseDirection = function(event)
-	{
-		if(event.detail.type == 'mouse' && event.detail.buttons != 1) {
-			this.lastTouchTime = 0;
-			return false;
-		}
-
-		var width = (widthspace + widthwall);
-
-		// Compute age of last touch event
-		var age = Date.now() - this.lastTouchTime;
-		this.lastTouchTime = Date.now();
-
-		// If no touch has been registered for the last second, start again
-		if(age > 1000) {
-			this.initialTouchPosition = {
-				x: event.detail.x / width,
-				y: event.detail.y / width};
-			return false;
-		}
-
-		// Compute mouse movement direction
-		var delta = {
-			x: event.detail.x / width - this.initialTouchPosition.x,
-			y: event.detail.y / width - this.initialTouchPosition.y
-		};
-
-
-		if(Math.abs(delta.x) > Math.abs(delta.y)) {
-			if(Math.abs(delta.x) >= 1.0) {
-				this.moveDirection(delta.x, 0);
-				this.initialTouchPosition.x += delta.x;
-			}
-		} else {
-			if(Math.abs(delta.y) >= 1.0) {
-				console.log(delta.y);
-				this.moveDirection(0, delta.y);
-				this.initialTouchPosition.y += delta.y;
-			}
-		}
-	}
-
-
-	/**
-	 * Handle mouse move
-	 */
-	this.mousemove = function(event)
-	{
-		if(this.mode == "coord" && this.moveMouseCoordinates(event))
-			return true;
-
-		if(this.mode == "direction" && this.moveMouseDirection(event))
-			return true;
 
 		return false;
 	}
