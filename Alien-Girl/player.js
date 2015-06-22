@@ -34,6 +34,9 @@ function Player(x, y)
 		this.velY = 0;
 
 		this.speed = 3.5;
+		this.speedDefault = 3.5;
+		this.speedSnow = 7.0;
+
 		this.jumping = false;
 		this.grounded = false;
 
@@ -48,7 +51,7 @@ function Player(x, y)
 		// Friction values for
 		this.frictionDefault = 0.8;		// normal ground
 		this.frictionDown = 0.7;			// when down is pressed
-		this.frictionSnow = 0.99;			// when on snow
+		this.frictionSnow = 0.999;			// when on snow
 
 		this.scale = 1;
 		this.alive = true;
@@ -119,7 +122,7 @@ function Player(x, y)
 			if(!this.jumping && this.grounded) {
 				this.jumping = true;
 				this.grounded = false;
-				this.velY = -sign(this.gravity) * this.speed * 2;
+				this.velY = -sign(this.gravity) * this.speedDefault * 2;
 			}
 		}
 
@@ -141,13 +144,13 @@ function Player(x, y)
 			// Flying (under normal gravity)
 			if(permitted.fly && input.keys[input.KEY_UP])
 			{
-				this.velY = -this.speed * 0.5;
+				this.velY = -this.speedDefault * 0.5;
 			}
 
 			// Flying (when gravity is inverted)
 			if(permitted.fly && input.keys[input.KEY_DOWN])
 			{
-				this.velY = this.speed * 0.5;
+				this.velY = this.speedDefault * 0.5;
 			}
 		}
 
@@ -173,10 +176,13 @@ function Player(x, y)
 		// Change friction when pressing down
 		if(input.keys[input.KEY_DOWN]) {
 			this.friction = this.frictionDown;
+			this.speed = this.speedDefault;
 		} else if(this.ground.slippery) {
 			this.friction = this.frictionSnow;
+			this.speed = this.speedSnow;
 		} else {
 			this.friction = this.frictionDefault;
+			this.speed = this.speedDefault;
 		}
 	}
 
@@ -221,14 +227,23 @@ function Player(x, y)
 
 		// Determine if player is on water
 		on_water =
-			hit_left && hit_left.type == 'water' &&
-			hit_right && hit_right.type == 'water';
+			(hit_left && hit_left.type == 'water' &&
+			 hit_right && hit_right.type == 'water');
+
+		on_water_body =
+			(hit_left && hit_left.type == 'waterBody' &&
+			 hit_right && hit_right.type == 'waterBody');
 
 		if(dirY > 0 && combined.min && combined.min.dy < 10) {
 			// If on water and we cannot walk on water, sink and die.
 			if(on_water && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
 				if(combined.min.dy < -8)
 					this.kill("water");
+				return;
+			}
+
+			if(on_water_body && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
+				this.kill("water");
 				return;
 			}
 
