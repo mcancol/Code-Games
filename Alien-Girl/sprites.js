@@ -91,7 +91,7 @@ var spriteTable = [
 
 
 	{key: [5, 4], src: 'signRight', collision: false},
-	{key: [5, 5], src: 'signExit', collision: false},
+	{key: [5, 5], src: 'signExit', collision: 'exit'},
 
 	{key: [6, 1], src: 'cloud1-left', collision: true},
 	{key: [6, 2], src: 'cloud1-right', collision: true},

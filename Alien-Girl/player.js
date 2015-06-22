@@ -55,6 +55,7 @@ function Player(x, y)
 
 		this.scale = 1;
 		this.alive = true;
+		this.finished = false;
 
 		this.events.push("RESTART");
 	}
@@ -210,6 +211,21 @@ function Player(x, y)
 	}
 
 
+	this.sensorCallback = function(hit)
+	{
+		if(hit.type == "exit") {
+			if(hit.dx == 0 && !this.finished) {
+				this.events.push("EXIT");
+				this.finished = true;
+			}
+
+			return false;
+		}
+
+		return hit;
+	}
+
+
 	this.collideVerticalDown = function(level)
 	{
 		var dirY = Math.sign(this.gravity);
@@ -217,11 +233,11 @@ function Player(x, y)
 
 		var hit_left = level.sensor(
 			{ x: this.x + this.sensor_left, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var hit_right = level.sensor(
 			{ x: this.x + this.sensor_right, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		combined = this.combineSensors([hit_left, hit_right]);
 
@@ -272,11 +288,11 @@ function Player(x, y)
 
 		var hit_left = level.sensor(
 			{ x: this.x + this.sensor_left, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var hit_right = level.sensor(
 			{ x: this.x + this.sensor_right, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var combined = this.combineSensors([hit_left, hit_right]);
 
@@ -294,7 +310,7 @@ function Player(x, y)
 	{
 		var hit = level.sensor(
 			{ x: this.x + this.width - 10, y: this.y + this.height - 20 },
-			{ x: 1, y: 0 }, 256, function(hit) { return hit; });
+			{ x: 1, y: 0 }, 256, this.sensorCallback.bind(this));
 
 		if(hit && hit.type && hit.dx < 10) {
 			this.velX = 0;
@@ -303,7 +319,7 @@ function Player(x, y)
 
 		var hit = level.sensor(
 			{ x: this.x + 10, y: this.y + this.height - 20 },
-			{ x: -1, y: 0 }, 256, function(hit) { return hit; });
+			{ x: -1, y: 0 }, 256, this.sensorCallback.bind(this));
 
 		if(hit && hit.type && hit.dx > -10) {
 			this.velX = 0;
@@ -317,7 +333,7 @@ function Player(x, y)
 	 */
 	this.updateKinematics = function()
 	{
-		if(!this.alive)
+		if(!this.alive && !this.finished)
 			return;
 
 		var oriX = this.x;
@@ -362,7 +378,9 @@ function Player(x, y)
 	 */
 	this.update = function(input)
 	{
-		this.handleInput(input);
+		if(!this.finished)
+			this.handleInput(input);
+			
 		this.updateKinematics();
 
 		if(this.velX < 0)
@@ -413,6 +431,17 @@ function Player(x, y)
 			context.font = 'bold 20px Arial';
 			context.textAlign = 'center';
 			context.fillText("Oops, you died...", this.game.canvas.width / 2, this.game.canvas.height / 2);
+
+			context.restore();
+		}
+
+		if(this.finished) {
+			context.save();
+
+			context.setTransform(1, 0, 0, 1, 0, 0);
+			context.font = 'bold 20px Arial';
+			context.textAlign = 'center';
+			context.fillText("Congratulations, you have finished the game...", this.game.canvas.width / 2, this.game.canvas.height / 2);
 
 			context.restore();
 		}
