@@ -4,8 +4,8 @@ function Controls()
   this.x = 1144;
   this.y = 100;
 
-  this.maxRadius = 50;
-  this.minRadius = 10;
+  this.maxRadius = 70;
+  this.minRadius = 15;
 
   // Position of initial touch
 	this.initialTouchPosition = {x: 0, y: 0};
@@ -58,6 +58,9 @@ function Controls()
   }
 
 
+  /**
+   * Move mouse using a control circle
+   */
   this.moveMouseControlCircle = function(event)
   {
     var pos = { x: event.detail.x - this.x, y: event.detail.y - this.y };
@@ -221,15 +224,15 @@ function Controls()
       context.fillStyle = 'white';
       context.fill();
       context.lineWidth = 2;
-      context.strokeStyle = 'black';
+      context.strokeStyle = 'red';
       context.stroke();
 
       context.beginPath();
       context.arc(this.x, this.y, this.minRadius, 0, 2 * Math.PI, false);
-      context.fillStyle = 'black';
+      context.fillStyle = 'red';
       context.fill();
       context.lineWidth = 2;
-      context.strokeStyle = 'black';
+      context.strokeStyle = 'red';
       context.stroke();
     }
   }
