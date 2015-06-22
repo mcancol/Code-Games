@@ -34,6 +34,9 @@ function Player(x, y)
 		this.velY = 0;
 
 		this.speed = 3.5;
+		this.speedDefault = 3.5;
+		this.speedSnow = 7.0;
+
 		this.jumping = false;
 		this.grounded = false;
 
@@ -48,10 +51,11 @@ function Player(x, y)
 		// Friction values for
 		this.frictionDefault = 0.8;		// normal ground
 		this.frictionDown = 0.7;			// when down is pressed
-		this.frictionSnow = 0.99;			// when on snow
+		this.frictionSnow = 0.999;			// when on snow
 
 		this.scale = 1;
 		this.alive = true;
+		this.finished = false;
 
 		this.events.push("RESTART");
 	}
@@ -119,7 +123,7 @@ function Player(x, y)
 			if(!this.jumping && this.grounded) {
 				this.jumping = true;
 				this.grounded = false;
-				this.velY = -sign(this.gravity) * this.speed * 2;
+				this.velY = -sign(this.gravity) * this.speedDefault * 2;
 			}
 		}
 
@@ -141,13 +145,13 @@ function Player(x, y)
 			// Flying (under normal gravity)
 			if(permitted.fly && input.keys[input.KEY_UP])
 			{
-				this.velY = -this.speed * 0.5;
+				this.velY = -this.speedDefault * 0.5;
 			}
 
 			// Flying (when gravity is inverted)
 			if(permitted.fly && input.keys[input.KEY_DOWN])
 			{
-				this.velY = this.speed * 0.5;
+				this.velY = this.speedDefault * 0.5;
 			}
 		}
 
@@ -173,10 +177,13 @@ function Player(x, y)
 		// Change friction when pressing down
 		if(input.keys[input.KEY_DOWN]) {
 			this.friction = this.frictionDown;
+			this.speed = this.speedDefault;
 		} else if(this.ground.slippery) {
 			this.friction = this.frictionSnow;
+			this.speed = this.speedSnow;
 		} else {
 			this.friction = this.frictionDefault;
+			this.speed = this.speedDefault;
 		}
 	}
 
@@ -204,6 +211,21 @@ function Player(x, y)
 	}
 
 
+	this.sensorCallback = function(hit)
+	{
+		if(hit.type == "exit") {
+			if(hit.dx == 0 && !this.finished) {
+				this.events.push("EXIT");
+				this.finished = true;
+			}
+
+			return false;
+		}
+
+		return hit;
+	}
+
+
 	this.collideVerticalDown = function(level)
 	{
 		var dirY = Math.sign(this.gravity);
@@ -211,24 +233,33 @@ function Player(x, y)
 
 		var hit_left = level.sensor(
 			{ x: this.x + this.sensor_left, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var hit_right = level.sensor(
 			{ x: this.x + this.sensor_right, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		combined = this.combineSensors([hit_left, hit_right]);
 
 		// Determine if player is on water
 		on_water =
-			hit_left && hit_left.type == 'water' &&
-			hit_right && hit_right.type == 'water';
+			(hit_left && hit_left.type == 'water' &&
+			 hit_right && hit_right.type == 'water');
+
+		on_water_body =
+			(hit_left && hit_left.type == 'waterBody' &&
+			 hit_right && hit_right.type == 'waterBody');
 
 		if(dirY > 0 && combined.min && combined.min.dy < 10) {
 			// If on water and we cannot walk on water, sink and die.
 			if(on_water && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
 				if(combined.min.dy < -8)
 					this.kill("water");
+				return;
+			}
+
+			if(on_water_body && (!permitted.walk_on_water || Math.abs(this.velX) <= 0.1 || this.jumping)) {
+				this.kill("water");
 				return;
 			}
 
@@ -257,11 +288,11 @@ function Player(x, y)
 
 		var hit_left = level.sensor(
 			{ x: this.x + this.sensor_left, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var hit_right = level.sensor(
 			{ x: this.x + this.sensor_right, y: oriY },
-			{ x: 0, y: dirY }, 256, function(hit) { return hit; });
+			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var combined = this.combineSensors([hit_left, hit_right]);
 
@@ -279,7 +310,7 @@ function Player(x, y)
 	{
 		var hit = level.sensor(
 			{ x: this.x + this.width - 10, y: this.y + this.height - 20 },
-			{ x: 1, y: 0 }, 256, function(hit) { return hit; });
+			{ x: 1, y: 0 }, 256, this.sensorCallback.bind(this));
 
 		if(hit && hit.type && hit.dx < 10) {
 			this.velX = 0;
@@ -288,7 +319,7 @@ function Player(x, y)
 
 		var hit = level.sensor(
 			{ x: this.x + 10, y: this.y + this.height - 20 },
-			{ x: -1, y: 0 }, 256, function(hit) { return hit; });
+			{ x: -1, y: 0 }, 256, this.sensorCallback.bind(this));
 
 		if(hit && hit.type && hit.dx > -10) {
 			this.velX = 0;
@@ -302,7 +333,7 @@ function Player(x, y)
 	 */
 	this.updateKinematics = function()
 	{
-		if(!this.alive)
+		if(!this.alive && !this.finished)
 			return;
 
 		var oriX = this.x;
@@ -347,7 +378,9 @@ function Player(x, y)
 	 */
 	this.update = function(input)
 	{
-		this.handleInput(input);
+		if(!this.finished)
+			this.handleInput(input);
+			
 		this.updateKinematics();
 
 		if(this.velX < 0)
@@ -398,6 +431,17 @@ function Player(x, y)
 			context.font = 'bold 20px Arial';
 			context.textAlign = 'center';
 			context.fillText("Oops, you died...", this.game.canvas.width / 2, this.game.canvas.height / 2);
+
+			context.restore();
+		}
+
+		if(this.finished) {
+			context.save();
+
+			context.setTransform(1, 0, 0, 1, 0, 0);
+			context.font = 'bold 20px Arial';
+			context.textAlign = 'center';
+			context.fillText("Congratulations, you have finished the game...", this.game.canvas.width / 2, this.game.canvas.height / 2);
 
 			context.restore();
 		}
