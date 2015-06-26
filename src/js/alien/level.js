@@ -1,8 +1,17 @@
 
+var spriteWidth = 32;
+var spriteHeight = 32;
+
 function Level(levelMap)
 {
 	this.levelMap = levelMap;
 	this.collisionTypes = {};
+
+	// Variable that contains canvas for drawing static level elements
+	this.staticLevelCanvas = document.createElement("canvas");
+
+	// Variable that contains coordinates and IDs for animated sprites
+	this.dynamicLevelGeometry = [];
 
 	this.lines = [];
 
@@ -13,6 +22,8 @@ function Level(levelMap)
 			var key = spriteTable[i]['key'];
 			this.collisionTypes[key[0] * 256 + key[1]] = spriteTable[i]['collision'];
 		}
+
+		this.cacheLevelGeometry();
 	}
 
 
@@ -27,8 +38,8 @@ function Level(levelMap)
 	this.worldToLevelCoords = function(worldCoord)
 	{
 		return {
-			x: Math.floor(worldCoord.x / 32),
-			y: Math.floor(worldCoord.y / 32)
+			x: Math.floor(worldCoord.x / spriteWidth),
+			y: Math.floor(worldCoord.y / spriteHeight)
 		};
 	}
 
@@ -193,13 +204,11 @@ function Level(levelMap)
 	/**
 	 * Draws a single sprite in the grid
 	 */
-	this.drawSprite = function(context, x, y, sprite)
+	this.drawSprite = function(context, x, y, sprite, frameCount)
 	{
-		box = {x: x * 32, y: y * 32, width: 32, height: 32};
+		var box = {x: x * 32, y: y * 32, width: 32, height: 32};
 
-		var frames = this.game.spriteManager.getFrameCount(sprite);
-		var deltaT = this.game.timestamp / 140;
-		var frame = Math.floor(deltaT % frames);
+		var frame = (this.game.timestamp >> 7) % frameCount;
 
 		if(sprite == 1 && this.game && !this.game.editMode)
 			return;
@@ -209,14 +218,46 @@ function Level(levelMap)
 
 
 	/**
+	 * Creates a cache of the level geometry. This cache consists of two parts:
+	 *   - An image containing all the static geometry
+	 *   - An array containing coordinates and IDs for all animated sprites
+	 */
+	this.cacheLevelGeometry = function()
+	{
+		this.staticLevelCanvas.width = this.getWidth() * spriteWidth;
+		this.staticLevelCanvas.height = this.getHeight() * spriteHeight;
+
+		this.dynamicLevelGeometry = new Array();
+		var context = this.staticLevelCanvas.getContext("2d");
+
+		console.log("Caching static level geometry");
+
+		for(var i = 0; i < this.levelMap.length; i++) {
+			for(var j = 0; j < this.levelMap[0].length; j++) {
+				var sprite = this.levelMap[i][j];
+				var frameCount =  this.game.spriteManager.getFrameCount(sprite);
+
+				if(frameCount == 1)
+					this.drawSprite(context, j, i, sprite, 1);
+				else
+					this.dynamicLevelGeometry.push({
+						x: j, y: i, frameCount: frameCount, sprite: sprite
+					});
+			}
+		}
+	}
+
+
+	/**
 	 * Draw entire level
 	 */
 	this.draw = function(context)
 	{
-		for(var i = 0; i < this.levelMap.length; i++) {
-			for(var j = 0; j < this.levelMap[0].length; j++) {
-				this.drawSprite(context, j, i, this.levelMap[i][j]);
-			}
+		context.drawImage(this.staticLevelCanvas, 0, 0);
+
+		for(var i = 0; i < this.dynamicLevelGeometry.length; i++) {
+			var item = this.dynamicLevelGeometry[i];
+			this.drawSprite(context, item.x, item.y, item.sprite, item.frameCount);
 		}
 
 		this.drawDebugLines();
@@ -269,6 +310,8 @@ Level.prototype.setSprite = function(coords, sprite)
 	}
 
 	this.levelMap[coords.y][coords.x] = sprite;
+
+	this.cacheLevelGeometry();
 }
 
 
