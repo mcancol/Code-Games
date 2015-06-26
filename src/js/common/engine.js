@@ -9,6 +9,7 @@ function Game(element, width, height)
 	window.requestAnimationFrame(this.update.bind(this));
 
 	this.input = new Keyboard();
+  this.mouse = new Mouse(this.canvas);
 	this.objects = {};
 
 	this.scroll = {x: 0, y: 0};
@@ -73,6 +74,7 @@ Game.prototype.updateTranslation = function()
 	var playerX = this.objects['player'].x;
 
 	if(this.canvas.width >= this.levelBounds.width) {
+    // DIFF: this.levelBounds.x not used in maze
 		this.scroll.x = (this.canvas.width - this.levelBounds.width) / 2 - this.levelBounds.x;
 	} else {
 		// Compute boundaries of dead-zone in screen coordinates
@@ -96,6 +98,7 @@ Game.prototype.updateTranslation = function()
 			this.scroll.x = (this.levelBounds.x + this.levelBounds.width) - this.canvas.width;
 	}
 
+  // Not used in maze
 	this.scroll.y = this.levelBounds.y;
 }
 
@@ -131,6 +134,8 @@ Game.prototype.update = function(timestamp)
 	 */
 	this.context.save()
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+  // Not used in maze game!
 	this.applyTranslation();
 
 	for(var key in this.objects)
