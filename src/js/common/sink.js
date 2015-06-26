@@ -5,7 +5,7 @@
  * @param {Integer} Game identifier
  * @param {String} Name of the current level
  */
-function Sink(sinkAddress, start, level)
+function Sink(sinkAddress)
 {
   this.sendingInProgress = false;
   this.sinkAddress = sinkAddress;
@@ -13,15 +13,15 @@ function Sink(sinkAddress, start, level)
   this.transmitAutomatically = true;
   this.transmitEvery = 1;
 
-  this.start = start;
-  this.level = level;
-
   this.id = 0;
   this.buffer = {};
 
 
   /**
    * Append data to buffer.
+   *
+   * @param {Object} Object to send
+   * @returns {Integer} Id of the transmitted move
    */
   this.appendData = function(data)
   {
@@ -31,6 +31,8 @@ function Sink(sinkAddress, start, level)
 
     if(this.transmitAutomatically && (this.id % this.transmitEvery) == 0)
       this.transmitData();
+
+    return data.id;
   }
 
 
@@ -46,7 +48,7 @@ function Sink(sinkAddress, start, level)
 
     // Send moves to server
     jQuery.ajax({
-      url: this.sinkAddress + "?game=" + this.start + "&level=" + this.level,
+      url: this.sinkAddress,
       data: JSON.stringify(this.buffer),
       contentType: 'text/plain',
       dataType: 'json',

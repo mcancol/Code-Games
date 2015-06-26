@@ -5,15 +5,7 @@ function Player()
 	this.width = 32;
 	this.height = 46;
 
-
-	// Keeps track of whether the moves are being sent
-	this.sendingInProgress = false;
-
-	// List of moves to be sent to the server
-	this.moveBuffer = {};
-
-	// Number of the current move
-	this.moveCounter = 0;
+	this.sink = new Sink(datasink + "?game=" + gameStart + "&level=" + playerId);
 
 
 	/**
@@ -102,14 +94,12 @@ function Player()
 
 			// Store move in the move-buffer
 			var move = {
-				id: this.moveCounter++,
 				timestamp: Date.now() / 1000,
 				x: x,
 				y: y
 			};
 
-			this.moveBuffer[move.id] = move;
-			this.transmitMoves();
+			this.sink.appendData(move);
 
 			return true;
 		}
@@ -117,36 +107,6 @@ function Player()
 		return false;
 	}
 
-
-	/**
-	 * Attempts to send all moves from the moveBuffer to the server
-	 */
-	this.transmitMoves = function()
-	{
-		if(this.sendingInProgress)
-			return;
-
-		this.sendingInProcess = true;
-
-		// Send moves to server
-		jQuery.ajax({
-			url: datasink + "?game=" + gameStart + "&level=" + playerId,
-			data: JSON.stringify(this.moveBuffer),
-			contentType: 'text/plain',
-			dataType: 'json',
-			method: 'POST'
-		}).done(function(result) {
-			// Remove moves from buffer that were successfully sent
-			for(var i in result) {
-				if(result[i] in this.moveBuffer)
-					delete(this.moveBuffer[ result[i] ]);
-			}
-
-			this.sendingInProcess = false;
-		}.bind(this)).fail(function() {
-			this.sendingInProcess = false;
-		}.bind(this));
-	}
 
 
 	/**

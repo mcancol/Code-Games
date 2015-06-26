@@ -16,7 +16,7 @@ function Player(x, y)
 	this.sensor_left = 6;
 	this.sensor_right = 23;
 
-	this.sink = new Sink(server + "/sink.php", gameStart, $("#level_name"));
+	this.sink = new Sink(server + "/sink.php?game=" + gameStart + "&level=" + $("#level_name"));
 	this.sink.transmitEvery = 20;
 
 	this.events = [];
@@ -380,7 +380,7 @@ function Player(x, y)
 	{
 		if(!this.finished)
 			this.handleInput(input);
-			
+
 		this.updateKinematics();
 
 		if(this.velX < 0)
