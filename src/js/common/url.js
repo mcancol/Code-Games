@@ -43,8 +43,8 @@ function getQueryField(field) {
  */
 function getQueryFields(url)
 {
-	fieldValues = url.split(/[\?&]+/);
-	values = {};
+	var fieldValues = url.split(/[\?&]+/);
+	var values = {};
 
 	for(var i = 1; i < fieldValues.length; i++)
 	{
@@ -67,17 +67,17 @@ function updateQueryString(updates)
 	var url = window.location.href;
 
 	// Extract all field-value pairs
-  fieldValues = getQueryFields(url);
+  var fieldValues = getQueryFields(url);
 
 	// Copy updates into fieldValues object
-	for(field in updates) {
+	for(var field in updates) {
 		fieldValues[field] = updates[field];
 	}
 
 	var queryString = getAddress();
 	var first = true;
 
-	for(field in fieldValues) {
+	for(var field in fieldValues) {
 		queryString += (first?"?":"&") + field + "=" + fieldValues[field];
 		first = false;
 	}
