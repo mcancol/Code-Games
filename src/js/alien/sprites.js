@@ -1,3 +1,4 @@
+"use strict";
 
 /**
  * Returns whether a given sprite should be slippery

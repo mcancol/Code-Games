@@ -1,3 +1,4 @@
+"use strict";
 
 /**
  * Returns the distance to and type of the ground object

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Implements various aspects related to the player:
  *  - Movement (input handling)
@@ -111,7 +113,7 @@ function Player(x, y)
 
 	this.handleInput = function(input)
 	{
-		permitted = this.getPermittedActions();
+		var permitted = this.getPermittedActions();
 
 		if(!permitted.walk_upside_down && this.gravity < 0) {
 			this.events.push("GRAVITY_NORMAL");
@@ -228,6 +230,8 @@ function Player(x, y)
 
 	this.collideVerticalDown = function(level)
 	{
+		var permitted = this.getPermittedActions();
+		
 		var dirY = Math.sign(this.gravity);
 		var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
 
@@ -239,14 +243,14 @@ function Player(x, y)
 			{ x: this.x + this.sensor_right, y: oriY },
 			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
-		combined = this.combineSensors([hit_left, hit_right]);
+		var combined = this.combineSensors([hit_left, hit_right]);
 
 		// Determine if player is on water
-		on_water =
+		var on_water =
 			(hit_left && hit_left.type == 'water' &&
 			 hit_right && hit_right.type == 'water');
 
-		on_water_body =
+		var on_water_body =
 			(hit_left && hit_left.type == 'waterBody' &&
 			 hit_right && hit_right.type == 'waterBody');
 
@@ -339,7 +343,7 @@ function Player(x, y)
 		var oriX = this.x;
 		var oriY = this.y;
 
-		permitted = this.getPermittedActions();
+		var permitted = this.getPermittedActions();
 		var level = this.game.getObject("level");
 
 		this.velX *= this.friction;

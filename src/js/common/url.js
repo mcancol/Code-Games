@@ -1,3 +1,4 @@
+"use strict";
 
 /**
  * Returns the address of the current web page
@@ -21,12 +22,12 @@ function getQueryField(field) {
 	var url = window.location.href;
 
 	// Extract all field-value pairs
-  fieldValues = url.split(/[\?&]+/);
+  var fieldValues = url.split(/[\?&]+/);
 
 	// Find field-value pair that matches the field
-  for (i = 0; i < fieldValues.length; i++)
+  for (var i = 0; i < fieldValues.length; i++)
 	{
-		fieldValue = fieldValues[i].split("=");
+		var fieldValue = fieldValues[i].split("=");
 
     if (fieldValue[0] == field)
       return fieldValue[1];

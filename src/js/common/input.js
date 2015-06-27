@@ -1,3 +1,4 @@
+"use strict";
 
 /**
  * Catches keyboard events and provides an array with states (up / down)

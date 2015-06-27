@@ -1,3 +1,4 @@
+"use strict";
 
 var spriteWidth = 32;
 var spriteHeight = 32;
@@ -152,7 +153,7 @@ function Level(levelMap)
 	 */
 	this.spriteSensor = function(origin, dir, length, func)
 	{
-		for(i = 0; i < Math.ceil(length); i++)
+		for(var i = 0; i < Math.ceil(length); i++)
 		{
 			var l = {
 				sx: origin.x + dir.x * i,
@@ -229,8 +230,6 @@ function Level(levelMap)
 
 		this.dynamicLevelGeometry = new Array();
 		var context = this.staticLevelCanvas.getContext("2d");
-
-		console.log("Caching static level geometry");
 
 		for(var i = 0; i < this.levelMap.length; i++) {
 			for(var j = 0; j < this.levelMap[0].length; j++) {
