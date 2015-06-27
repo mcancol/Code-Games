@@ -1,3 +1,4 @@
+"use strict";
 
 function Player()
 {
@@ -114,6 +115,8 @@ function Player()
 	 */
 	this.draw = function(context)
 	{
+		var x, y, w, h;
+		
 		if(this.x % 2 == 0){
 			x = this.x*(widthspace+widthwall)/2;
 			w = widthwall;

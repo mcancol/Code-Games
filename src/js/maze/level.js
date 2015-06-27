@@ -1,3 +1,4 @@
+"use strict";
 
 function Level()
 {
@@ -46,19 +47,20 @@ function Level()
 	{
 		for(var i = 0; i < this.levelMap.length; i++) {
 			for(var j = 0; j < this.levelMap[0].length; j++) {
-				if(j % 2 == 0){
+				var x, y, w, h;
+
+				if(j % 2 == 0) {
 					x = j*(widthspace+widthwall)/2;
 					w = widthwall;
-				}
-				else{
+				}	else {
 					x = (j-1)*(widthspace+widthwall)/2 + widthwall;
 					w = widthspace;
 				}
-				if(i % 2 == 0){
+
+				if(i % 2 == 0) {
 					y = i*(widthspace+widthwall)/2;
 					h = widthwall;
-				}
-				else{
+				} else {
 					y = (i-1)*(widthspace+widthwall)/2 + widthwall;
 					h = widthspace;
 				}
@@ -66,12 +68,12 @@ function Level()
 				context.fillStyle = '#FFFFFF';
 				context.fillRect(x, y, w, h);
 
-				if (this.levelMap[i][j] == 1){
+				if(this.levelMap[i][j] == 1){
 					context.fillStyle="#000000";
 					context.fillRect(x, y, w, h);
 				}
 
-				if (this.levelMap[i][j] == 2){
+				if(this.levelMap[i][j] == 2){
 					context.drawImage(this.bombImage, x, y, w, h);
 				}
 			}
