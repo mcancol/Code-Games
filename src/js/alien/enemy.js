@@ -1,5 +1,14 @@
+/** @module Alien **/
 "use strict";
 
+/**
+ * Creates new enemy object
+ *
+ * @class
+ * @param {number} x - X coordinate of enemy starting location
+ * @param {number} y - Y coordinate of enemy starting location
+ * @param {number} sprite - ID of base sprite (dead sprite is +1)
+ */
 function Enemy(x, y, sprite)
 {
   this.baseX = x;
@@ -14,6 +23,10 @@ function Enemy(x, y, sprite)
 
   this.sprite = sprite;
 
+
+  /**
+   * Setups the enemy at the start of the game
+   */
   this.setup = function()
   {
     this.targetX = this.baseX;
@@ -111,6 +124,11 @@ function Enemy(x, y, sprite)
   }
 
 
+  /**
+   * Draws the enemy to the specified context
+   *
+   * @param {Context} context - Context to draw to
+   */
   this.draw = function(context)
   {
     var frame = Math.floor((this.game.timestamp / 120) % 2);

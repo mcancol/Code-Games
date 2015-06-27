@@ -1,4 +1,14 @@
+/** @module Alien **/
+"use strict";
 
+/**
+ * Level editor for alien girl game
+ *
+ * @class
+ * @param {String} element - Name of canvas element to draw to
+ * @param {number} width - Required width of canvas element
+ * @param {number} height - Required height of canvas element
+ */
 function Editor(element, width, height)
 {
 	this.game = new Game(element, width, height);
@@ -17,6 +27,11 @@ function Editor(element, width, height)
 }
 
 
+/**
+ * Change the currently active sprite
+ *
+ * @param {number} sprite - ID of sprite to make active
+ */
 Editor.prototype.setSprite = function(sprite)
 {
 	this.currentSprite = sprite;
@@ -28,6 +43,14 @@ Editor.prototype.setSprite = function(sprite)
  ************************************/
 
 
+/**
+ * Called on mouse movement, paints active sprite when
+ * moving the mouse while holding the left button. Removes
+ * the sprite when moving the mouse while holding the right button.
+ *
+ * @private
+ * @param {Event} event - Mouse movement event
+ */
 Editor.prototype.mouseMove = function(event)
 {
 	var coords = {x: Math.floor((this.game.scroll.x + event.detail.x) / 32),
@@ -40,6 +63,11 @@ Editor.prototype.mouseMove = function(event)
 }
 
 
+/**
+ * Sets up mouse movement callback
+ *
+ * @private
+ */
 Editor.prototype.setupMouse = function()
 {
 	var canvas = this.canvas;
