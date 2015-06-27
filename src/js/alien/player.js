@@ -1,3 +1,4 @@
+/** @module Alien **/
 "use strict";
 
 /**
@@ -231,7 +232,7 @@ function Player(x, y)
 	this.collideVerticalDown = function(level)
 	{
 		var permitted = this.getPermittedActions();
-		
+
 		var dirY = Math.sign(this.gravity);
 		var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
 

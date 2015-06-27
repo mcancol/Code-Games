@@ -1,3 +1,4 @@
+/** @module Maze **/
 "use strict";
 
 document.cancelFullScreen = document.webkitExitFullscreen || document.mozCancelFullScreen || document.exitFullscreen;

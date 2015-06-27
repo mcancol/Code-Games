@@ -1,5 +1,10 @@
+/** @module Maze **/
 "use strict";
 
+/**
+ * Object representing the player in the maze game
+ * @class
+ */
 function Player()
 {
 	// Depends on sprite
@@ -34,6 +39,7 @@ function Player()
 
 	/**
 	 * Handles player movement
+	 * @param {Keyboard} Object containing keyboard state
 	 */
 	this.update = function(input)
 	{
@@ -41,8 +47,9 @@ function Player()
 
 
 	/**
-	 * Attempt to moves the player one block in the
-	 * specified direction
+	 * Attempt to moves the player one block in the specified direction
+	 * @param {number} Movement in X direction (left/right)
+	 * @param {number} Movement in Y direction (up/down)
 	 */
 	this.moveDirection = function(dx, dy)
 	{
@@ -59,6 +66,8 @@ function Player()
 
 	/**
 	 * Move player, returns whether the proposed move is valid
+	 * @param {number} Target X coordinate
+	 * @param {number} Target Y coordinate
 	 */
 	this.move = function(x, y)
 	{
@@ -116,7 +125,7 @@ function Player()
 	this.draw = function(context)
 	{
 		var x, y, w, h;
-		
+
 		if(this.x % 2 == 0){
 			x = this.x*(widthspace+widthwall)/2;
 			w = widthwall;

@@ -1,3 +1,4 @@
+/** @module Common **/
 "use strict";
 
 /**

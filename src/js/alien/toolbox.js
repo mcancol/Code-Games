@@ -1,3 +1,5 @@
+/** @module Alien **/
+"use strict";
 
 function SpriteBox(element, editor, spriteTable)
 {
@@ -20,19 +22,19 @@ function SpriteBox(element, editor, spriteTable)
 	for(var i = 0; i < spriteTable.length; i++) {
 
 		this.images[i] = document.createElement("img");
-		
+
 		var src = spriteTable[i]['src'];
-		
+
 		if ('frames' in spriteTable[i])
 			src += '_1';
-		
+
 		this.images[i].src = 'tiles/' + src + '.png';
 		this.images[i].setAttribute("class", "sprite");
-		
+
 		this.images[i].onclick = function(e) {
 			this.select(e.target);
 		}.bind(this);
-	
+
 		this.element.appendChild(this.images[i]);
 	}
 }

@@ -1,5 +1,10 @@
+/** @module Maze **/
 "use strict";
 
+/**
+ * Handles different ways to handle touch events in the maze game.
+ * @class
+ */
 function Controls()
 {
   this.x = 1144;

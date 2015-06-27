@@ -1,9 +1,11 @@
+/** @module Common **/
 "use strict";
 
 /**
  * Accepts and buffers player movement data
  * and periodically sends it to the data sink.
  *
+ * @class
  * @param {Integer} Game identifier
  * @param {String} Name of the current level
  */

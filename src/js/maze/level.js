@@ -1,5 +1,11 @@
+/** @module Maze **/
 "use strict";
 
+/**
+ * Represents the maze layout
+ *
+ * @class
+ */
 function Level()
 {
 	// Server to load levels from

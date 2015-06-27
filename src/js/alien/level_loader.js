@@ -1,3 +1,5 @@
+/** @module Alien **/
+"use strict";
 
 function LevelLoader(game)
 {

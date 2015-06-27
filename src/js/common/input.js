@@ -1,3 +1,4 @@
+/** @module Common **/
 "use strict";
 
 /**
@@ -7,6 +8,8 @@
  *  var keyboard = Keyboard();
  *  if(keyboard.keys[keyboard.KEY_UP])
  *    console.log("The up key is currently being pressed.");
+ *
+ * @class
  */
 function Keyboard()
 {
@@ -74,10 +77,13 @@ function Keyboard()
 /**
  * Creates a new event to dispatch on mouse move, click, or touch
  *
- *  name - Name of the event
- *  type - Type of the event, typically mouse or touch
- *  event - Original event
- *  canvas - Canvas object, coordinates will be relative to this
+ * @private
+ * @param {string} name - Name of the event
+ * @param {string} type - Type of the event, typically mouse or touch
+ * @param {Event} event - Original event
+ * @param {Canvas} canvas - Canvas object, coordinates will be relative to this
+ *
+ * @returns {CustomEvent} Custom event to dispatch
  */
 function createMoveEvent(name, type, event, canvas)
 {
@@ -100,6 +106,9 @@ function createMoveEvent(name, type, event, canvas)
 /**
  * Catches mouse movement and touch events and dispatches a
  * common event to the specified element;
+ *
+ * @class
+ * @param {Canvas} canvas - Canvas element to dispatch events to
  */
 function Mouse(canvas)
 {

@@ -1,5 +1,11 @@
+/** @module Common **/
 "use strict";
 
+
+/**
+ * Game engine - responsible for render loop
+ * @class
+ */
 function Engine()
 {
 

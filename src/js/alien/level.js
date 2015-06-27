@@ -1,3 +1,4 @@
+/** @module Alien **/
 "use strict";
 
 var spriteWidth = 32;
