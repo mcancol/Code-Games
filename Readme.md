@@ -17,6 +17,7 @@ To see debugging lines, you can use:
 
 All player actions are sent to the [data server](http://www.ivarclemens.nl/platform_game/).
 
+
 Maze game
 ---------
 
@@ -36,4 +37,3 @@ Then generate the documentation:
 
     cd doc
     jsdoc ..\readme.md ..\src\js\common ..\src\js\maze ..\src\js\alien -p
-s
