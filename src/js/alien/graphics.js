@@ -1,5 +1,13 @@
+/** @module Alien **/
 "use strict";
 
+
+/**
+ * Create a new sprite manager object.
+ *
+ * @class
+ * @classdesc Manages sprites in the alien girl game.
+ */
 function SpriteManager()
 {
 	this.sprites = {};

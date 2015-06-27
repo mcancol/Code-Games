@@ -95,6 +95,14 @@ function detectCollisionArray(objectA, objectsB, callback, offset)
 }
 
 
+/**
+ * Clamps the value between two extremes.
+ *
+ * @param {number} value - The value to clamp
+ * @param {number} min - Minimum value
+ * @param {number} max - Maximum value
+ * @returns {number} Clamped value
+ */
 function clamp(value, min, max)
 {
 	return Math.min(max, Math.max(min, value));

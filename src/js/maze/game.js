@@ -6,6 +6,7 @@
  * Main class for maze game
  *
  * @class
+ * @augments Engine
  * @param {String} element - Name of canvas element to draw to
  * @param {number} width - Required width of canvas element
  * @param {number} height - Required height of canvas element

@@ -2,10 +2,13 @@
 "use strict";
 
 /**
- * Implements various aspects related to the player:
- *  - Movement (input handling)
- *  - Kinematics
- *  - Visual representation (drawing)
+ * Implements player in alien girl game, it is reponsible for input/movement,
+ * kinematics, visual representation, collision handling.
+ *
+ * @class
+ * @classdesc Represents the player in the alien girl game.
+ * @param {number} x - X coordinate of player starting location
+ * @param {number} y - Y coordinate of player starting location
  */
 function Player(x, y)
 {

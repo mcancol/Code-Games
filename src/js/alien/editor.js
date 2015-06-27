@@ -2,9 +2,10 @@
 "use strict";
 
 /**
- * Level editor for alien girl game
+ * Creates a new level edior object.
  *
  * @class
+ * @classdesc Level editor for alien girl game.
  * @param {String} element - Name of canvas element to draw to
  * @param {number} width - Required width of canvas element
  * @param {number} height - Required height of canvas element

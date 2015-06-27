@@ -4,6 +4,13 @@
 var spriteWidth = 32;
 var spriteHeight = 32;
 
+/**
+ * Creates a new level object.
+ *
+ * @class
+ * @classdesc Represents a level in the alien girl game.
+ * @param {Object} levelMap - Two-dimensional array containing the level
+ */
 function Level(levelMap)
 {
 	this.levelMap = levelMap;

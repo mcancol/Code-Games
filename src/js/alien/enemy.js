@@ -2,9 +2,10 @@
 "use strict";
 
 /**
- * Creates new enemy object
+ * Creates new enemy object.
  *
  * @class
+ * @classdesc Object representing an enemy in the alien girl game.
  * @param {number} x - X coordinate of enemy starting location
  * @param {number} y - Y coordinate of enemy starting location
  * @param {number} sprite - ID of base sprite (dead sprite is +1)

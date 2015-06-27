@@ -3,9 +3,11 @@
 
 
 /**
- * Main class for alien girl game
+ * Creates main class for alien girl game.
  *
  * @class
+ * @classdesc Alien girl game.
+ * @augments Engine
  * @param {String} element - Name of canvas element to draw to
  * @param {number} width - Required width of canvas element
  * @param {number} height - Required height of canvas element

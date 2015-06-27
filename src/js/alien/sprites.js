@@ -1,14 +1,19 @@
 /** @module Alien **/
 "use strict";
 
+
 /**
  * Returns whether a given sprite should be slippery
+ *
+ * @param {number} sprite - ID of sprite
+ * @returns {boolean} True if slippery, false if not
  */
 function isSlippery(sprite)
 {
 	return (sprite >= 288 && sprite <= 303) ||	// Snow
 			   (sprite >= 304 && sprite <= 319);		// Planet
 }
+
 
 var spriteTable = [
 	{key: [0, 1], src: 'clipping', collision: true},
