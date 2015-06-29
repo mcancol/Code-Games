@@ -37,11 +37,29 @@ function SpriteManager()
 	}
 
 
+	/**
+	 * Returns whether a given sprite is valid.
+	 *
+	 * @param {String} name - Name of the sprite to check
+	 * @return {boolean} True if valid, false if not
+	 */
+	this.isSpriteValid = function(name)
+	{
+		return (name in this.sprites);
+	}
+
+
+	/**
+	 * Draw a sprite to the context
+	 *
+	 * @param {Context} context - Context to draw to
+	 * @param {Object} box - Bounding box {x, y, width, height} to draw to
+	 * @param {String} name - Name of the sprite to draw
+	 * @param {number} frame - Number of the frame to draw
+	 * @param {Function} transform - Special transform function to call before drawing
+	 */
 	this.drawSprite = function(context, box, name, frame, transform)
 	{
-		if(!(name in this.sprites))
-			return;
-
 		var sprite = this.sprites[name];
 
 		if(frame in sprite)

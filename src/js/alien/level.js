@@ -215,12 +215,11 @@ function Level(levelMap)
 	 */
 	this.drawSprite = function(context, x, y, sprite, frameCount)
 	{
-		var box = {x: x * 32, y: y * 32, width: 32, height: 32};
-
-		var frame = (this.game.timestamp >> 7) % frameCount;
-
 		if(sprite == 1 && this.game && !this.game.editMode)
 			return;
+
+		var box = {x: x * 32, y: y * 32, width: 32, height: 32};
+		var frame = (this.game.timestamp >> 7) % frameCount;
 
 		return this.game.spriteManager.drawSprite(context, box, sprite, frame);
 	}
@@ -244,6 +243,11 @@ function Level(levelMap)
 				var sprite = this.levelMap[i][j];
 				var frameCount =  this.game.spriteManager.getFrameCount(sprite);
 
+				// Ignore invalid sprites (that the sprite manager doesn't know about)
+				if(!this.game.spriteManager.isSpriteValid(sprite))
+					continue;
+
+				// Sprites with 1 frame are static, more than one dynamic
 				if(frameCount == 1)
 					this.drawSprite(context, j, i, sprite, 1);
 				else
