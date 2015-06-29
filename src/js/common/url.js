@@ -5,9 +5,11 @@
  * Returns the address of the current web page
  * @returns {String} Address of the web page
  */
-function getAddress()
+function getAddress(url)
 {
-	var url = window.location.href;
+	if(typeof url === 'undefined')
+		url = window.location.href;
+
 	var parts = url.split(/[\?]+/);
 
 	return parts[0];
@@ -16,23 +18,19 @@ function getAddress()
 
 /**
  * Returns the value of a field from the query string
- * @param {String} Name of the field
+ *
+ * @param {String} field - Name of the field
+ * @param {String} url - Optional string containing the URL to parse
  * @returns {String} Value of the field or false if the key was not found.
  */
-function getQueryField(field) {
-	var url = window.location.href;
+function getQueryField(field, url) {
+	if(typeof url === 'undefined')
+		url = window.location.href;
 
-	// Extract all field-value pairs
-  var fieldValues = url.split(/[\?&]+/);
+	var fieldValues = getQueryFields(url);
 
-	// Find field-value pair that matches the field
-  for (var i = 0; i < fieldValues.length; i++)
-	{
-		var fieldValue = fieldValues[i].split("=");
-
-    if (fieldValue[0] == field)
-      return fieldValue[1];
-  }
+	if(field in fieldValues)
+		return fieldValues[field];
 
 	return false;
 }
@@ -40,7 +38,7 @@ function getQueryField(field) {
 
 /**
  * Returns the values for all fields in the query string
- * @param {String} URL that contains the query string
+ * @param {String} url - URL that contains the query string
  */
 function getQueryFields(url)
 {
@@ -49,7 +47,7 @@ function getQueryFields(url)
 
 	for(var i = 1; i < fieldValues.length; i++)
 	{
-		fieldValue = fieldValues[i].split("=");
+		var fieldValue = fieldValues[i].split("=");
 		values[fieldValue[0]] = fieldValue[1];
 	}
 
@@ -63,9 +61,10 @@ function getQueryFields(url)
  * @param {Object} Associative array with field to update
  * @returns {String} Updates query string
  */
-function updateQueryString(updates)
+function updateQueryString(updates, url)
 {
-	var url = window.location.href;
+	if(typeof url === 'undefined')
+		url = window.location.href;
 
 	// Extract all field-value pairs
   var fieldValues = getQueryFields(url);
@@ -75,7 +74,7 @@ function updateQueryString(updates)
 		fieldValues[field] = updates[field];
 	}
 
-	var queryString = getAddress();
+	var queryString = getAddress(url);
 	var first = true;
 
 	for(var field in fieldValues) {
