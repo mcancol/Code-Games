@@ -6,14 +6,11 @@
  *
  * @class
  * @classdesc Object representing an enemy in the alien girl game.
- * @param {number} x - X coordinate of enemy starting location
- * @param {number} y - Y coordinate of enemy starting location
- * @param {number} sprite - ID of base sprite (dead sprite is +1)
  */
-function Enemy(x, y, sprite)
+function Enemy()
 {
-  this.baseX = x;
-  this.baseY = y;
+  this.baseX = 0;
+  this.baseY = 0;
 
   this.width = 32;
   this.height = 32;
@@ -22,7 +19,7 @@ function Enemy(x, y, sprite)
   this.gravity = 0.3;
   this.alive = true;
 
-  this.sprite = sprite;
+  this.sprite = 0;
 
 
   /**
@@ -39,6 +36,28 @@ function Enemy(x, y, sprite)
     this.alive = true;
   }
 
+
+  /**
+	 * Update stating position of the player
+	 *
+	 * @param {number} x - X coordinate of player starting location
+   * @param {number} y - Y coordinate of player starting location
+   */
+	this.setStartingPosition = function(x, y)
+	{
+		this.baseX = x;
+		this.baseY = y;
+	}
+
+
+  /**
+   * Set base sprite for enemy
+   * @param {number} sprite - ID of base sprite (dead sprite is +1)
+   */
+  this.setBaseSprite = function(sprite)
+  {
+    this.sprite = sprite;
+  }
 
   /**
    * Updates the enemy; it is hunting the player
@@ -144,3 +163,5 @@ function Enemy(x, y, sprite)
     }
   }
 }
+
+Enemy.prototype = new BaseObject();

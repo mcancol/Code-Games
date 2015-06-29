@@ -40,7 +40,10 @@ function LevelLoader(game)
       return;
 
     for(var i = 0; i < enemies.length; i++) {
-      var enemy = new Enemy(enemies[i].x, enemies[i].y, enemies[i].type);
+      var enemy = new Enemy();
+      enemy.setStartingPosition(enemies[i].x, enemies[i].y);
+      enemy.setBaseSprite(enemies[i].type);
+
       this.game.addObject('enemy_' + i, enemy);
     }
   }
@@ -58,7 +61,8 @@ function LevelLoader(game)
     if(players.length == 0)
       players.push({ x: 32, y: 128 });
 
-    var player = new Player(players[0].x, players[0].y);
+    var player = new Player();
+    player.setStartingPosition(players[0].x, players[0].y);
     this.game.addObject('player', player);
   }
 

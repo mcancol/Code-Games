@@ -7,17 +7,15 @@
  *
  * @class
  * @classdesc Represents the player in the alien girl game.
- * @param {number} x - X coordinate of player starting location
- * @param {number} y - Y coordinate of player starting location
  */
-function Player(x, y)
+function Player()
 {
 	// Depends on sprite
 	this.width = 32;
 	this.height = 46;
 
-	this.baseX = x;
-	this.baseY = y;
+	this.baseX = 0;
+	this.baseY = 0;
 
 	this.sensor_left = 6;
 	this.sensor_right = 23;
@@ -80,6 +78,19 @@ function Player(x, y)
 		}
 
 		this.alive = false;
+	}
+
+
+	/**
+	 * Update stating position of the player
+	 *
+	 * @param {number} x - X coordinate of player starting location
+   * @param {number} y - Y coordinate of player starting location
+   */
+	this.setStartingPosition = function(x, y)
+	{
+		this.baseX = x;
+		this.baseY = y;
 	}
 
 
@@ -469,3 +480,5 @@ function Player(x, y)
 		}.bind(this));
 	}
 }
+
+Player.prototype = new BaseObject();
