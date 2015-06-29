@@ -1,5 +1,4 @@
 
-
 Platform game
 -------------
 
@@ -33,7 +32,6 @@ First install jsdoc:
 
     npm install -g jsdoc
 
-Then generate the documentation:
+To (re)generate the documentation, run:
 
-    cd doc
-    jsdoc ..\readme.md ..\src\js\common ..\src\js\maze ..\src\js\alien -p
+    generate-documentation.bat
