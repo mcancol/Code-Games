@@ -1,5 +1,7 @@
 # Generated Documentation
-doc/out
+doc
+!doc/*.bat
+!doc/*.sh
 
 # Windows image file caches
 Thumbs.db
