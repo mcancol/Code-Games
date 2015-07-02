@@ -114,4 +114,8 @@ var spriteTable = [
 
 	{key: [10, 3], src: 'bee/bee', frames: 2, collision: 'Bee'},
 	{key: [10, 4], src: 'bee/bee_dead', collision: true},
+
+	{key: [10, 6], src: 'bat/bat', frames: 2, collision: 'Bat'},
+	{key: [10, 7], src: 'bat/bat_dead', collision: true},
+	{key: [10, 8], src: 'bat/bat_hang', collision: true},
 ];

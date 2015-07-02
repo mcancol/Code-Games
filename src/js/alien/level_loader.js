@@ -1,6 +1,12 @@
 /** @module Alien **/
 "use strict";
 
+/**
+ * Constructs a level loading class
+ *
+ * @class
+ * @classdesc Level loading class
+ */
 function LevelLoader(game)
 {
   this.game = game;
@@ -9,6 +15,8 @@ function LevelLoader(game)
   /**
    * Loads the level from the list and sets up the game
    * state (players / enemies) accordingly.
+   *
+   * @param {String} name - Name of the level to load
    */
   this.loadLevel = function(name)
   {
@@ -34,8 +42,14 @@ function LevelLoader(game)
   }
 
 
+  /**
+   * Construct enemies and add them to the game
+   *
+   * @param {Array} enemies - List of enemies to setup
+   */
   this.setupEnemies = function(enemies)
   {
+    var spriteManager = this.game.spriteManager;
     var Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
 
     if(this.game.editMode)
@@ -43,6 +57,7 @@ function LevelLoader(game)
 
     for(var i = 0; i < enemies.length; i++) {
       var enemy = new Enemy();
+
       enemy.setStartingPosition(enemies[i].x, enemies[i].y);
       enemy.setBaseSprite(enemies[i].type);
 
@@ -58,6 +73,8 @@ function LevelLoader(game)
 
   /**
    * Create player objects
+   *
+   * @param {Array} players - List of players to setup
    */
   this.setupPlayers = function(players)
   {
@@ -76,6 +93,8 @@ function LevelLoader(game)
 
   /**
    * Retrieves the level from the server
+   *
+   * @param {String} name - Name of the level to load
    */
   this.getLevelFromServer = function(name)
   {
@@ -124,8 +143,9 @@ function LevelLoader(game)
     };
 
     var Sprite_Player = SpriteManager.keyToInteger([0, 2]);
-    var Sprite_Enemy_Bat = SpriteManager.keyToInteger([10, 0]);
+    var Sprite_Enemy_Fly = SpriteManager.keyToInteger([10, 0]);
     var Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
+    var Sprite_Enemy_Bat = SpriteManager.keyToInteger([10, 6]);
 
     for(var x = 0; x < level.getWidth(); x++) {
       for(var y = 0; y < level.getHeight(); y++) {
@@ -139,7 +159,10 @@ function LevelLoader(game)
         }
 
         // Mark location of enemy objects
-        if(level.levelMap[y][x] == Sprite_Enemy_Bee || level.levelMap[y][x] == Sprite_Enemy_Bat) {
+        if(level.levelMap[y][x] == Sprite_Enemy_Bee ||
+           level.levelMap[y][x] == Sprite_Enemy_Bat ||
+           level.levelMap[y][x] == Sprite_Enemy_Fly) {
+
           locations.enemies.push({ type: level.levelMap[y][x], x: x * 32, y: y * 32 });
 
           if(!this.game.editMode)
