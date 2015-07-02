@@ -36,6 +36,8 @@ function LevelLoader(game)
 
   this.setupEnemies = function(enemies)
   {
+    var Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
+
     if(this.game.editMode)
       return;
 
@@ -43,6 +45,11 @@ function LevelLoader(game)
       var enemy = new Enemy();
       enemy.setStartingPosition(enemies[i].x, enemies[i].y);
       enemy.setBaseSprite(enemies[i].type);
+
+      if(enemies[i].type == Sprite_Enemy_Bee)
+        enemy.setAggressionLevel(0);
+      else
+        enemy.setAggressionLevel(1);
 
       this.game.addObject('enemy_' + i, enemy);
     }
