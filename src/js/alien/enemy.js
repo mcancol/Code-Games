@@ -18,6 +18,7 @@ function Enemy()
   this.velY = 0;
   this.gravity = 0.3;
   this.alive = true;
+  this.aggressionLevel = 0;
 
   this.sprite = 0;
 
@@ -34,6 +35,17 @@ function Enemy()
     this.y = this.baseY;
 
     this.alive = true;
+  }
+
+
+  /**
+   * Set the aggression level of the enemy
+   *
+   * @param {number} aggressionLevel - Aggressiveness of animal
+   */
+  this.setAggressionLevel = function(aggressionLevel)
+  {
+    this.aggressionLevel = aggressionLevel;
   }
 
 
@@ -73,23 +85,28 @@ function Enemy()
 
     var player_went_past = (player.x - 2 * player.width) > this.baseX;
 
-    /** Move towards player when player is underneath **/
-    if(player_underneath || player_went_past) {
-      this.targetX = player.x;
-      this.targetY = player.y;
-    } else {
-      this.targetX = this.baseX;
-      this.targetY = this.baseY;
-    }
 
-    this.x = lerp(this.x, this.targetX, 0.2);
-    this.y = lerp(this.y, this.targetY, 0.3);
+    if(this.aggressionLevel != 0)
+    {
+      /** Move towards player when player is underneath **/
+      if(player_underneath || player_went_past) {
+        this.targetX = player.x;
+        this.targetY = player.y;
+      } else {
+        this.targetX = this.baseX;
+        this.targetY = this.baseY;
+      }
+
+      this.x = lerp(this.x, this.targetX, 0.2);
+      this.y = lerp(this.y, this.targetY, 0.3);
+    }
 
     /** Check collision with player **/
     var collision = collisionCheck(this, player);
     if(this.alive && collision) {
       if(collision.normal.y < 0 || player_went_past) {
-        player.kill("enemy");
+        if(this.aggressionLevel != 0)
+          player.kill("enemy");
       } else {
         this.alive = false;
         player.events.push("KILLED_ENEMY");

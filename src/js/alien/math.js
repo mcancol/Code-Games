@@ -44,7 +44,7 @@ function collisionCheck(objectA, objectB)
 		return false;
 
 	// Collision information object
-	ci = {normal: {x: 0, y: 0}};
+	var ci = {normal: {x: 0, y: 0}};
 	ci.type = objectB.type;
 
 	// Compute collision normal in X

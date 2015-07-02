@@ -95,6 +95,40 @@ SpriteManager.prototype.getFrameCount = function(sprite)
 }
 
 
+/**
+ * Returns the width of a sprite.
+ *
+ * @param {number} sprite - Number of the sprite.
+ * @returns {number} Width in pixels.
+ */
+SpriteManager.prototype.getWidth = function(sprite)
+{
+	if(!(sprite in this.sprites))
+		return;
+
+	if(this.sprites[sprite].length > 1)
+		return this.sprites[sprite][0].width;
+	return this.sprites[sprite].width;
+}
+
+
+/**
+ * Returns the height of a sprite.
+ *
+ * @param {number} sprite - Number of the sprite.
+ * @returns {number} Height in pixels.
+ */
+SpriteManager.prototype.getHeight = function(sprite)
+{
+	if(!(sprite in this.sprites))
+		return;
+
+	if(this.sprites[sprite].length > 1)
+		return this.sprites[sprite][0].height;
+	return this.sprites[sprite].height;
+}
+
+
 SpriteManager.prototype.loadFromSpriteTable =  function(spriteTable)
 {
 	/** Load sprites from sprite table **/
