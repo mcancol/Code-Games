@@ -132,9 +132,20 @@ function Enemy()
     var dirY = Math.sign(this.gravity);
     var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
 
+    /**
+     * Make sure hitting spikes or water causes the enemy to touch the surface
+     */
+    var callback = function(hit) {
+      if(hit.type == 'water') {
+        hit.y += 24;
+        hit.dy += 24;
+      }
+      return hit;
+    }
+
     var hit = level.sensor(
       { x: this.x + this.width / 2, y: oriY },
-      { x: 0, y: dirY }, 256, function(hit) { return hit; });
+      { x: 0, y: dirY }, 256, callback);
 
     if(dirY > 0 && hit && hit.dy < 10) {
       this.y = hit.y - this.height;

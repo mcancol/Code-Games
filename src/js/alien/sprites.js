@@ -76,6 +76,25 @@ var spriteTable = [
 	{key: [1, 63], src: 'planet/planetHalf_right', collision: 'topHalf'},
 
 
+	/* Sand */
+	{key: [1, 64], src: 'sand/sandLeft', collision: true},
+	{key: [1, 65], src: 'sand/sandMid', collision: true},
+	{key: [1, 66], src: 'sand/sandRight', collision: true},
+	{key: [1, 67], src: 'sand/sandCenter', collision: true},
+	{key: [1, 68], src: 'sand/sandCliffLeft', collision: true},
+	{key: [1, 69], src: 'sand/sandCliffRight', collision: true},
+	{key: [1, 70], src: 'sand/sandCliffLeftAlt', collision: true},
+	{key: [1, 71], src: 'sand/sandCliffRightAlt', collision: true},
+	{key: [1, 72], src: 'sand/sandHillLeft2', collision: true},
+	{key: [1, 73], src: 'sand/sandHillRight2', collision: true},
+	{key: [1, 74], src: 'sand/sandHillLeft', collision: 'hillUp'},
+	{key: [1, 75], src: 'sand/sandHillRight', collision: 'hillDown'},
+	{key: [1, 76], src: 'sand/sandHalf', collision: 'topHalf'},
+	{key: [1, 77], src: 'sand/sandHalfLeft', collision: 'topHalf'},
+	{key: [1, 78], src: 'sand/sandHalfMid', collision: 'topHalf'},
+	{key: [1, 79], src: 'sand/sandHalfRight', collision: 'topHalf'},
+
+
 	{key: [1, 20], src: 'metalCenter', collision: true},
 
 	{key: [2, 1], src: 'water/normal_waves_top', frames: 6, collision: 'water'},

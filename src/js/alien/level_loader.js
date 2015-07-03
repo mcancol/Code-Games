@@ -11,6 +11,11 @@ function LevelLoader(game)
 {
   this.game = game;
 
+  this.Sprite_Player = SpriteManager.keyToInteger([0, 2]);
+  this.Sprite_Enemy_Fly = SpriteManager.keyToInteger([10, 0]);
+  this.Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
+  this.Sprite_Enemy_Bat = SpriteManager.keyToInteger([10, 6]);
+
 
   /**
    * Loads the level from the list and sets up the game
@@ -50,7 +55,6 @@ function LevelLoader(game)
   this.setupEnemies = function(enemies)
   {
     var spriteManager = this.game.spriteManager;
-    var Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
 
     if(this.game.editMode)
       return;
@@ -61,7 +65,7 @@ function LevelLoader(game)
       enemy.setStartingPosition(enemies[i].x, enemies[i].y);
       enemy.setBaseSprite(enemies[i].type);
 
-      if(enemies[i].type == Sprite_Enemy_Bee)
+      if(enemies[i].type == this.Sprite_Enemy_Bee)
         enemy.setAggressionLevel(0);
       else
         enemy.setAggressionLevel(1);
@@ -142,16 +146,11 @@ function LevelLoader(game)
       enemies: []
     };
 
-    var Sprite_Player = SpriteManager.keyToInteger([0, 2]);
-    var Sprite_Enemy_Fly = SpriteManager.keyToInteger([10, 0]);
-    var Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
-    var Sprite_Enemy_Bat = SpriteManager.keyToInteger([10, 6]);
-
     for(var x = 0; x < level.getWidth(); x++) {
       for(var y = 0; y < level.getHeight(); y++) {
 
         // Mark location of player objects
-        if(level.levelMap[y][x] == Sprite_Player) {
+        if(level.levelMap[y][x] == this.Sprite_Player) {
           locations.players.push({ x: x * 32, y: y * 32 });
 
           if(!this.game.editMode)
@@ -159,9 +158,9 @@ function LevelLoader(game)
         }
 
         // Mark location of enemy objects
-        if(level.levelMap[y][x] == Sprite_Enemy_Bee ||
-           level.levelMap[y][x] == Sprite_Enemy_Bat ||
-           level.levelMap[y][x] == Sprite_Enemy_Fly) {
+        if(level.levelMap[y][x] == this.Sprite_Enemy_Bee ||
+           level.levelMap[y][x] == this.Sprite_Enemy_Bat ||
+           level.levelMap[y][x] == this.Sprite_Enemy_Fly) {
 
           locations.enemies.push({ type: level.levelMap[y][x], x: x * 32, y: y * 32 });
 

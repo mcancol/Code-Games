@@ -16,7 +16,7 @@
 		<script src="js/common/input.js"></script>
 		<script src="js/common/sink.js"></script>
 		<script src="js/common/engine.js"></script>
-		
+
 		<script src="js/common/base_object.js"></script>
 
 		<script src="js/alien/game.js"></script>
@@ -114,7 +114,23 @@
 					Unable to load the specified level
 				</div>
 			</div>
+
+			<div class="panel panel-danger" id="level-selector">
+				<div class="panel-heading">
+					Level not specified
+				</div>
+				<div class="panel-body">
+					Please select the level you wish to load:
+
+					<p>
+						<ul id="level-list">
+						</ul>
+					</p>
+				</div>
+			</div>
 		</div>
+	</div>
+
 
 
 		<div class="container">
@@ -128,6 +144,28 @@
 		<script>
 			var server = "http://www.ivarclemens.nl/platform_game/";
 			var gameStart = false;
+
+			$("#level-selector").hide();
+
+
+			/**
+			 * Load list of levels from the server
+			 */
+			jQuery.ajax(server + "ldb/list_levels.php", { dataType: 'json'}).done(function(result) {
+				for(var i = 0; i < result.length; i++) {
+					var list = $("#level-list");
+
+					var li = $("<li/>")
+						.appendTo(list);
+
+					var a = $("<a />")
+						.appendTo(li)
+						.attr("href", updateQueryString({ level: result[i].name }))
+						.text(result[i].name[0].toUpperCase() + result[i].name.slice(1));
+				}
+
+	    }.bind(this));
+
 
 			(function() {
 				/**
@@ -166,8 +204,14 @@
 				 */
 				var levelName = getQueryField("level");
 
-				if(!levelName || levelName == "")
-					levelName = "level1";
+				if(!levelName || levelName == "") {
+					$("nav").hide();
+					$("#loading-screen").fadeOut(500, function() {
+						$("#level-selector").fadeIn(250);
+					});
+
+					return;
+				}
 
 				$("#level_name").val(levelName);
 
