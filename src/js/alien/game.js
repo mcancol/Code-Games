@@ -35,6 +35,10 @@ Game.prototype.setup = function()
 Game.prototype.update = function(keyboard)
 {
   this.updateTranslation();
+
+  if(this.editMode)
+    return;
+
   this.updateChildren(keyboard);
 }
 

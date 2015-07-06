@@ -215,7 +215,7 @@ function Level(levelMap)
 	 */
 	this.drawSprite = function(context, x, y, sprite, frameCount)
 	{
-		if(sprite == 1 && !this.getEngine().editMode)
+		if(sprite == 1 && !this.parent.editMode)
 			return;
 
 		var box = {x: x * 32, y: y * 32, width: 32, height: 32};
