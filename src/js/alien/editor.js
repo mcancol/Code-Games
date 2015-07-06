@@ -94,8 +94,9 @@ Editor.prototype.mouseMove = function(event)
 	}
 
 	/**
-	 * Check whether an object has been clicked or
-	 * dragging of an object has been initiated
+	 * Check whether an object has been clicked or dragging of an
+	 * object has been initiated. We start with the latest object
+	 * because that one will be renderen on-top of everything else.
 	 */
 	if(event.detail.down) {
 		for(var i = keys.length - 1; i >= 0; i--) {
