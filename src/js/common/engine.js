@@ -24,13 +24,13 @@ function Engine()
 
 		this.setSize(width, height);
 
-		window.requestAnimationFrame(this.update.bind(this));
-
 		this.input = new Keyboard();
   	this.mouse = new Mouse(this.canvas);
 
 		this.editMode = false;
 		this.debugMode = false;
+
+		window.requestAnimationFrame(this.update.bind(this));		
 	}
 }
 
