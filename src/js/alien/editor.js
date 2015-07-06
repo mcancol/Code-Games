@@ -12,6 +12,8 @@ function Editor(game)
 	this.game = game;
 	this.game.startEditMode();
 
+	this.offset = {x: 0, y: 0};
+
 	this.selectedObject = false;
 	this.currentSprite = 'l';
 
@@ -77,29 +79,49 @@ Editor.prototype.mouseMove = function(event)
 	var keys = this.game.getObjectNames();
 	var coords = { x: this.game.scroll.x + event.detail.x, y: event.detail.y };
 
-	for(var i = keys.length - 1; i >= 0; i--) {
-		var object = this.game.getObject(keys[i]);
+	/**
+	 * Move selected object if we are dragging it
+	 */
+	if(this.dragging && !event.detail.down) {
+		if(event.detail.buttons == 1) {
+			this.selectedObject.x = coords.x - this.offset.x;
+			this.selectedObject.y = coords.y - this.offset.y;
+		} else {
+			this.dragging = false;
+		}
 
-		if(inBox(coords.x, coords.y, object)) {
-			if(event.detail.down) {
+		return;
+	}
+
+	/**
+	 * Check whether an object has been clicked or
+	 * dragging of an object has been initiated
+	 */
+	if(event.detail.down) {
+		for(var i = keys.length - 1; i >= 0; i--) {
+			var object = this.game.getObject(keys[i]);
+
+			if(inBox(coords.x, coords.y, object)) {
 				this.selectedObject = object;
-				console.log("Select: " + keys[i]);
+				this.dragging = true;
+
+				this.offset.x = coords.x - object.x;
+				this.offset.y = coords.y - object.y;
 
 				return;
 			}
-
-			// Click to select
-			// Do we want drag to work without selecting?
-
-
 		}
 	}
 
+	/**
+	 * The level itself has been clicked, deselect all objects
+	 */
 	if(event.detail.down)
 		this.selectedObject = false;
 
-	return;
-
+	/**
+	 * Put the sprite into the level (FIXME: some objects e.g. player/ennemy need special care)
+	 */
 	coords.x = Math.floor(coords.x / 32);
 	coords.y = Math.floor(coords.y / 32);
 
