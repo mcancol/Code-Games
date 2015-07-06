@@ -120,7 +120,7 @@ function Level(levelMap)
 		});
 
 		// Draw result
-		if(this.game.debugMode) {
+		if(this.getEngine().debugMode) {
 			if(dir.x != 0)
 				this.lines.push({ a: origin, b: result, color: 'blue' });
 			else
@@ -140,7 +140,7 @@ function Level(levelMap)
 
 	this.drawLine = function(a, b, color)
 	{
-		var ctx = this.game.context;
+		var ctx = this.getEngine().context;
 
 		ctx.beginPath();
 		ctx.moveTo(a.x, a.y);
@@ -205,7 +205,7 @@ function Level(levelMap)
 	 */
 	this.animate = function(base, frames)
 	{
-		var deltaT = this.game.timestamp / 140;
+		var deltaT = this.getEngine().timestamp / 140;
 		return base + Math.floor(1 + deltaT % frames);
 	}
 
@@ -215,13 +215,13 @@ function Level(levelMap)
 	 */
 	this.drawSprite = function(context, x, y, sprite, frameCount)
 	{
-		if(sprite == 1 && this.game && !this.game.editMode)
+		if(sprite == 1 && !this.getEngine().editMode)
 			return;
 
 		var box = {x: x * 32, y: y * 32, width: 32, height: 32};
-		var frame = (this.game.timestamp >> 7) % frameCount;
+		var frame = (this.getEngine().timestamp >> 7) % frameCount;
 
-		return this.game.spriteManager.drawSprite(context, box, sprite, frame);
+		return this.parent.spriteManager.drawSprite(context, box, sprite, frame);
 	}
 
 
@@ -241,10 +241,10 @@ function Level(levelMap)
 		for(var i = 0; i < this.levelMap.length; i++) {
 			for(var j = 0; j < this.levelMap[0].length; j++) {
 				var sprite = this.levelMap[i][j];
-				var frameCount =  this.game.spriteManager.getFrameCount(sprite);
+				var frameCount =  this.parent.spriteManager.getFrameCount(sprite);
 
 				// Ignore invalid sprites (that the sprite manager doesn't know about)
-				if(!this.game.spriteManager.isSpriteValid(sprite))
+				if(!this.parent.spriteManager.isSpriteValid(sprite))
 					continue;
 
 				// Sprites with 1 frame are static, more than one dynamic
@@ -274,6 +274,9 @@ function Level(levelMap)
 		this.drawDebugLines();
 	}
 }
+
+
+Level.prototype = new BaseObject();
 
 
 /**

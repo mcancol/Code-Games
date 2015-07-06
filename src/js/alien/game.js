@@ -12,13 +12,54 @@
  * @param {number} width - Required width of canvas element
  * @param {number} height - Required height of canvas element
  */
-function Game(element, width, height)
+function Game()
 {
-  this.initializeEngine(element, width, height);
+  this.levelBounds = {x: 0, y: 0, width: 32, height: 32 };
+  this.spriteManager = new SpriteManager();
+  this.engine = false;
+  this.scroll = {x: 0, y: 0};
+  this.deadzone = {w: 128};
 }
 
 
-Game.prototype = new Engine();
+Game.prototype = new BaseObject();
+
+
+Game.prototype.setup = function()
+{
+  console.log("Setup");
+  this.scroll = {x: 0, y: 0};
+}
+
+
+Game.prototype.update = function(keyboard)
+{
+  this.updateTranslation();
+  this.updateChildren(keyboard);
+}
+
+
+Game.prototype.draw = function(context)
+{
+  var width = this.engine.getWidth();
+  var height = this.engine.getHeight()
+
+  context.clearRect(0, 0, width, height);
+  context.translate(-this.scroll.x, -this.scroll.y);
+
+  this.drawChildren(context);
+}
+
+
+/**
+ * Sets the boundaries of the level
+ *
+ * @param {Array} bounds - Bounaries of the level
+ */
+Game.prototype.setLevelBounds = function(bounds)
+{
+	this.levelBounds = bounds;
+}
 
 
 /**
@@ -30,4 +71,77 @@ Game.prototype.gameover = function()
   // Reset all objects to their default states
   for(var key in this.objects)
     this.objects[key].setup();
+}
+
+
+/**
+ * Start edit mode
+ */
+Game.prototype.startEditMode = function()
+{
+	this.editMode = true;
+
+	// Reset all objects to their default states
+	for(var key in this.objects)
+		this.objects[key].setup();
+}
+
+
+/**
+ * Updates translation offset in canvas when the player exits the dead-zone.
+ */
+Game.prototype.updateTranslation = function()
+{
+  var input = this.getEngine().input;
+  var width = this.engine.getWidth();
+  var height = this.engine.getHeight();
+
+	// Do not use player to scroll in edit mode
+	if(this.editMode) {
+		if(input.keys[input.KEY_LEFT])
+			this.scroll.x -= 8;
+		if(input.keys[input.KEY_RIGHT])
+			this.scroll.x += 8;
+
+		if(this.scroll.x < 0)
+			this.scroll.x = 0;
+
+		return;
+	}
+
+  if(!this.hasObject('player'))
+    return;
+
+	var playerX = this.getObject('player').x;
+
+	if(width >= this.levelBounds.width) {
+		this.scroll.x = (width - this.levelBounds.width) / 2 - this.levelBounds.x;
+    this.scroll.y = this.levelBounds.y;
+    return;
+  }
+
+
+	// Compute boundaries of dead-zone in screen coordinates
+	var deadzone_x_min = (width - this.deadzone.w) / 2;
+	var deadzone_x_max = (width + this.deadzone.w) / 2;
+
+	// Computer player position in screen coordinates
+	var player_x_game = playerX - this.scroll.x;
+
+	// Update scrolling
+	if(player_x_game > deadzone_x_max) {
+		this.scroll.x += player_x_game - deadzone_x_max;
+	} else if(player_x_game < deadzone_x_min) {
+		this.scroll.x += player_x_game - deadzone_x_min;
+	}
+
+	// Make sure we do not scroll past beginning/end of level
+	if(this.scroll.x < this.levelBounds.x)
+		this.scroll.x = this.levelBounds.x;
+	if(this.scroll.x > (this.levelBounds.x + this.levelBounds.width) - width) {
+		this.scroll.x = (this.levelBounds.x + this.levelBounds.width) - width;
+  }
+
+  // Not used in maze
+	this.scroll.y = this.levelBounds.y;
 }

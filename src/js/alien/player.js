@@ -28,6 +28,8 @@ function Player()
 
 	this.setup = function()
 	{
+		this.engine = this.getEngine();
+
 		// Position
 		this.x = this.baseX;
 		this.y = this.baseY;
@@ -115,7 +117,7 @@ function Player()
 		var x = Math.floor(this.x / 32);
 		var y = Math.floor(this.y / 32);
 
-		var level = this.game.getObject("level");
+		var level = this.parent.getObject("level");
 		var code = level.levelMap[0][x] - 2304;
 
 		return {
@@ -148,9 +150,9 @@ function Player()
 		if(input.keys[input.KEY_UP] && input.keys[input.KEY_DOWN])
 		{
 			// Allow wait at least 200ms before next flip
-			if(permitted.walk_upside_down && (!this.lastFlip || this.game.timestamp - this.lastFlip > 200))
+			if(permitted.walk_upside_down && (!this.lastFlip || this.engine.timestamp - this.lastFlip > 200))
 			{
-				this.lastFlip = this.game.timestamp
+				this.lastFlip = this.engine.timestamp
 				this.gravity *= -1;
 
 				if(this.gravity < 0)
@@ -359,7 +361,7 @@ function Player()
 		var oriY = this.y;
 
 		var permitted = this.getPermittedActions();
-		var level = this.game.getObject("level");
+		var level = this.parent.getObject("level");
 
 		this.velX *= this.friction;
 		this.velY += this.gravity;
@@ -380,7 +382,7 @@ function Player()
 
 	this.findTeleportDestination = function(x, y)
 	{
-		var map = this.game.getObject('level').levelMap;
+		var map = this.parent.getObject('level').levelMap;
 
 		for(var j = 0; j < map.length; j++) {
 			for(var i = Math.floor(x / 32); i < map[0].length; i++) {
@@ -409,7 +411,7 @@ function Player()
 
 		if(!this.alive && Math.abs(this.scale) < 0.01) {
 			// Recreate character after it died
-			this.game.gameover();
+			this.parent.gameover();
 		}
 	}
 
@@ -420,11 +422,11 @@ function Player()
 	this.animate = function(base, frames)
 	{
 		if(this.animationBase != base) {
-			this.animationStart = this.game.timestamp;
+			this.animationStart = this.engine.timestamp;
 			this.animationBase = base;
 		}
 
-		var deltaT = (this.game.timestamp - this.animationStart) / 120;
+		var deltaT = (this.engine.timestamp - this.animationStart) / 120;
 
 		return base + Math.floor(1 + deltaT % frames);
 	}
@@ -449,7 +451,7 @@ function Player()
 			context.setTransform(1, 0, 0, 1, 0, 0);
 			context.font = 'bold 20px Arial';
 			context.textAlign = 'center';
-			context.fillText("Oops, you died...", this.game.canvas.width / 2, this.game.canvas.height / 2);
+			context.fillText("Oops, you died...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
 
 			context.restore();
 		}
@@ -460,7 +462,7 @@ function Player()
 			context.setTransform(1, 0, 0, 1, 0, 0);
 			context.font = 'bold 20px Arial';
 			context.textAlign = 'center';
-			context.fillText("Congratulations, you have finished the game...", this.game.canvas.width / 2, this.game.canvas.height / 2);
+			context.fillText("Congratulations, you have finished the game...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
 
 			context.restore();
 		}
@@ -475,7 +477,7 @@ function Player()
 			sprite = this.animate('player_idle_left_', 3);
 		}
 
-		this.game.spriteManager.drawSprite(context, this, sprite, 0, function(context) {
+		this.parent.spriteManager.drawSprite(context, this, sprite, 0, function(context) {
 			context.scale(1, this.scale);
 		}.bind(this));
 	}

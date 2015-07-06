@@ -76,7 +76,7 @@ function Enemy()
    */
   this.updateHunting = function()
   {
-    var player = this.game.getObject("player");
+    var player = this.parent.getObject("player");
 
     var player_underneath =
       player.x + player.width / 2 >= this.x &&
@@ -127,7 +127,7 @@ function Enemy()
    */
   this.updateDying = function()
   {
-    var level = this.game.getObject("level");
+    var level = this.parent.getObject("level");
 
     var dirY = Math.sign(this.gravity);
     var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
@@ -179,13 +179,13 @@ function Enemy()
    */
   this.draw = function(context)
   {
-    var frame = Math.floor((this.game.timestamp / 120) % 2);
+    var frame = Math.floor((this.getEngine().timestamp / 120) % 2);
 
     if(this.alive) {
       //sprite = SpriteManager.keyToInteger([10, 3]);
-      this.game.spriteManager.drawSprite(context, this, this.sprite, frame);
+      this.parent.spriteManager.drawSprite(context, this, this.sprite, frame);
     } else {
-      this.game.spriteManager.drawSprite(context, this, this.sprite + 1, 0, function(context) {
+      this.parent.spriteManager.drawSprite(context, this, this.sprite + 1, 0, function(context) {
         context.rotate(this.rotation);
       }.bind(this));
     }

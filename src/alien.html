@@ -224,15 +224,17 @@
 				 * Initialize game
 				 */
 				if(editMode) {
-					editor = new Editor(canvas_id, 32 * width, 32 * (height + 2));
+					var editor = new Editor(canvas_id, 32 * width, 32 * (height + 2));
 					var game = editor.game;
 					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
 				} else {
 					$("nav").hide();
 
-					var game = new Game(canvas_id, 32 * width, 32 * height);
-					game.debugMode = debugMode;
-					game.spriteManager = new SpriteManager();
+					var game = new Game();
+					var engine = new Engine();
+
+					engine.initializeEngine(canvas_id, 32 * width, 32 * height, game);
+					engine.debugMode = debugMode;
 				}
 
 

@@ -10,18 +10,19 @@
  * @param {number} width - Required width of canvas element
  * @param {number} height - Required height of canvas element
  */
-function Editor(element, width, height)
+function Editor(canvas_id, width, height)
 {
-	this.game = new Game(element, width, height);
+	this.game = new Game();
+	this.engine = new Engine();
+
+	this.engine.initializeEngine(canvas_id, width, height, this.game);
+
 	this.game.startEditMode();
 
-	this.canvas = this.game.canvas;
-	this.context = this.game.context;
-
-	this.game.spriteManager = new SpriteManager();
-
+	this.canvas = this.engine.canvas;
 	this.mouse = new Mouse(this.canvas);
 
+	this.selectedObject = false;
 	this.currentSprite = 'l';
 
 	this.setupMouse();
@@ -61,7 +62,12 @@ Editor.prototype.mouseMove = function(event)
 		var object = this.game.getObject(keys[i]);
 
 		if(inBox(coords.x, coords.y, object)) {
-			console.log("Yes: " + keys[i]);
+			if(event.detail.down) {
+
+				//console.log("Select: " + keys[i]);
+
+				return;
+			}
 
 			// Click to select
 			// Do we want drag to work without selecting?
