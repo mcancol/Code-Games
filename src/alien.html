@@ -221,22 +221,27 @@
 				$("#" + canvas_id).width((width * 32) + "px");
 
 				/**
-				 * Initialize game
+				 * Hide menu bar when playing the game
 				 */
-				if(editMode) {
-					var editor = new Editor(canvas_id, 32 * width, 32 * (height + 2));
-					var game = editor.game;
-					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
-				} else {
+				if(!editMode)
 					$("nav").hide();
 
-					var game = new Game();
-					var engine = new Engine();
+				/**
+				 * Initialize game
+				 */
+				var engine = new Engine();
+				var game = new Game();
+				var main = game;
 
-					engine.initializeEngine(canvas_id, 32 * width, 32 * height, game);
-					engine.debugMode = debugMode;
+				if(editMode) {
+					var editor = new Editor(game);
+					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
+
+					main = editor;
 				}
 
+				engine.initializeEngine(canvas_id, 32 * width, 32 * (height + 2 * (editMode?1:0)), main);
+				engine.debugMode = debugMode;
 
 				loader = new LevelLoader(game);
 

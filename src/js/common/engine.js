@@ -30,7 +30,10 @@ function Engine()
 		this.editMode = false;
 		this.debugMode = false;
 
-		window.requestAnimationFrame(this.update.bind(this));		
+		window.requestAnimationFrame(this.update.bind(this));
+
+		//this.game.initialize();
+		this.game.setup();
 	}
 }
 

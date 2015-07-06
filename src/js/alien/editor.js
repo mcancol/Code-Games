@@ -6,26 +6,31 @@
  *
  * @class
  * @classdesc Level editor for alien girl game.
- * @param {String} element - Name of canvas element to draw to
- * @param {number} width - Required width of canvas element
- * @param {number} height - Required height of canvas element
  */
-function Editor(canvas_id, width, height)
+function Editor(game)
 {
-	this.game = new Game();
-	this.engine = new Engine();
-
-	this.engine.initializeEngine(canvas_id, width, height, this.game);
-
+	this.game = game;
 	this.game.startEditMode();
-
-	this.canvas = this.engine.canvas;
-	this.mouse = new Mouse(this.canvas);
 
 	this.selectedObject = false;
 	this.currentSprite = 'l';
 
-	this.setupMouse();
+	this.setupDone = false;
+}
+
+
+Editor.prototype = new BaseObject();
+
+
+Editor.prototype.setup = function()
+{
+	var engine = this.getEngine();
+
+	if(!this.setupDone && engine) {
+		this.game.engine = engine;
+		this.setupMouse(engine.canvas);
+		this.setupDone = true;
+	}
 }
 
 
@@ -37,6 +42,20 @@ function Editor(canvas_id, width, height)
 Editor.prototype.setSprite = function(sprite)
 {
 	this.currentSprite = sprite;
+}
+
+
+Editor.prototype.draw = function(context)
+{
+	this.game.draw(context);
+
+	if(this.selectedObject) {
+		context.beginPath();
+		context.rect(this.selectedObject.x, this.selectedObject.y, this.selectedObject.width, this.selectedObject.height);
+		context.lineWidth = 1;
+		context.strokeStyle = 'red';
+		context.stroke();
+	}
 }
 
 
@@ -63,8 +82,8 @@ Editor.prototype.mouseMove = function(event)
 
 		if(inBox(coords.x, coords.y, object)) {
 			if(event.detail.down) {
-
-				//console.log("Select: " + keys[i]);
+				this.selectedObject = object;
+				console.log("Select: " + keys[i]);
 
 				return;
 			}
@@ -75,6 +94,9 @@ Editor.prototype.mouseMove = function(event)
 
 		}
 	}
+
+	if(event.detail.down)
+		this.selectedObject = false;
 
 	return;
 
@@ -93,9 +115,9 @@ Editor.prototype.mouseMove = function(event)
  *
  * @private
  */
-Editor.prototype.setupMouse = function()
+Editor.prototype.setupMouse = function(canvas)
 {
-	var canvas = this.canvas;
+	this.mouse = new Mouse(canvas);
 
 	/**
 	 * Disable context-menu on right click
@@ -106,5 +128,5 @@ Editor.prototype.setupMouse = function()
 			return false;
 		}, false);
 
-	this.canvas.addEventListener("game-move", this.mouseMove.bind(this));
+	canvas.addEventListener("game-move", this.mouseMove.bind(this));
 }
