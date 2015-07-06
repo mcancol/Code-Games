@@ -15,6 +15,18 @@ function isSlippery(sprite)
 }
 
 
+/**
+ * Returns whether a sprite is an enemy
+ *
+ * @param {number} sprite - ID of sprite
+ * @returns {boolean} True if enemy, false if not
+ */
+function isEnemy(sprite)
+{
+	return sprite >= 2560 && sprite <= 2816;
+}
+
+
 var spriteTable = [
 	{key: [0, 1], src: 'clipping', collision: true},
 	{key: [0, 2], src: 'sara/idle/r/1', collision: false},
@@ -97,14 +109,14 @@ var spriteTable = [
 
 	{key: [1, 20], src: 'metalCenter', collision: true},
 
+	{key: [2, 4], src: 'water/no_waves_top', frames: 7, collision: 'water'},
+	{key: [2, 6], src: 'water/no_waves_body', frames: 7, collision: 'waterBody'},
+
 	{key: [2, 1], src: 'water/normal_waves_top', frames: 6, collision: 'water'},
 	{key: [2, 2], src: 'water/normal_waves_body', frames: 6, collision: 'waterBody'},
 
 	{key: [2, 3], src: 'water/big_waves_top', frames: 3, collision: 'water'},
-	{key: [2, 4], src: 'water/no_waves_top', frames: 7, collision: 'water'},
-
 	{key: [2, 5], src: 'water/big_waves_body', frames: 3, collision: 'waterBody'},
-	{key: [2, 6], src: 'water/no_waves_body', frames: 7, collision: 'waterBody'},
 
 	{key: [3, 1], src: 'plant', collision: false},
 	{key: [3, 2], src: 'pineSapling', collision: false},
@@ -115,12 +127,22 @@ var spriteTable = [
 	{key: [4, 2], src: 'doorOpen', collision: 'Door'},
 	{key: [4, 3], src: 'doorOpenTop', collision: false},
 
+	{key: [4, 4], src: 'springboardDown', collision: 'boardDown'},
+	{key: [4, 5], src: 'springboardUp', collision: 'boardUp'},
+
 
 	{key: [5, 4], src: 'signRight', collision: false},
 	{key: [5, 5], src: 'signExit', collision: 'exit'},
 
 	{key: [6, 1], src: 'cloud1-left', collision: true},
 	{key: [6, 2], src: 'cloud1-right', collision: true},
+
+	{key: [7, 1], src: 'bomb', collision: true},
+	{key: [7, 2], src: 'rock', collision: true},
+	{key: [7, 3], src: 'weight', collision: true},
+	{key: [7, 4], src: 'switchRight', collision: false},
+	{key: [7, 5], src: 'switchMid', collision: false},
+	{key: [7, 6], src: 'switchLeft', collision: false},
 
 	{key: [9, 1], src: 'numbers/1', collision: true},
 	{key: [9, 2], src: 'numbers/2', collision: true},
@@ -129,12 +151,18 @@ var spriteTable = [
 	{key: [9, 5], src: 'numbers/5', collision: true},
 
 	{key: [10, 0], src: 'fly/fly', frames: 2, collision: 'Fly'},
-	{key: [10, 1], src: 'fly/fly_dead', collision: true},
+	{key: [10, 1], src: 'fly/fly_dead', collision: true, toolbox: false},
 
 	{key: [10, 3], src: 'bee/bee', frames: 2, collision: 'Bee'},
-	{key: [10, 4], src: 'bee/bee_dead', collision: true},
+	{key: [10, 4], src: 'bee/bee_dead', collision: true, toolbox: false},
 
 	{key: [10, 6], src: 'bat/bat', frames: 2, collision: 'Bat'},
-	{key: [10, 7], src: 'bat/bat_dead', collision: true},
-	{key: [10, 8], src: 'bat/bat_hang', collision: true},
+	{key: [10, 7], src: 'bat/bat_dead', collision: true, toolbox: false},
+	{key: [10, 8], src: 'bat/bat_hang', collision: true, toolbox: false},
+
+	{key: [10, 10], src: 'bug/ladybug', collision: true},
+	{key: [10, 11], src: 'bug/ladybug_move', collision: true, toolbox: false},
+	{key: [10, 12], src: 'bug/ladybug_fly', collision: true, toolbox: false},
+
+
 ];

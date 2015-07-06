@@ -159,6 +159,11 @@ Engine.prototype.update = function(timestamp)
  * Adding objects to the game *
  ******************************/
 
+Engine.prototype.getObjectNames = function()
+{
+	return Object.keys(this.objects);
+}
+
 Engine.prototype.addObject = function(name, object)
 {
 	object.game = this;

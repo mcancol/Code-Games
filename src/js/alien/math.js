@@ -96,6 +96,18 @@ function detectCollisionArray(objectA, objectsB, callback, offset)
 
 
 /**
+ * Checks whether a given position is within a box
+ */
+function inBox(x, y, box)
+{
+	if(x >= box.x && x <= box.x + box.width &
+		 y >= box.y && y <= box.y + box.height)
+			return true;
+	return false;
+}
+
+
+/**
  * Clamps the value between two extremes.
  *
  * @param {number} value - The value to clamp

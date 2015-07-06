@@ -16,7 +16,6 @@ function LevelLoader(game)
   this.Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
   this.Sprite_Enemy_Bat = SpriteManager.keyToInteger([10, 6]);
 
-
   /**
    * Loads the level from the list and sets up the game
    * state (players / enemies) accordingly.
@@ -28,14 +27,14 @@ function LevelLoader(game)
     return new Promise(function(resolve, reject) {
       this.game.deleteAllObjects();
       this.getLevelFromServer(name).then(
-        function(level) {
-          var locations = this.markSpecialLocations(level);
+        function(data) {
+          var level = new Level(data.level);
 
           this.setLevelBounds(level);
           this.game.addObject('level', level);
 
-          this.setupPlayers(locations.players);
-          this.setupEnemies(locations.enemies);
+          this.setupPlayers(data.players);
+          this.setupEnemies(data.enemies);
 
           resolve();
         }.bind(this),
@@ -55,9 +54,6 @@ function LevelLoader(game)
   this.setupEnemies = function(enemies)
   {
     var spriteManager = this.game.spriteManager;
-
-    if(this.game.editMode)
-      return;
 
     for(var i = 0; i < enemies.length; i++) {
       var enemy = new Enemy();
@@ -82,13 +78,6 @@ function LevelLoader(game)
    */
   this.setupPlayers = function(players)
   {
-    if(this.game.editMode)
-      return;
-
-    // Default location if no players have been found
-    if(players.length == 0)
-      players.push({ x: 32, y: 128 });
-
     var player = new Player();
     player.setStartingPosition(players[0].x, players[0].y);
     this.game.addObject('player', player);
@@ -110,9 +99,11 @@ function LevelLoader(game)
   			url: server + "ldb/get_level.php?name=" + name,
   			dataType: 'json'
   		}).done(function(data) {
-        var level = new Level(data);
 
-  			resolve(level);
+        if($.isArray(data))
+          data = upgradeLevelVersion1(data);
+
+  			resolve(data);
   		}).fail(function(response) {
         console.log("LevelLoader.getLevelFromServer() failed " + response);
   			reject(response.responseText);
@@ -134,43 +125,48 @@ function LevelLoader(game)
     });
   };
 
+}
+
+
+/**
+ * Upgrade level from version 1 to version 2.
+ *
+ * @param {Array} data - Version 1 level returned from server
+ */
+function upgradeLevelVersion1(data)
+{
+  // Convert format
+  data = {
+    'version': 2,
+    'level': data,
+    'players': [],
+    'enemies': []
+  };
 
   /**
    * Scans the level for special items, such as the player and enemies,
    * adds them to a list and removes them from the level.
    */
-  this.markSpecialLocations = function(level)
-  {
-    var locations = {
-      players: [],
-      enemies: []
-    };
+  for(var x = 0; x < data.level[0].length; x++) {
+    for(var y = 0; y < data.level.length; y++) {
 
-    for(var x = 0; x < level.getWidth(); x++) {
-      for(var y = 0; y < level.getHeight(); y++) {
+      // Extract location of player objects
+      if(data.level[y][x] == 2) {
+        data.players.push({ x: x * 32, y: y * 32 - 12 });
+        data.level[y][x] = 0;
+      }
 
-        // Mark location of player objects
-        if(level.levelMap[y][x] == this.Sprite_Player) {
-          locations.players.push({ x: x * 32, y: y * 32 });
-
-          if(!this.game.editMode)
-            level.levelMap[y][x] = 0;
-        }
-
-        // Mark location of enemy objects
-        if(level.levelMap[y][x] == this.Sprite_Enemy_Bee ||
-           level.levelMap[y][x] == this.Sprite_Enemy_Bat ||
-           level.levelMap[y][x] == this.Sprite_Enemy_Fly) {
-
-          locations.enemies.push({ type: level.levelMap[y][x], x: x * 32, y: y * 32 });
-
-          if(!this.game.editMode)
-            level.levelMap[y][x] = 0;
-        }
+      // Extract location of enemy objects
+      if(isEnemy(data.level[y][x])) {
+        data.enemies.push({ type: data.level[y][x], x: x * 32, y: y * 32 });
+        data.level[y][x] = 0;
       }
     }
+  }
 
-    return locations;
-  };
+  // Add default player if none are found
+  if(data.players.length == 0)
+    data.players.push({ x: 32, y: 128 });
 
-}
+  return data;
+};

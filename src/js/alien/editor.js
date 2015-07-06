@@ -54,8 +54,26 @@ Editor.prototype.setSprite = function(sprite)
  */
 Editor.prototype.mouseMove = function(event)
 {
-	var coords = {x: Math.floor((this.game.scroll.x + event.detail.x) / 32),
-	 			  y: Math.floor(event.detail.y / 32)};
+	var keys = this.game.getObjectNames();
+	var coords = { x: this.game.scroll.x + event.detail.x, y: event.detail.y };
+
+	for(var i = keys.length - 1; i >= 0; i--) {
+		var object = this.game.getObject(keys[i]);
+
+		if(inBox(coords.x, coords.y, object)) {
+			console.log("Yes: " + keys[i]);
+
+			// Click to select
+			// Do we want drag to work without selecting?
+
+
+		}
+	}
+
+	return;
+
+	coords.x = Math.floor(coords.x / 32);
+	coords.y = Math.floor(coords.y / 32);
 
 	if(event.detail.buttons & 1)
 		this.game.getObject("level").setSprite(coords, this.currentSprite);
