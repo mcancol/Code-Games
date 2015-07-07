@@ -79,8 +79,7 @@ Engine.prototype.update = function(timestamp)
 	/**
 	 * Handle input, update physics and scrolling
 	 */
-	if(!this.editMode)
-		this.game.update(this.input);
+	this.game.update(this.input);
 
 	/**
 	 * Redraw entire scene

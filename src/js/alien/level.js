@@ -1,8 +1,7 @@
 /** @module Alien **/
 "use strict";
 
-var spriteWidth = 32;
-var spriteHeight = 32;
+var spriteSize = 32;
 
 /**
  * Creates a new level object.
@@ -59,8 +58,8 @@ function Level(levelMap)
 	this.worldToLevelCoords = function(worldCoord)
 	{
 		return {
-			x: Math.floor(worldCoord.x / spriteWidth),
-			y: Math.floor(worldCoord.y / spriteHeight)
+			x: Math.floor(worldCoord.x / spriteSize),
+			y: Math.floor(worldCoord.y / spriteSize)
 		};
 	}
 
@@ -77,11 +76,11 @@ function Level(levelMap)
 	{
 		var o = this.worldToLevelCoords(origin);
 
-		var result = this.spriteSensor(o, dir, length / 32, function(hit)
+		var result = this.spriteSensor(o, dir, length / spriteSize, function(hit)
 		{
 			// Coordinates of top left corner
-			hit.x = hit.sx * 32;
-			hit.y = hit.sy * 32;
+			hit.x = hit.sx * spriteSize;
+			hit.y = hit.sy * spriteSize;
 
 			// Fix the x coordinate for vertical sensors
 			if(dir.x == 0) hit.x = origin.x;
@@ -90,27 +89,27 @@ function Level(levelMap)
 			if(dir.y == 0) hit.y = origin.y;
 
 			// Collide with right most edge for leftward sensors
-			if(dir.x < 0) hit.x += 32;
+			if(dir.x < 0) hit.x += spriteSize;
 
 			// Collide with bottom edge for upward sensors
-			if(dir.y < 0)	hit.y += 32;
+			if(dir.y < 0)	hit.y += spriteSize;
 
 			// Half blocks
 			if(hit.type == 'topHalf') {
 				if(dir.y < 0) hit.y -= 14;
-				if(dir.x != 0 && origin.y - hit.sy * 32 > 18) return false;
+				if(dir.x != 0 && origin.y - hit.sy * spriteSize > (18/32)*spriteSize) return false;
 			}
 
 			// Ramp down
 			if(hit.type == 'hillDown') {
-				if(dir.y == 0) hit.x += (hit.sy * 32 - origin.y) + 32;
-				if(dir.x == 0) hit.y += (hit.sx * 32 - origin.x) + 32;
+				if(dir.y == 0) hit.x += (hit.sy * spriteSize - origin.y) + spriteSize;
+				if(dir.x == 0) hit.y += (hit.sx * spriteSize - origin.x) + spriteSize;
 			}
 
 			// Ramp up
 			if(hit.type == 'hillUp') {
-				if(dir.y == 0) hit.x -= (hit.sy * 32 - origin.y) + 32;
-				if(dir.x == 0) hit.y -= (hit.sx * 32 - origin.x);
+				if(dir.y == 0) hit.x -= (hit.sy * spriteSize - origin.y) + spriteSize;
+				if(dir.x == 0) hit.y -= (hit.sx * spriteSize - origin.x);
 			}
 
 			// Compute difference
@@ -230,7 +229,7 @@ function Level(levelMap)
 		if(sprite == 1 && !this.parent.editMode)
 			return;
 
-		var box = {x: x * 32, y: y * 32, width: 32, height: 32};
+		var box = {x: x * spriteSize, y: y * spriteSize, width: spriteSize, height: spriteSize};
 		var frame = (this.getEngine().timestamp >> 7) % frameCount;
 
 		return this.parent.spriteManager.drawSprite(context, box, sprite, frame);
@@ -244,8 +243,8 @@ function Level(levelMap)
 	 */
 	this.cacheLevelGeometry = function()
 	{
-		this.staticLevelCanvas.width = this.getWidth() * spriteWidth;
-		this.staticLevelCanvas.height = this.getHeight() * spriteHeight;
+		this.staticLevelCanvas.width = this.getWidth() * spriteSize;
+		this.staticLevelCanvas.height = this.getHeight() * spriteSize;
 
 		this.dynamicLevelGeometry = new Array();
 		var context = this.staticLevelCanvas.getContext("2d");

@@ -44,6 +44,18 @@ var constructors = {
 		var bomb = new Bomb();
 		bomb.fromArray(array);
 		return bomb;
+	},
+
+	'rock': function(array) {
+		var rock = new Rock();
+		rock.fromArray(array);
+		return rock;
+	},
+
+	'worm': function(array) {
+		var worm = new Worm();
+		worm.fromArray(array);
+		return worm;
 	}
 };
 
@@ -159,7 +171,7 @@ var spriteTable = [
 	{key: 0x0602, src: 'cloud1-right', collision: true},
 
 	{key: 0x0701, src: 'bomb', collision: true, type: 'bomb'},
-	{key: 0x0702, src: 'rock', collision: true},
+	{key: 0x0702, src: 'rock', collision: true, type: 'rock'},
 	{key: 0x0703, src: 'weight', collision: true},
 	{key: 0x0704, src: 'switchRight', collision: false},
 	{key: 0x0705, src: 'switchMid', collision: false},
@@ -185,4 +197,17 @@ var spriteTable = [
 	{key: 0x0A0A, src: 'bug/ladybug', collision: true, type: 'enemy'},
 	{key: 0x0A0B, src: 'bug/ladybug_move', collision: true, toolbox: false},
 	{key: 0x0A0C, src: 'bug/ladybug_fly', collision: true, toolbox: false},
+
+	{key: 0x0A0E, src: 'worm/wormGreen', frames: 2, collision: true, type: 'worm'},
+	{key: 0x0A0F, src: 'worm/wormGreen_dead', collision: true, toolbox: false},
+
+	{key: 0x0A10, src: 'slime/snakeSlime', collision: true},
+	{key: 0x0A11, src: 'slime/snakeSlime_ani', collision: true, toolbox: false},
+	{key: 0x0A12, src: 'slime/snakeSlime_dead', collision: true, toolbox: false},
+
+	{key: 0x0A1A, src: 'frog/frog', collision: true, type: 'enemy'},
+	{key: 0x0A1B, src: 'frog/frog_move', collision: true, toolbox: false},
+	{key: 0x0A1C, src: 'frog/frog_dead', collision: true, toolbox: false},
+
+	{key: 0x0A20, src: 'snail/snail', frames: 2, collision: true, type: 'enemy'},
 ];

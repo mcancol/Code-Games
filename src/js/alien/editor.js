@@ -45,6 +45,20 @@ Editor.prototype.setup = function()
 
 
 /**
+ * Handle keyboard input, scroll on arrow keys
+ */
+Editor.prototype.update = function(input)
+{
+	if(input.keys[input.KEY_LEFT])
+		this.game.scroll.x -= 8;
+	if(input.keys[input.KEY_RIGHT])
+		this.game.scroll.x += 8;
+
+	if(this.game.scroll.x < 0)
+		this.game.scroll.x = 0;
+}
+
+/**
  * Change the currently active sprite
  *
  * @param {number} sprite - ID of sprite to make active
@@ -164,8 +178,6 @@ Editor.prototype.mouseMove = function(event)
 			var type = this.types[this.currentSprite];
 
 			var object = constructors[type]({ x: coords.x, y: coords.y, sprite: this.currentSprite});
-
-			console.log(object);
 
 			var object_name = this.generateName(type);
 			this.game.addObject(object_name, object);

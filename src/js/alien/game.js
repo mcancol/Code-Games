@@ -48,6 +48,9 @@ Game.prototype.draw = function(context)
   var width = this.engine.getWidth();
   var height = this.engine.getHeight()
 
+  //context.imageSmoothingEnabled = true;
+  //context.scale(0.25, 0.25);
+
   context.clearRect(0, 0, width, height);
   context.translate(-this.scroll.x, -this.scroll.y);
 
@@ -102,14 +105,6 @@ Game.prototype.updateTranslation = function()
 
 	// Do not use player to scroll in edit mode
 	if(this.editMode) {
-		if(input.keys[input.KEY_LEFT])
-			this.scroll.x -= 8;
-		if(input.keys[input.KEY_RIGHT])
-			this.scroll.x += 8;
-
-		if(this.scroll.x < 0)
-			this.scroll.x = 0;
-
 		return;
 	}
 

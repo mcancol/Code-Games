@@ -145,10 +145,10 @@ function LevelLoader(game)
   this.setLevelBounds = function(level)
   {
     this.game.setLevelBounds({
-      x: 32,
-      y: 32,
-      width: level.getWidth() * 32 - 64,
-      height: level.getHeight() * 32 - 64
+      x: spriteSize,
+      y: spriteSize,
+      width: (level.getWidth() - 2) * spriteSize,
+      height: (level.getHeight() - 2) * spriteSize
     });
   };
 
@@ -184,8 +184,8 @@ function upgradeLevelVersion1(data)
         data.objects.push({
           name: 'player_' + (i_player++),
           type: 'player',
-          x: x * 32,
-          y: y * 32 - 12
+          x: x * spriteSize,
+          y: y * spriteSize - 12
         });
 
         data.level[y][x] = 0;
@@ -197,7 +197,7 @@ function upgradeLevelVersion1(data)
           name: 'enemy_' + (i_enemy++),
           sprite: data.level[y][x],
           type: 'enemy',
-          x: x * 32, y: y * 32,
+          x: x * spriteSize, y: y * spriteSize,
           aggressionLevel: (data.level[y][x] == 0x0A03)?0:1
         });
 
@@ -211,7 +211,7 @@ function upgradeLevelVersion1(data)
     data.objects.push({
       name: 'player_0',
       type: 'player',
-      x: 32, y: 128
+      x: spriteSize, y: 4 * spriteSize
     });
   }
 
