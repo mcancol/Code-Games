@@ -159,13 +159,16 @@ Editor.prototype.mouseMove = function(event)
 			var type = this.types[this.currentSprite];
 
 			var object = constructors[type]({ x: coords.x, y: coords.y, sprite: this.currentSprite});
+
+			console.log(object);
+
 			var object_name = this.generateName(type);
 			this.game.addObject(object_name, object);
 		}
 	} else {
 
 		/**
-	 	 * Put the sprite into the level (FIXME: some objects e.g. player/ennemy need special care)
+	 	 * Put the (normal) sprite into the level
 	 	 */
 		coords.x = Math.floor(coords.x / 32);
 		coords.y = Math.floor(coords.y / 32);

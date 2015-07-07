@@ -122,7 +122,7 @@ function Bomb()
    */
   this.draw = function(context)
   {
-    this.parent.spriteManager.drawSprite(context, this, this.sprite);
+    this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
   }
 }
 

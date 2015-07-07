@@ -21,7 +21,7 @@ function Enemy()
   this.aggressionLevel = 0;
 
   this.sprite = 0;
-
+  this.frameCount = 1;
 
   /**
    * Serialize state to array
@@ -63,6 +63,8 @@ function Enemy()
     this.y = this.baseY;
 
     this.alive = true;
+
+    this.frameCount = this.parent.spriteManager.getFrameCount(this.sprite);
   }
 
 
@@ -207,7 +209,7 @@ function Enemy()
    */
   this.draw = function(context)
   {
-    var frame = Math.floor((this.getEngine().timestamp / 120) % 2);
+    var frame = Math.floor((this.getEngine().timestamp / 120) % this.frameCount);
 
     if(this.alive) {
       this.parent.spriteManager.drawSprite(context, this, this.sprite, frame);
