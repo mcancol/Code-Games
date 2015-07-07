@@ -113,10 +113,10 @@ Game.prototype.updateTranslation = function()
 		return;
 	}
 
-  if(!this.hasObject('player'))
+  if(!this.hasObject('player_1'))
     return;
 
-	var playerX = this.getObject('player').x;
+	var playerX = this.getObject('player_1').x;
 
 	if(width >= this.levelBounds.width) {
 		this.scroll.x = (width - this.levelBounds.width) / 2 - this.levelBounds.x;

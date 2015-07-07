@@ -24,6 +24,34 @@ function Enemy()
 
 
   /**
+   * Serialize state to array
+   */
+  this.toArray = function()
+  {
+    return {
+      'x': this.x,
+      'y': this.y,
+      'type': 'enemy',
+      'sprite': this.sprite,
+      'aggressionLevel': this.aggressionLevel
+    };
+  }
+
+
+  /**
+   * Unserialize state from array
+   */
+  this.fromArray = function(array)
+  {
+    if('aggressionLevel' in array)
+      this.setAggressionLevel(array.aggressionLevel);
+
+    this.setStartingPosition(array.x, array.y);
+    this.setBaseSprite(array.sprite);
+  }
+
+
+  /**
    * Setups the enemy at the start of the game
    */
   this.setup = function()
@@ -50,10 +78,10 @@ function Enemy()
 
 
   /**
-	 * Update stating position of the player
+	 * Update stating position of the enemy
 	 *
-	 * @param {number} x - X coordinate of player starting location
-   * @param {number} y - Y coordinate of player starting location
+	 * @param {number} x - X coordinate of enemy starting location
+   * @param {number} y - Y coordinate of enemy starting location
    */
 	this.setStartingPosition = function(x, y)
 	{
@@ -76,7 +104,7 @@ function Enemy()
    */
   this.updateHunting = function()
   {
-    var player = this.parent.getObject("player");
+    var player = this.parent.getObject("player_1");
 
     var player_underneath =
       player.x + player.width / 2 >= this.x &&

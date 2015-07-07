@@ -33,8 +33,21 @@ function LevelLoader(game)
           this.setLevelBounds(level);
           this.game.addObject('level', level);
 
-          this.setupPlayers(data.players);
-          this.setupEnemies(data.enemies);
+          for(var i = 0; i < data.objects.length; i++) {
+            var object = data.objects[i];
+
+            if(!object.type in constructors)
+              throw new Error("Invalid type: " + object.type);
+
+            var constructor = constructors[object.type];
+
+            if(!constructor) {
+              console.log("Skipping object: ", object);
+              continue;
+            }
+
+            this.game.addObject(object.name, constructor(object));
+          }
 
           resolve();
         }.bind(this),
@@ -46,41 +59,30 @@ function LevelLoader(game)
   }
 
 
-  /**
-   * Construct enemies and add them to the game
-   *
-   * @param {Array} enemies - List of enemies to setup
-   */
-  this.setupEnemies = function(enemies)
+  this.saveLevel = function(name)
   {
-    var spriteManager = this.game.spriteManager;
+    var data = {
+        'version': 2,
+        'level': null,
+        'objects': []
+      };
 
-    for(var i = 0; i < enemies.length; i++) {
-      var enemy = new Enemy();
+    var names = this.game.getObjectNames();
 
-      enemy.setStartingPosition(enemies[i].x, enemies[i].y);
-      enemy.setBaseSprite(enemies[i].type);
+    for(var i = 0; i < names.length; i++) {
+      var object = this.game.getObject(names[i]);
+      var array = object.toArray();
 
-      if(enemies[i].type == this.Sprite_Enemy_Bee)
-        enemy.setAggressionLevel(0);
-      else
-        enemy.setAggressionLevel(1);
+      if(names[i] == 'level') {
+        data.level = array;
+        continue;
+      }
 
-      this.game.addObject(enemy.name, enemy);
+      array.name = names[i];
+      data.objects.push( array );
     }
-  }
 
-
-  /**
-   * Create player objects
-   *
-   * @param {Array} players - List of players to setup
-   */
-  this.setupPlayers = function(players)
-  {
-    var player = new Player();
-    player.setStartingPosition(players[0].x, players[0].y);
-    this.game.addObject(players[0].name, player);
+    return this.saveLevelToServer(name, data);
   }
 
 
@@ -106,6 +108,31 @@ function LevelLoader(game)
   			resolve(data);
   		}).fail(function(response) {
         console.log("LevelLoader.getLevelFromServer() failed " + response);
+  			reject(response.responseText);
+  		});
+  	});
+  };
+
+
+  /**
+  * Save the level to the server
+  *
+  * @param {String} name - Name of the level to save
+  */
+  this.saveLevelToServer = function(name, level)
+  {
+  	return new Promise(function(resolve, reject) {
+  		if(typeof(server) == 'undefined' || !server)
+  			reject();
+
+  		jQuery.ajax({
+  			url: server + "ldb/set_level.php?name=" + name,
+  			data: JSON.stringify(level),
+  			contentType: 'text/plain',
+  			method: 'POST'
+  		}).done(function(data) {
+  			resolve();
+  		}.bind(level)).fail(function(response) {
   			reject(response.responseText);
   		});
   	});
@@ -139,8 +166,7 @@ function upgradeLevelVersion1(data)
   data = {
     'version': 2,
     'level': data,
-    'players': [],
-    'enemies': []
+    'objects': [],
   };
 
   /**
@@ -155,21 +181,39 @@ function upgradeLevelVersion1(data)
 
       // Extract location of player objects
       if(data.level[y][x] == 2) {
-        data.players.push({ x: x * 32, y: y * 32 - 12, name: 'player_' + (i_player++) });
+        data.objects.push({
+          name: 'player_' + (i_player++),
+          type: 'player',
+          x: x * 32,
+          y: y * 32 - 12
+        });
+
         data.level[y][x] = 0;
       }
 
       // Extract location of enemy objects
       if(isEnemy(data.level[y][x])) {
-        data.enemies.push({ type: data.level[y][x], x: x * 32, y: y * 32, name: 'enemy_' + (i_enemy++) });
+        data.objects.push({
+          name: 'enemy_' + (i_enemy++),
+          sprite: data.level[y][x],
+          type: 'enemy',
+          x: x * 32, y: y * 32,
+          aggressionLevel: (data.level[y][x] == 0x0A03)?0:1
+        });
+
         data.level[y][x] = 0;
       }
     }
   }
 
   // Add default player if none are found
-  if(data.players.length == 0)
-    data.players.push({ x: 32, y: 128 });
+  if(i_player == 0) {
+    data.objects.push({
+      name: 'player_0',
+      type: 'player',
+      x: 32, y: 128
+    });
+  }
 
   return data;
 };

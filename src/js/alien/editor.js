@@ -19,11 +19,11 @@ function Editor(game)
 
 	this.setupDone = false;
 
-	this.constructors = [];
+	this.types = {};
 	for(var i = 0; i < spriteTable.length; i++) {
-		if('construct' in spriteTable[i]) {
+		if('type' in spriteTable[i]) {
 			var key = spriteTable[i].key;
-			this.constructors[key] = spriteTable[i].construct;
+			this.types[key] = spriteTable[i].type;
 		}
 	}
 }
@@ -154,10 +154,12 @@ Editor.prototype.mouseMove = function(event)
 	if(event.detail.down)
 		this.selectedObject = false;
 
-	if(this.currentSprite in this.constructors) {
+	if(this.currentSprite in this.types) {
 		if(event.detail.down && event.detail.buttons & 1) {
-			var object = this.constructors[this.currentSprite](coords.x, coords.y);
-			var object_name = this.generateName("enemy");
+			var type = this.types[this.currentSprite];
+
+			var object = constructors[type]({ x: coords.x, y: coords.y, sprite: this.currentSprite});
+			var object_name = this.generateName(type);
 			this.game.addObject(object_name, object);
 		}
 	} else {

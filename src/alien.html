@@ -65,9 +65,7 @@
 
 				$("#status").html("Saving level, please wait...");
 
-				editor.game
-					.getObject("level")
-					.saveLevel(level_name)
+				loader.saveLevel(level_name)
 					.then(
 						function() { $("#status").html("Level saved..."); },
 						function(error) { $("#status").html("Error saving level: " + error); }
@@ -234,7 +232,7 @@
 				var main = game;
 
 				if(editMode) {
-					var editor = new Editor(game);
+					editor = new Editor(game);
 					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
 
 					main = editor;

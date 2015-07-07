@@ -36,6 +36,18 @@ function Level(levelMap)
 	}
 
 
+	this.fromArray = function(array)
+	{
+		this.levelMap = array;
+	}
+
+
+	this.toArray = function()
+	{
+		return this.levelMap;
+	}
+
+
 	this.update = function(input)
 	{
 	}
@@ -326,29 +338,4 @@ Level.prototype.setSprite = function(coords, sprite)
 	this.levelMap[coords.y][coords.x] = sprite;
 
 	this.cacheLevelGeometry();
-}
-
-
-/**
-* Save the level to the server
-*/
-Level.prototype.saveLevel = function(name)
-{
-	var level = this;
-
-	return new Promise(function(resolve, reject) {
-		if(typeof(server) == 'undefined' || !server)
-			reject();
-
-		jQuery.ajax({
-			url: server + "ldb/set_level.php?name=" + name,
-			data: JSON.stringify(level.levelMap),
-			contentType: 'text/plain',
-			method: 'POST'
-		}).done(function(data) {
-			resolve();
-		}.bind(level)).fail(function(response) {
-			reject(response.responseText);
-		});
-	});
 }

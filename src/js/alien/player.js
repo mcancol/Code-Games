@@ -68,6 +68,28 @@ function Player()
 
 
 	/**
+   * Serialize state to array
+   */
+  this.toArray = function()
+  {
+    return {
+      'x': this.x,
+      'y': this.y,
+			'type': 'player'
+    };
+  }
+
+
+  /**
+   * Unserialize state from array
+   */
+  this.fromArray = function(array)
+  {
+    this.setStartingPosition(array.x, array.y);
+  }
+
+
+	/**
 	 * Terminates the player
 	 *
 	 * @param {String} Reason the player was killed

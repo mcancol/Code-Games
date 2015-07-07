@@ -27,9 +27,24 @@ function isEnemy(sprite)
 }
 
 
+var constructors = {
+	'enemy': function(array) {
+		var enemy = new Enemy();
+		enemy.fromArray(array);
+		return enemy;
+	},
+
+	'player': function(array) {
+		var player = new Player();
+		player.fromArray(array);
+		return player;
+	}
+};
+
+
 var spriteTable = [
 	{key: 0x0001, src: 'clipping', collision: true},
-	{key: 0x0002, src: 'sara/idle/r/1', collision: false},
+	{key: 0x0002, src: 'sara/idle/r/1', collision: false, type: 'player'},
 
 	/* Grass */
 	{key: 0x0101, src: 'grass/grassLeft', collision: true},
@@ -150,25 +165,18 @@ var spriteTable = [
 	{key: 0x0904, src: 'numbers/4', collision: true},
 	{key: 0x0905, src: 'numbers/5', collision: true},
 
-	{key: 0x0A00, src: 'fly/fly', frames: 2, collision: 'Fly', construct: function(x, y) {
-		var enemy = new Enemy();
-		enemy.setStartingPosition(x, y);
-		enemy.setBaseSprite(0x0A00);
-		return enemy;
-	}},
+	{key: 0x0A00, src: 'fly/fly', frames: 2, collision: 'Fly', type: 'enemy'},
 
 	{key: 0x0A01, src: 'fly/fly_dead', collision: true, toolbox: false},
 
-	{key: 0x0A03, src: 'bee/bee', frames: 2, collision: 'Bee'},
+	{key: 0x0A03, src: 'bee/bee', frames: 2, collision: 'Bee', type: 'enemy'},
 	{key: 0x0A04, src: 'bee/bee_dead', collision: true, toolbox: false},
 
-	{key: 0x0A06, src: 'bat/bat', frames: 2, collision: 'Bat'},
+	{key: 0x0A06, src: 'bat/bat', frames: 2, collision: 'Bat', type: 'enemy'},
 	{key: 0x0A07, src: 'bat/bat_dead', collision: true, toolbox: false},
 	{key: 0x0A08, src: 'bat/bat_hang', collision: true, toolbox: false},
 
-	{key: 0x0A0A, src: 'bug/ladybug', collision: true},
+	{key: 0x0A0A, src: 'bug/ladybug', collision: true, type: 'enemy'},
 	{key: 0x0A0B, src: 'bug/ladybug_move', collision: true, toolbox: false},
 	{key: 0x0A0C, src: 'bug/ladybug_fly', collision: true, toolbox: false},
-
-
 ];
