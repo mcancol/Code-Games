@@ -75,6 +75,32 @@ Editor.prototype.draw = function(context)
 
 
 /**
+ * Generate unique name for new object given a base name
+ *
+ * @param {String} base - Initial part of the name
+ * @return {String} Unique identifier that contains the base name
+ */
+Editor.prototype.generateName = function(base)
+{
+	var keys = this.game.getObjectNames();
+	var max_i = 0;
+
+	for(var i = 0; i < keys.length; i++) {
+		var first = keys[i].slice(0, base.length + 1);
+
+		if(first == base + "_") {
+			var last = parseInt(keys[i].slice(base.length + 1));
+
+			if(last > max_i)
+				max_i = last;
+		}
+	}
+
+	return base + "_" + (max_i + 1);
+}
+
+
+/**
  * Called on mouse movement, paints active sprite when
  * moving the mouse while holding the left button. Removes
  * the sprite when moving the mouse while holding the right button.
@@ -131,7 +157,8 @@ Editor.prototype.mouseMove = function(event)
 	if(this.currentSprite in this.constructors) {
 		if(event.detail.down && event.detail.buttons & 1) {
 			var object = this.constructors[this.currentSprite](coords.x, coords.y);
-			this.game.addObject("object", object);
+			var object_name = this.generateName("enemy");
+			this.game.addObject(object_name, object);
 		}
 	} else {
 

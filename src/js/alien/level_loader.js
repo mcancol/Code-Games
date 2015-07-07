@@ -66,7 +66,7 @@ function LevelLoader(game)
       else
         enemy.setAggressionLevel(1);
 
-      this.game.addObject('enemy_' + i, enemy);
+      this.game.addObject(enemy.name, enemy);
     }
   }
 
@@ -80,7 +80,7 @@ function LevelLoader(game)
   {
     var player = new Player();
     player.setStartingPosition(players[0].x, players[0].y);
-    this.game.addObject('player', player);
+    this.game.addObject(players[0].name, player);
   }
 
 
@@ -147,18 +147,21 @@ function upgradeLevelVersion1(data)
    * Scans the level for special items, such as the player and enemies,
    * adds them to a list and removes them from the level.
    */
+  var i_player = 0;
+  var i_enemy = 0;
+
   for(var x = 0; x < data.level[0].length; x++) {
     for(var y = 0; y < data.level.length; y++) {
 
       // Extract location of player objects
       if(data.level[y][x] == 2) {
-        data.players.push({ x: x * 32, y: y * 32 - 12 });
+        data.players.push({ x: x * 32, y: y * 32 - 12, name: 'player_' + (i_player++) });
         data.level[y][x] = 0;
       }
 
       // Extract location of enemy objects
       if(isEnemy(data.level[y][x])) {
-        data.enemies.push({ type: data.level[y][x], x: x * 32, y: y * 32 });
+        data.enemies.push({ type: data.level[y][x], x: x * 32, y: y * 32, name: 'enemy_' + (i_enemy++) });
         data.level[y][x] = 0;
       }
     }
