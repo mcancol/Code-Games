@@ -14,8 +14,12 @@ function BaseObject()
 }
 
 
-BaseObject.prototype.setup = function()
+/**
+ * Reset object to its initiail state
+ */
+BaseObject.prototype.reset = function()
 {
+  this.resetChildren();
 }
 
 
@@ -77,7 +81,7 @@ BaseObject.prototype.addObject = function(name, object)
 {
 	object.parent = this;
 	this.objects[name] = object;
-	this.objects[name].setup();
+	this.objects[name].reset();
 };
 
 
@@ -124,6 +128,15 @@ BaseObject.prototype.deleteAllObjects = function()
 	this.objects = {};
 };
 
+
+/**
+ * Reset state of child objects.
+ */
+BaseObject.prototype.resetChildren = function()
+{
+  for(var key in this.objects)
+    this.objects[key].reset();
+};
 
 
 /**

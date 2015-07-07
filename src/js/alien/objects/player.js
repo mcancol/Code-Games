@@ -26,7 +26,7 @@ function Player()
 	this.events = [];
 
 
-	this.setup = function()
+	this.reset = function()
 	{
 		this.engine = this.getEngine();
 

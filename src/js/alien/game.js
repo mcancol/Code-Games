@@ -25,10 +25,10 @@ function Game()
 Game.prototype = new BaseObject();
 
 
-Game.prototype.setup = function()
+Game.prototype.reset = function()
 {
-  console.log("Setup");
-  this.scroll = {x: 0, y: 0};
+  this.scroll = {x: 0, y: 0};  
+  this.resetChildren();
 }
 
 
@@ -76,8 +76,7 @@ Game.prototype.setLevelBounds = function(bounds)
 Game.prototype.gameover = function()
 {
   // Reset all objects to their default states
-  for(var key in this.objects)
-    this.objects[key].setup();
+  this.reset();
 }
 
 

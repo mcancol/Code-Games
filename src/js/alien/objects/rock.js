@@ -48,7 +48,7 @@ function Rock()
   /**
    * Setups the enemy at the start of the game
    */
-  this.setup = function()
+  this.reset = function()
   {
     this.x = this.baseX;
     this.y = this.baseY;

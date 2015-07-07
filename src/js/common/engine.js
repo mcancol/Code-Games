@@ -33,7 +33,7 @@ function Engine()
 		window.requestAnimationFrame(this.update.bind(this));
 
 		//this.game.initialize();
-		this.game.setup();
+		this.game.reset();
 	}
 }
 

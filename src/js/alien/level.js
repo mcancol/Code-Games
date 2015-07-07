@@ -24,7 +24,7 @@ function Level(levelMap)
 	this.lines = [];
 
 
-	this.setup = function()
+	this.reset = function()
 	{
 		for(var i = 0; i < spriteTable.length; i++) {
 			var key = spriteTable[i]['key'];

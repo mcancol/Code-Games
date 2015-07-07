@@ -48,7 +48,7 @@ function Worm()
   /**
    * Setups the worm at the start of the game
    */
-  this.setup = function()
+  this.reset = function()
   {
     this.x = this.baseX;
     this.y = this.baseY;
@@ -110,6 +110,8 @@ function Worm()
 
     this.velY += this.gravity;
     this.y += this.velY;
+
+    // Check for hits with player
   }
 
 

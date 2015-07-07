@@ -201,7 +201,7 @@ var spriteTable = [
 	{key: 0x0A0E, src: 'worm/wormGreen', frames: 2, collision: true, type: 'worm'},
 	{key: 0x0A0F, src: 'worm/wormGreen_dead', collision: true, toolbox: false},
 
-	{key: 0x0A10, src: 'slime/snakeSlime', collision: true},
+	{key: 0x0A10, src: 'slime/snakeSlime', collision: true, toolbox: false},
 	{key: 0x0A11, src: 'slime/snakeSlime_ani', collision: true, toolbox: false},
 	{key: 0x0A12, src: 'slime/snakeSlime_dead', collision: true, toolbox: false},
 

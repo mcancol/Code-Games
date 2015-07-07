@@ -54,7 +54,7 @@ function Enemy()
   /**
    * Setups the enemy at the start of the game
    */
-  this.setup = function()
+  this.reset = function()
   {
     this.targetX = this.baseX;
     this.targetY = this.baseY;
