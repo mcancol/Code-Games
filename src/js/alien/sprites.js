@@ -38,6 +38,12 @@ var constructors = {
 		var player = new Player();
 		player.fromArray(array);
 		return player;
+	},
+
+	'bomb': function(array) {
+		var bomb = new Bomb();
+		bomb.fromArray(array);
+		return bomb;
 	}
 };
 
@@ -152,7 +158,7 @@ var spriteTable = [
 	{key: 0x0601, src: 'cloud1-left', collision: true},
 	{key: 0x0602, src: 'cloud1-right', collision: true},
 
-	{key: 0x0701, src: 'bomb', collision: true},
+	{key: 0x0701, src: 'bomb', collision: true, type: 'bomb'},
 	{key: 0x0702, src: 'rock', collision: true},
 	{key: 0x0703, src: 'weight', collision: true},
 	{key: 0x0704, src: 'switchRight', collision: false},
