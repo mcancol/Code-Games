@@ -138,10 +138,15 @@ Editor.prototype.mouseMove = function(event)
 
 			if(inBox(coords.x, coords.y, object)) {
 				this.selectedObject = object;
-				this.dragging = true;
 
-				this.offset.x = coords.x - object.x;
-				this.offset.y = coords.y - object.y;
+				if(event.detail.buttons & 1) {
+					this.dragging = true;
+
+					this.offset.x = coords.x - object.x;
+					this.offset.y = coords.y - object.y;
+				} else if(event.detail.buttons & 2) {
+					this.game.deleteObject(keys[i]);
+				}
 
 				return;
 			}
