@@ -10,8 +10,8 @@
  */
 function isSlippery(sprite)
 {
-	return (sprite >= 288 && sprite <= 303) ||	// Snow
-			   (sprite >= 304 && sprite <= 319);		// Planet
+	return (sprite >= 0x0120 && sprite <= 0x012F) ||	// Snow
+			   (sprite >= 0x0130 && sprite <= 0x013F);		// Planet
 }
 
 
@@ -23,146 +23,152 @@ function isSlippery(sprite)
  */
 function isEnemy(sprite)
 {
-	return sprite >= 2560 && sprite <= 2816;
+	return sprite >= 0x0A00 && sprite <= 0x0B00;
 }
 
 
 var spriteTable = [
-	{key: [0, 1], src: 'clipping', collision: true},
-	{key: [0, 2], src: 'sara/idle/r/1', collision: false},
+	{key: 0x0001, src: 'clipping', collision: true},
+	{key: 0x0002, src: 'sara/idle/r/1', collision: false},
 
 	/* Grass */
-	{key: [1, 1], src: 'grass/grassLeft', collision: true},
-	{key: [1, 2], src: 'grass/grassMid', collision: true},
-	{key: [1, 3], src: 'grass/grassRight', collision: true},
-	{key: [1, 4], src: 'grass/grassCenter', collision: true},
-	{key: [1, 5], src: 'grass/grassCliff_left', collision: true},
-	{key: [1, 6], src: 'grass/grassCliff_right', collision: true},
-	{key: [1, 7], src: 'grass/grassCliffAlt_left', collision: true},
-	{key: [1, 8], src: 'grass/grassCliffAlt_right', collision: true},
-	{key: [1, 9], src: 'grass/grassCorner_left', collision: true},
-	{key: [1, 10], src: 'grass/grassCorner_right', collision: true},
-	{key: [1, 11], src: 'grass/grassHill_left', collision: 'hillUp'},
-	{key: [1, 12], src: 'grass/grassHill_right', collision: 'hillDown'},
-	{key: [1, 13], src: 'grass/grassHalf', collision: 'topHalf'},
-	{key: [1, 14], src: 'grass/grassHalf_left', collision: 'topHalf'},
-	{key: [1, 15], src: 'grass/grassHalf_mid', collision: 'topHalf'},
-	{key: [1, 16], src: 'grass/grassHalf_right', collision: 'topHalf'},
+	{key: 0x0101, src: 'grass/grassLeft', collision: true},
+	{key: 0x0102, src: 'grass/grassMid', collision: true},
+	{key: 0x0103, src: 'grass/grassRight', collision: true},
+	{key: 0x0104, src: 'grass/grassCenter', collision: true},
+	{key: 0x0105, src: 'grass/grassCliff_left', collision: true},
+	{key: 0x0106, src: 'grass/grassCliff_right', collision: true},
+	{key: 0x0107, src: 'grass/grassCliffAlt_left', collision: true},
+	{key: 0x0108, src: 'grass/grassCliffAlt_right', collision: true},
+	{key: 0x0109, src: 'grass/grassCorner_left', collision: true},
+	{key: 0x010A, src: 'grass/grassCorner_right', collision: true},
+	{key: 0x010B, src: 'grass/grassHill_left', collision: 'hillUp'},
+	{key: 0x010C, src: 'grass/grassHill_right', collision: 'hillDown'},
+	{key: 0x010D, src: 'grass/grassHalf', collision: 'topHalf'},
+	{key: 0x010E, src: 'grass/grassHalf_left', collision: 'topHalf'},
+	{key: 0x010F, src: 'grass/grassHalf_mid', collision: 'topHalf'},
+	{key: 0x0110, src: 'grass/grassHalf_right', collision: 'topHalf'},
 
 
 	/* Snow */
-	{key: [1, 32], src: 'snow/snowLeft', collision: true},
-	{key: [1, 33], src: 'snow/snowMid', collision: true},
-	{key: [1, 34], src: 'snow/snowRight', collision: true},
-	{key: [1, 35], src: 'snow/snowCenter', collision: true},
-	{key: [1, 36], src: 'snow/snowCliff_left', collision: true},
-	{key: [1, 37], src: 'snow/snowCliff_right', collision: true},
-	{key: [1, 38], src: 'snow/snowCliffAlt_left', collision: true},
-	{key: [1, 39], src: 'snow/snowCliffAlt_right', collision: true},
-	{key: [1, 40], src: 'snow/snowCorner_left', collision: true},
-	{key: [1, 41], src: 'snow/snowCorner_right', collision: true},
-	{key: [1, 42], src: 'snow/snowHill_left', collision: 'hillUp'},
-	{key: [1, 43], src: 'snow/snowHill_right', collision: 'hillDown'},
-	{key: [1, 44], src: 'snow/snowHalf', collision: 'topHalf'},
-	{key: [1, 45], src: 'snow/snowHalf_left', collision: 'topHalf'},
-	{key: [1, 46], src: 'snow/snowHalf_mid', collision: 'topHalf'},
-	{key: [1, 47], src: 'snow/snowHalf_right', collision: 'topHalf'},
+	{key: 0x0120, src: 'snow/snowLeft', collision: true},
+	{key: 0x0121, src: 'snow/snowMid', collision: true},
+	{key: 0x0122, src: 'snow/snowRight', collision: true},
+	{key: 0x0123, src: 'snow/snowCenter', collision: true},
+	{key: 0x0124, src: 'snow/snowCliff_left', collision: true},
+	{key: 0x0125, src: 'snow/snowCliff_right', collision: true},
+	{key: 0x0126, src: 'snow/snowCliffAlt_left', collision: true},
+	{key: 0x0127, src: 'snow/snowCliffAlt_right', collision: true},
+	{key: 0x0128, src: 'snow/snowCorner_left', collision: true},
+	{key: 0x0129, src: 'snow/snowCorner_right', collision: true},
+	{key: 0x012A, src: 'snow/snowHill_left', collision: 'hillUp'},
+	{key: 0x012B, src: 'snow/snowHill_right', collision: 'hillDown'},
+	{key: 0x012C, src: 'snow/snowHalf', collision: 'topHalf'},
+	{key: 0x012D, src: 'snow/snowHalf_left', collision: 'topHalf'},
+	{key: 0x012E, src: 'snow/snowHalf_mid', collision: 'topHalf'},
+	{key: 0x012F, src: 'snow/snowHalf_right', collision: 'topHalf'},
 
 
 	/* Planet */
-	{key: [1, 48], src: 'planet/planetLeft', collision: true},
-	{key: [1, 49], src: 'planet/planetMid', collision: true},
-	{key: [1, 50], src: 'planet/planetRight', collision: true},
-	{key: [1, 51], src: 'planet/planetCenter', collision: true},
-	{key: [1, 52], src: 'planet/planetCliff_left', collision: true},
-	{key: [1, 53], src: 'planet/planetCliff_right', collision: true},
-	{key: [1, 54], src: 'planet/planetCliffAlt_left', collision: true},
-	{key: [1, 55], src: 'planet/planetCliffAlt_right', collision: true},
-	{key: [1, 56], src: 'planet/planetCorner_left', collision: true},
-	{key: [1, 57], src: 'planet/planetCorner_right', collision: true},
-	{key: [1, 58], src: 'planet/planetHill_left', collision: 'hillUp'},
-	{key: [1, 59], src: 'planet/planetHill_right', collision: 'hillDown'},
-	{key: [1, 60], src: 'planet/planetHalf', collision: 'topHalf'},
-	{key: [1, 61], src: 'planet/planetHalf_left', collision: 'topHalf'},
-	{key: [1, 62], src: 'planet/planetHalf_mid', collision: 'topHalf'},
-	{key: [1, 63], src: 'planet/planetHalf_right', collision: 'topHalf'},
+	{key: 0x0130, src: 'planet/planetLeft', collision: true},
+	{key: 0x0131, src: 'planet/planetMid', collision: true},
+	{key: 0x0132, src: 'planet/planetRight', collision: true},
+	{key: 0x0133, src: 'planet/planetCenter', collision: true},
+	{key: 0x0134, src: 'planet/planetCliff_left', collision: true},
+	{key: 0x0135, src: 'planet/planetCliff_right', collision: true},
+	{key: 0x0136, src: 'planet/planetCliffAlt_left', collision: true},
+	{key: 0x0137, src: 'planet/planetCliffAlt_right', collision: true},
+	{key: 0x0138, src: 'planet/planetCorner_left', collision: true},
+	{key: 0x0139, src: 'planet/planetCorner_right', collision: true},
+	{key: 0x013A, src: 'planet/planetHill_left', collision: 'hillUp'},
+	{key: 0x013B, src: 'planet/planetHill_right', collision: 'hillDown'},
+	{key: 0x013C, src: 'planet/planetHalf', collision: 'topHalf'},
+	{key: 0x013D, src: 'planet/planetHalf_left', collision: 'topHalf'},
+	{key: 0x013E, src: 'planet/planetHalf_mid', collision: 'topHalf'},
+	{key: 0x013F, src: 'planet/planetHalf_right', collision: 'topHalf'},
 
 
 	/* Sand */
-	{key: [1, 64], src: 'sand/sandLeft', collision: true},
-	{key: [1, 65], src: 'sand/sandMid', collision: true},
-	{key: [1, 66], src: 'sand/sandRight', collision: true},
-	{key: [1, 67], src: 'sand/sandCenter', collision: true},
-	{key: [1, 68], src: 'sand/sandCliffLeft', collision: true},
-	{key: [1, 69], src: 'sand/sandCliffRight', collision: true},
-	{key: [1, 70], src: 'sand/sandCliffLeftAlt', collision: true},
-	{key: [1, 71], src: 'sand/sandCliffRightAlt', collision: true},
-	{key: [1, 72], src: 'sand/sandHillLeft2', collision: true},
-	{key: [1, 73], src: 'sand/sandHillRight2', collision: true},
-	{key: [1, 74], src: 'sand/sandHillLeft', collision: 'hillUp'},
-	{key: [1, 75], src: 'sand/sandHillRight', collision: 'hillDown'},
-	{key: [1, 76], src: 'sand/sandHalf', collision: 'topHalf'},
-	{key: [1, 77], src: 'sand/sandHalfLeft', collision: 'topHalf'},
-	{key: [1, 78], src: 'sand/sandHalfMid', collision: 'topHalf'},
-	{key: [1, 79], src: 'sand/sandHalfRight', collision: 'topHalf'},
+	{key: 0x0140, src: 'sand/sandLeft', collision: true},
+	{key: 0x0141, src: 'sand/sandMid', collision: true},
+	{key: 0x0142, src: 'sand/sandRight', collision: true},
+	{key: 0x0143, src: 'sand/sandCenter', collision: true},
+	{key: 0x0144, src: 'sand/sandCliffLeft', collision: true},
+	{key: 0x0145, src: 'sand/sandCliffRight', collision: true},
+	{key: 0x0146, src: 'sand/sandCliffLeftAlt', collision: true},
+	{key: 0x0147, src: 'sand/sandCliffRightAlt', collision: true},
+	{key: 0x0148, src: 'sand/sandHillLeft2', collision: true},
+	{key: 0x0149, src: 'sand/sandHillRight2', collision: true},
+	{key: 0x014A, src: 'sand/sandHillLeft', collision: 'hillUp'},
+	{key: 0x014B, src: 'sand/sandHillRight', collision: 'hillDown'},
+	{key: 0x014C, src: 'sand/sandHalf', collision: 'topHalf'},
+	{key: 0x014D, src: 'sand/sandHalfLeft', collision: 'topHalf'},
+	{key: 0x014E, src: 'sand/sandHalfMid', collision: 'topHalf'},
+	{key: 0x014F, src: 'sand/sandHalfRight', collision: 'topHalf'},
 
 
-	{key: [1, 20], src: 'metalCenter', collision: true},
+	{key: 0x0114, src: 'metalCenter', collision: true},
 
-	{key: [2, 4], src: 'water/no_waves_top', frames: 7, collision: 'water'},
-	{key: [2, 6], src: 'water/no_waves_body', frames: 7, collision: 'waterBody'},
+	{key: 0x0204, src: 'water/no_waves_top', frames: 7, collision: 'water'},
+	{key: 0x0206, src: 'water/no_waves_body', frames: 7, collision: 'waterBody'},
 
-	{key: [2, 1], src: 'water/normal_waves_top', frames: 6, collision: 'water'},
-	{key: [2, 2], src: 'water/normal_waves_body', frames: 6, collision: 'waterBody'},
+	{key: 0x0201, src: 'water/normal_waves_top', frames: 6, collision: 'water'},
+	{key: 0x0202, src: 'water/normal_waves_body', frames: 6, collision: 'waterBody'},
 
-	{key: [2, 3], src: 'water/big_waves_top', frames: 3, collision: 'water'},
-	{key: [2, 5], src: 'water/big_waves_body', frames: 3, collision: 'waterBody'},
+	{key: 0x0203, src: 'water/big_waves_top', frames: 3, collision: 'water'},
+	{key: 0x0205, src: 'water/big_waves_body', frames: 3, collision: 'waterBody'},
 
-	{key: [3, 1], src: 'plant', collision: false},
-	{key: [3, 2], src: 'pineSapling', collision: false},
-	{key: [3, 3], src: 'pineSaplingAlt', collision: false},
-	{key: [3, 4], src: 'cactus', collision: false},
+	{key: 0x0301, src: 'plant', collision: false},
+	{key: 0x0302, src: 'pineSapling', collision: false},
+	{key: 0x0303, src: 'pineSaplingAlt', collision: false},
+	{key: 0x0304, src: 'cactus', collision: false},
 
-	{key: [4, 1], src: 'spikes', collision: 'water'},
-	{key: [4, 2], src: 'doorOpen', collision: 'Door'},
-	{key: [4, 3], src: 'doorOpenTop', collision: false},
+	{key: 0x0401, src: 'spikes', collision: 'water'},
+	{key: 0x0402, src: 'doorOpen', collision: 'Door'},
+	{key: 0x0403, src: 'doorOpenTop', collision: false},
 
-	{key: [4, 4], src: 'springboardDown', collision: 'boardDown'},
-	{key: [4, 5], src: 'springboardUp', collision: 'boardUp'},
+	{key: 0x0404, src: 'springboardDown', collision: 'boardDown'},
+	{key: 0x0405, src: 'springboardUp', collision: 'boardUp'},
 
 
-	{key: [5, 4], src: 'signRight', collision: false},
-	{key: [5, 5], src: 'signExit', collision: 'exit'},
+	{key: 0x0504, src: 'signRight', collision: false},
+	{key: 0x0505, src: 'signExit', collision: 'exit'},
 
-	{key: [6, 1], src: 'cloud1-left', collision: true},
-	{key: [6, 2], src: 'cloud1-right', collision: true},
+	{key: 0x0601, src: 'cloud1-left', collision: true},
+	{key: 0x0602, src: 'cloud1-right', collision: true},
 
-	{key: [7, 1], src: 'bomb', collision: true},
-	{key: [7, 2], src: 'rock', collision: true},
-	{key: [7, 3], src: 'weight', collision: true},
-	{key: [7, 4], src: 'switchRight', collision: false},
-	{key: [7, 5], src: 'switchMid', collision: false},
-	{key: [7, 6], src: 'switchLeft', collision: false},
+	{key: 0x0701, src: 'bomb', collision: true},
+	{key: 0x0702, src: 'rock', collision: true},
+	{key: 0x0703, src: 'weight', collision: true},
+	{key: 0x0704, src: 'switchRight', collision: false},
+	{key: 0x0705, src: 'switchMid', collision: false},
+	{key: 0x0706, src: 'switchLeft', collision: false},
 
-	{key: [9, 1], src: 'numbers/1', collision: true},
-	{key: [9, 2], src: 'numbers/2', collision: true},
-	{key: [9, 3], src: 'numbers/3', collision: true},
-	{key: [9, 4], src: 'numbers/4', collision: true},
-	{key: [9, 5], src: 'numbers/5', collision: true},
+	{key: 0x0901, src: 'numbers/1', collision: true},
+	{key: 0x0902, src: 'numbers/2', collision: true},
+	{key: 0x0903, src: 'numbers/3', collision: true},
+	{key: 0x0904, src: 'numbers/4', collision: true},
+	{key: 0x0905, src: 'numbers/5', collision: true},
 
-	{key: [10, 0], src: 'fly/fly', frames: 2, collision: 'Fly'},
-	{key: [10, 1], src: 'fly/fly_dead', collision: true, toolbox: false},
+	{key: 0x0A00, src: 'fly/fly', frames: 2, collision: 'Fly', construct: function(x, y) {
+		var enemy = new Enemy();
+		enemy.setStartingPosition(x, y);
+		enemy.setBaseSprite(0x0A00);
+		return enemy;
+	}},
 
-	{key: [10, 3], src: 'bee/bee', frames: 2, collision: 'Bee'},
-	{key: [10, 4], src: 'bee/bee_dead', collision: true, toolbox: false},
+	{key: 0x0A01, src: 'fly/fly_dead', collision: true, toolbox: false},
 
-	{key: [10, 6], src: 'bat/bat', frames: 2, collision: 'Bat'},
-	{key: [10, 7], src: 'bat/bat_dead', collision: true, toolbox: false},
-	{key: [10, 8], src: 'bat/bat_hang', collision: true, toolbox: false},
+	{key: 0x0A03, src: 'bee/bee', frames: 2, collision: 'Bee'},
+	{key: 0x0A04, src: 'bee/bee_dead', collision: true, toolbox: false},
 
-	{key: [10, 10], src: 'bug/ladybug', collision: true},
-	{key: [10, 11], src: 'bug/ladybug_move', collision: true, toolbox: false},
-	{key: [10, 12], src: 'bug/ladybug_fly', collision: true, toolbox: false},
+	{key: 0x0A06, src: 'bat/bat', frames: 2, collision: 'Bat'},
+	{key: 0x0A07, src: 'bat/bat_dead', collision: true, toolbox: false},
+	{key: 0x0A08, src: 'bat/bat_hang', collision: true, toolbox: false},
+
+	{key: 0x0A0A, src: 'bug/ladybug', collision: true},
+	{key: 0x0A0B, src: 'bug/ladybug_move', collision: true, toolbox: false},
+	{key: 0x0A0C, src: 'bug/ladybug_fly', collision: true, toolbox: false},
 
 
 ];

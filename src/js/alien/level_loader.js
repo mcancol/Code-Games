@@ -11,10 +11,10 @@ function LevelLoader(game)
 {
   this.game = game;
 
-  this.Sprite_Player = SpriteManager.keyToInteger([0, 2]);
-  this.Sprite_Enemy_Fly = SpriteManager.keyToInteger([10, 0]);
-  this.Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
-  this.Sprite_Enemy_Bat = SpriteManager.keyToInteger([10, 6]);
+  this.Sprite_Player = 0x0002;
+  this.Sprite_Enemy_Fly = 0x0A00;
+  this.Sprite_Enemy_Bee = 0x0A03;
+  this.Sprite_Enemy_Bat = 0x0A06;
 
   /**
    * Loads the level from the list and sets up the game

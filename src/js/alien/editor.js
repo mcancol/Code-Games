@@ -18,6 +18,14 @@ function Editor(game)
 	this.currentSprite = 'l';
 
 	this.setupDone = false;
+
+	this.constructors = [];
+	for(var i = 0; i < spriteTable.length; i++) {
+		if('construct' in spriteTable[i]) {
+			var key = spriteTable[i].key;
+			this.constructors[key] = spriteTable[i].construct;
+		}
+	}
 }
 
 
@@ -120,16 +128,24 @@ Editor.prototype.mouseMove = function(event)
 	if(event.detail.down)
 		this.selectedObject = false;
 
-	/**
-	 * Put the sprite into the level (FIXME: some objects e.g. player/ennemy need special care)
-	 */
-	coords.x = Math.floor(coords.x / 32);
-	coords.y = Math.floor(coords.y / 32);
+	if(this.currentSprite in this.constructors) {
+		if(event.detail.down && event.detail.buttons & 1) {
+			var object = this.constructors[this.currentSprite](coords.x, coords.y);
+			this.game.addObject("object", object);
+		}
+	} else {
 
-	if(event.detail.buttons & 1)
-		this.game.getObject("level").setSprite(coords, this.currentSprite);
-	else if(event.detail.buttons & 2)
-		this.game.getObject("level").setSprite(coords, 0);
+		/**
+	 	 * Put the sprite into the level (FIXME: some objects e.g. player/ennemy need special care)
+	 	 */
+		coords.x = Math.floor(coords.x / 32);
+		coords.y = Math.floor(coords.y / 32);
+
+		if(event.detail.buttons & 1)
+			this.game.getObject("level").setSprite(coords, this.currentSprite);
+		else if(event.detail.buttons & 2)
+			this.game.getObject("level").setSprite(coords, 0);
+	}
 }
 
 

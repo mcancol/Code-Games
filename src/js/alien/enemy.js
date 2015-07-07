@@ -182,7 +182,6 @@ function Enemy()
     var frame = Math.floor((this.getEngine().timestamp / 120) % 2);
 
     if(this.alive) {
-      //sprite = SpriteManager.keyToInteger([10, 3]);
       this.parent.spriteManager.drawSprite(context, this, this.sprite, frame);
     } else {
       this.parent.spriteManager.drawSprite(context, this, this.sprite + 1, 0, function(context) {

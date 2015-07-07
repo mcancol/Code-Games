@@ -29,7 +29,7 @@ function Level(levelMap)
 	{
 		for(var i = 0; i < spriteTable.length; i++) {
 			var key = spriteTable[i]['key'];
-			this.collisionTypes[key[0] * 256 + key[1]] = spriteTable[i]['collision'];
+			this.collisionTypes[key] = spriteTable[i]['collision'];
 		}
 
 		this.cacheLevelGeometry();

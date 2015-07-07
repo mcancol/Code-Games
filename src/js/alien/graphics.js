@@ -80,12 +80,6 @@ function SpriteManager()
 }
 
 
-SpriteManager.keyToInteger = function(key)
-{
-	return key[0] * 256 + key[1];
-}
-
-
 SpriteManager.prototype.getFrameCount = function(sprite)
 {
 	if(!(sprite in this.sprites))
@@ -133,7 +127,7 @@ SpriteManager.prototype.loadFromSpriteTable =  function(spriteTable)
 {
 	/** Load sprites from sprite table **/
 	for(var i = 0; i < spriteTable.length; i++) {
-		var key = SpriteManager.keyToInteger(spriteTable[i]['key']);
+		var key = spriteTable[i]['key'];
 
 		if('frames' in spriteTable[i]) {
 			var sprite_array = [];

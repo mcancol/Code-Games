@@ -22,7 +22,7 @@ function SpriteBox(element, editor, spriteTable)
 			if(this.images[i] == target) {
 				var key = spriteTable[i]['key'];
 				this.images[i].setAttribute("class", "selected");
-				editor.setSprite(key[0] * 256 + key[1]);
+				editor.setSprite(key);
 			} else {
 				this.images[i].setAttribute("class", "sprite");
 			}
@@ -30,12 +30,12 @@ function SpriteBox(element, editor, spriteTable)
 	}
 
 
-	var currentKey = spriteTable[0].key[0];
+	var currentKey = spriteTable[0].key & 0xFF00;
 	var insertBreaks = false;
 	for(var i = 0; i < spriteTable.length; i++) {
 
 		// Insert breaks when the first element of key changes.
-		if(insertBreaks && currentKey != spriteTable[i].key[0]) {
+		if(insertBreaks && currentKey != spriteTable[i].key & 0xFF00) {
 			var br = document.createElement("br");
 			this.element.appendChild(br);
 			currentKey = spriteTable[i].key[0];
