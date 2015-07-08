@@ -27,7 +27,6 @@ Game.prototype = new BaseObject();
 
 Game.prototype.reset = function()
 {
-  this.scroll = {x: 0, y: 0};
   this.resetChildren();
 }
 
