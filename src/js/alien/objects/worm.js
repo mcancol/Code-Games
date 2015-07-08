@@ -11,6 +11,7 @@ function Worm()
 {
   this.baseX = 0;
   this.baseY = 0;
+  this.type = 'worm';
 
   this.width = 32;
   this.height = 32;
@@ -19,6 +20,8 @@ function Worm()
   this.gravity = 0.3;
 
   this.sprite = 0;
+
+  this.transform = false;
 
 
   /**
@@ -112,6 +115,18 @@ function Worm()
     this.y += this.velY;
 
     // Check for hits with player
+    var player = this.parent.getObject("player_1");
+
+    var collision = collisionCheckX(this, player);
+
+    if(collision) {
+      var distanceY = this.y + this.height - player.y;
+
+      this.transform = true;
+      this.transformHeight = distanceY;
+    } else {
+      this.transform = false;
+    }
   }
 
 
@@ -122,7 +137,19 @@ function Worm()
    */
   this.draw = function(context)
   {
-    this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
+
+    //{key: 0x0A10, src: 'slime/snakeSlime', collision: true, toolbox: false},
+  	//{key: 0x0A11, src: 'slime/snakeSlime_ani', collision: true, toolbox: false},
+  	//{key: 0x0A12, src: 'slime/snakeSlime_dead', collision: true, toolbox: false},
+
+    if(this.transform) {
+      this.height = lerp(this.height, this.transformHeight, 0.4);
+      //this.y =
+      this.parent.spriteManager.drawSprite(context, this, 0x0A10, 0);
+    } else {
+      this.height = 32;
+      this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
+    }
   }
 }
 

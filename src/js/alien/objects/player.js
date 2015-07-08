@@ -13,6 +13,7 @@ function Player()
 	// Depends on sprite
 	this.width = 32;
 	this.height = 46;
+	this.type = 'player';
 
 	this.baseX = 0;
 	this.baseY = 0;
@@ -267,6 +268,9 @@ function Player()
 	}
 
 
+	/**************************************************************/
+
+
 	this.collideVerticalDown = function(level)
 	{
 		var permitted = this.getPermittedActions();
@@ -351,24 +355,38 @@ function Player()
 
 	this.collideHorizontal = function(level)
 	{
-		var hit = level.sensor(
-			{ x: this.x + this.width - 10, y: this.y + this.height - 20 },
-			{ x: 1, y: 0 }, 256, this.sensorCallback.bind(this));
+		// To the right
+		var hit = level.sensor({
+			x: this.x + this.width - 10,
+			y: this.y + this.height - 20
+		}, {
+			x: 1,
+			y: 0
+		}, 256, this.sensorCallback.bind(this));
+
 
 		if(hit && hit.type && hit.dx < 10) {
 			this.velX = 0;
 			this.x = this.x + hit.dx - 10;
 		}
 
-		var hit = level.sensor(
-			{ x: this.x + 10, y: this.y + this.height - 20 },
-			{ x: -1, y: 0 }, 256, this.sensorCallback.bind(this));
+		// To the left
+		var hit = level.sensor({
+			x: this.x + 10,
+			y: this.y + this.height - 20
+		}, {
+			x: -1,
+			y: 0
+		}, 256, this.sensorCallback.bind(this));
 
 		if(hit && hit.type && hit.dx > -10) {
 			this.velX = 0;
 			this.x = this.x + hit.dx + 10;
 		}
 	}
+
+
+	/*****************************************************************/
 
 
 	/**
@@ -455,6 +473,42 @@ function Player()
 
 
 	/**
+	 * Draws the dead message to the context
+	 *
+	 * @private
+	 * @param {Context} context - Context to draw to
+	 */
+	this.drawDeadMessage = function(context)
+	{
+		context.save();
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.font = 'bold 20px Arial';
+		context.textAlign = 'center';
+		context.fillText("Oops, you died...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
+		context.restore();
+	}
+
+
+	/**
+	 * Draws the finished message to the context
+	 *
+	 * @private
+	 * @param {Context} context - Context to draw to
+	 */
+	this.drawFinishedMessage = function(context)
+	{
+		context.save();
+
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.font = 'bold 20px Arial';
+		context.textAlign = 'center';
+		context.fillText("Congratulations, you have finished the game...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
+
+		context.restore();
+	}
+
+
+	/**
 	 * Draw the correct sprite based on the current state of the player
 	 */
 	this.draw = function(context)
@@ -467,27 +521,11 @@ function Player()
 			this.scale = lerp(this.scale, 0, 0.05);
 		}
 
-		if(!this.alive) {
-			context.save();
+		if(!this.alive)
+			this.drawDeadMessage(context);
 
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.font = 'bold 20px Arial';
-			context.textAlign = 'center';
-			context.fillText("Oops, you died...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
-
-			context.restore();
-		}
-
-		if(this.finished) {
-			context.save();
-
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.font = 'bold 20px Arial';
-			context.textAlign = 'center';
-			context.fillText("Congratulations, you have finished the game...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
-
-			context.restore();
-		}
+		if(this.finished)
+			this.drawFinishedMessage(context);
 
 		if(this.velX > 0.3) {
 			sprite = this.animate('player_walk_right_', 3);

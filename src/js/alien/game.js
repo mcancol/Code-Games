@@ -27,7 +27,7 @@ Game.prototype = new BaseObject();
 
 Game.prototype.reset = function()
 {
-  this.scroll = {x: 0, y: 0};  
+  this.scroll = {x: 0, y: 0};
   this.resetChildren();
 }
 
@@ -45,6 +45,9 @@ Game.prototype.update = function(keyboard)
 
 Game.prototype.draw = function(context)
 {
+  if(!this.engine)
+    throw new Error("Game: Engine object is invalid");
+
   var width = this.engine.getWidth();
   var height = this.engine.getHeight()
 
@@ -98,7 +101,7 @@ Game.prototype.startEditMode = function()
  */
 Game.prototype.updateTranslation = function()
 {
-  var input = this.getEngine().input;
+  var input = this.engine.input;
   var width = this.engine.getWidth();
   var height = this.engine.getHeight();
 

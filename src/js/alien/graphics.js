@@ -62,6 +62,9 @@ function SpriteManager()
 	{
 		var sprite = this.sprites[name];
 
+		if(!sprite)
+			throw new Error("Could not find sprite " + name + " " + name.toString(16));
+
 		if(frame in sprite)
 			sprite = sprite[frame];
 

@@ -210,4 +210,5 @@ var spriteTable = [
 	{key: 0x0A1C, src: 'frog/frog_dead', collision: true, toolbox: false},
 
 	{key: 0x0A20, src: 'snail/snail', frames: 2, collision: true, type: 'enemy'},
+	{key: 0x0A21, src: 'snail/snail', frames: 2, collision: true, type: 'enemy'},
 ];

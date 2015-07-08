@@ -78,19 +78,18 @@ function Level(levelMap)
 	 */
 	this.sensor = function(origin, dir, length, func)
 	{
+		if(isNaN(origin.x) || isNaN(origin.y))
+			throw new Error("Sensor: Origin is set to NaN (" + origin.x + ", " + origin.y + ")");
+
+		if(isNaN(dir.x) || isNaN(dir.y))
+			throw new Error("Sensor: Direction is set to NaN (" + dir.x + ", " + dir.y + ")");
+
 		var o = this.worldToLevelCoords(origin);
 
 		var result = this.spriteSensor(o, dir, length / spriteSize, function(hit)
 		{
-			// Coordinates of top left corner
-			hit.x = hit.sx * spriteSize;
-			hit.y = hit.sy * spriteSize;
-
-			// Fix the x coordinate for vertical sensors
-			if(dir.x == 0) hit.x = origin.x;
-
-			// Fix the y coordinate for horizontal sensors
-			if(dir.y == 0) hit.y = origin.y;
+			if(dir.x == 0) hit.x = origin.x; else	hit.x = hit.sx * spriteSize;
+			if(dir.y == 0) hit.y = origin.y; else	hit.y = hit.sy * spriteSize;
 
 			// Collide with right most edge for leftward sensors
 			if(dir.x < 0) hit.x += spriteSize;
@@ -124,9 +123,6 @@ function Level(levelMap)
 			if(dir.x != 0 && dir.x * hit.dx <= 0)
 				return false;
 
-			//if(dir.y != 0 && dir.y * hit.dy <= 0)
-			//	return false;
-
 			// Invoke callback
 			hit = func(hit);
 
@@ -156,6 +152,12 @@ function Level(levelMap)
 	 */
 	this.spriteSensor = function(origin, dir, length, func)
 	{
+		if(isNaN(origin.x) || isNaN(origin.y))
+			throw new Error("SpriteSensor: Origin is set to NaN (" + origin.x + ", " + origin.y + ")");
+
+		if(isNaN(dir.x) || isNaN(dir.y))
+			throw new Error("SpriteSensor: Direction is set to NaN (" + dir.x + ", " + dir.y + ")");
+
 		for(var i = 0; i < Math.ceil(length); i++)
 		{
 			var l = {
@@ -166,12 +168,15 @@ function Level(levelMap)
 			/**
 			 * Out of bounds, return 'Bounds'
 			 */
-			if(l.sy < 0 || l.sy >= this.getHeight() || l.sx < 0 || l.sx >= this.getWidth())
+			if(l.sx < 0 || l.sx >= this.getWidth() ||
+				 l.sy < 0 || l.sy >= this.getHeight())
+			{
 				return {
 					type: 'Bounds',
 					sx: clamp(l.sx, 0, this.getWidth()),
 					sy: clamp(l.sy, 0, this.getHeight())
 				};
+			}
 
 			// Get sprite number
 			var sprite = this.levelMap[l.sy][l.sx];
@@ -305,7 +310,7 @@ function Level(levelMap)
 			this.drawSprite(context, item.x, item.y, item.sprite, item.frameCount);
 		}
 
-		this.drawDebugLines();
+		this.drawDebugLines(context);
 	}
 }
 
