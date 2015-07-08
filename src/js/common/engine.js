@@ -8,33 +8,34 @@
  */
 function Engine()
 {
+}
 
-	Engine.prototype.initializeEngine = function(element, width, height, game)
-	{
-		this.canvas = document.getElementById(element);
-		if(!this.canvas)
-			throw new Error("Canvas element passed to engine initialization is invalid.");
 
-		this.context = this.canvas.getContext("2d");
-		if(!this.context)
-			throw new Error("Could not create 2d context during engine initialization.");
+Engine.prototype.initializeEngine = function(element, width, height, game)
+{
+	this.canvas = document.getElementById(element);
+	if(!this.canvas)
+		throw new Error("Canvas element passed to engine initialization is invalid.");
 
-		this.game = game;
-		this.game.engine = this;
+	this.context = this.canvas.getContext("2d");
+	if(!this.context)
+		throw new Error("Could not create 2d context during engine initialization.");
 
-		this.setSize(width, height);
+	this.game = game;
+	this.game.engine = this;
 
-		this.input = new Keyboard();
-  	this.mouse = new Mouse(this.canvas);
+	this.setSize(width, height);
 
-		this.editMode = false;
-		this.debugMode = false;
+	this.input = new Keyboard();
+	this.mouse = new Mouse(this.canvas);
 
-		window.requestAnimationFrame(this.update.bind(this));
+	this.editMode = false;
+	this.debugMode = false;
 
-		//this.game.initialize();
-		this.game.reset();
-	}
+	window.requestAnimationFrame(this.update.bind(this));
+
+	//this.game.initialize();
+	this.game.reset();
 }
 
 
