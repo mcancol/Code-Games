@@ -198,16 +198,14 @@ function Player()
 		}
 
 		// Move to the left
-		if(input.keys[input.KEY_LEFT]) {
-			if(this.velX > -this.speed)
-				this.velX--;
-		}
+		if(input.keys[input.KEY_LEFT] && this.velX > -this.speed)
+			this.velX--;
 
 		// Move to the right
-		if(input.keys[input.KEY_RIGHT]) {
-			if(this.velX < this.speed)
-				this.velX++;
-		} else if(this.ground.slippery && !input.keys[input.KEY_DOWN]) {
+		if(input.keys[input.KEY_RIGHT] && this.velX < this.speed)
+			this.velX++;
+
+		if(this.ground.slippery && !input.keys[input.KEY_DOWN]) {
 			if(this.ground.type == 'hillDown')
 				if(this.velX > 0.5 * -this.speed)
 					this.velX -= 0.25;
@@ -216,7 +214,7 @@ function Player()
 					this.velX += 0.25;
 		}
 
-		// Change friction when pressing down
+		// Change friction when pressing down / ground is slippery
 		if(input.keys[input.KEY_DOWN]) {
 			this.friction = this.frictionDown;
 			this.speed = this.speedDefault;
@@ -278,13 +276,15 @@ function Player()
 		var dirY = Math.sign(this.gravity);
 		var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
 
-		var hit_left = level.sensor(
-			{ x: this.x + this.sensor_left, y: oriY },
-			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
+		var hit_left = level.sensor({
+			x: this.x + this.sensor_left,
+			y: oriY
+		}, { x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
-		var hit_right = level.sensor(
-			{ x: this.x + this.sensor_right, y: oriY },
-			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
+		var hit_right = level.sensor({
+			x: this.x + this.sensor_right,
+			y: oriY
+		}, { x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var combined = this.combineSensors([hit_left, hit_right]);
 
