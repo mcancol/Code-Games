@@ -32,7 +32,7 @@ function Editor(game)
 Editor.prototype = new BaseObject();
 
 
-Editor.prototype.setup = function()
+Editor.prototype.reset = function()
 {
 	var engine = this.getEngine();
 
