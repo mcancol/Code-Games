@@ -21,9 +21,13 @@ function Level(levelMap)
 	// Variable that contains coordinates and IDs for animated sprites
 	this.dynamicLevelGeometry = [];
 
+	// Contains debugging lines to draw
 	this.lines = [];
 
 
+	/**
+	 * Reset level
+	 */
 	this.reset = function()
 	{
 		for(var i = 0; i < spriteTable.length; i++) {
@@ -141,26 +145,6 @@ function Level(levelMap)
 		return result;
 	}
 
-	this.drawDebugLines = function()
-	{
-		for(var i = 0; i < this.lines.length; i++)
-			this.drawLine(this.lines[i].a, this.lines[i].b, this.lines[i].color);
-		this.lines = [];
-	}
-
-
-	this.drawLine = function(a, b, color)
-	{
-		var ctx = this.getEngine().context;
-
-		ctx.beginPath();
-		ctx.moveTo(a.x, a.y);
-		ctx.lineTo(b.x, b.y);
-		ctx.closePath();
-		ctx.strokeStyle = color;
-		ctx.stroke();
-	}
-
 
 	/**
 	 * Sprite level sensor line for collision detection.
@@ -209,6 +193,11 @@ function Level(levelMap)
 		// We did not hit anything, return false
 		return { type: false };
 	}
+
+
+	/*********************
+	 * Drawing functions *
+	 *********************/
 
 
 	/**
@@ -271,7 +260,41 @@ function Level(levelMap)
 
 
 	/**
-	 * Draw entire level
+	 * Draw debug lines (from this.lines).
+	 *
+	 * @param {Context} context - Context to draw to.
+	 */
+	this.drawDebugLines = function(context)
+	{
+		for(var i = 0; i < this.lines.length; i++)
+			this.drawLine(context, this.lines[i].a, this.lines[i].b, this.lines[i].color);
+		this.lines = [];
+	}
+
+
+	/**
+	 * Draw a line to the context.
+	 *
+	 * @param {Context} context - Context to draw to.
+	 * @param {Object} a - Starting coordinate of the line.
+	 * @param {Object} b - Final coordinate of the line.
+	 * @param {Object} color - Color of the line.
+	 */
+	this.drawLine = function(context, a, b, color)
+	{
+		context.beginPath();
+		context.moveTo(a.x, a.y);
+		context.lineTo(b.x, b.y);
+		context.closePath();
+		context.strokeStyle = color;
+		context.stroke();
+	}
+
+
+	/**
+	 * Draw entire level.
+	 *
+	 * @param {Context} context - Context to draw to.
 	 */
 	this.draw = function(context)
 	{
@@ -291,7 +314,9 @@ Level.prototype = new BaseObject();
 
 
 /**
- * Returns the height of the level in sprites
+ * Returns the height of the level in sprites.
+ *
+ * @return {Number} Height of the level.
  */
 Level.prototype.getHeight = function()
 {
@@ -300,7 +325,9 @@ Level.prototype.getHeight = function()
 
 
 /**
- * Returns the width of the level in sprites
+ * Returns the width of the level in sprites.
+ *
+ * @return {Number} Width of the level.
  */
 Level.prototype.getWidth = function()
 {
@@ -309,7 +336,10 @@ Level.prototype.getWidth = function()
 
 
 /**
- * Sets the sprite at a specific block
+ * Sets the sprite at a specific block.
+ *
+ * @param {Object} coords - Coordinates.
+ * @param {Number} sprite - Number of the sprite to set.
  */
 Level.prototype.setSprite = function(coords, sprite)
 {
