@@ -123,7 +123,7 @@ function Worm()
       var distanceY = this.y + this.height - player.y;
 
       this.transform = true;
-      this.transformHeight = distanceY;
+      this.transformHeight = (distanceY>32)?distanceY:32;
     } else {
       this.transform = false;
     }
@@ -137,17 +137,15 @@ function Worm()
    */
   this.draw = function(context)
   {
-
-    //{key: 0x0A10, src: 'slime/snakeSlime', collision: true, toolbox: false},
-  	//{key: 0x0A11, src: 'slime/snakeSlime_ani', collision: true, toolbox: false},
-  	//{key: 0x0A12, src: 'slime/snakeSlime_dead', collision: true, toolbox: false},
-
     if(this.transform) {
-      this.height = lerp(this.height, this.transformHeight, 0.4);
-      //this.y =
+      var height = lerp(this.height, this.transformHeight, 0.4);
+      this.y += (this.height - height);
+      this.height = height;
       this.parent.spriteManager.drawSprite(context, this, 0x0A10, 0);
     } else {
-      this.height = 32;
+      var height = lerp(this.height, 32, 0.1);
+      this.y += (this.height - height);
+      this.height = height;
       this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
     }
   }
