@@ -56,6 +56,12 @@ var constructors = {
 		var worm = new Worm();
 		worm.fromArray(array);
 		return worm;
+	},
+
+	'frog': function(array) {
+		var frog = new Frog();
+		frog.fromArray(array);
+		return frog;
 	}
 };
 
@@ -205,7 +211,7 @@ var spriteTable = [
 	{key: 0x0A11, src: 'slime/snakeSlime_ani', collision: true, toolbox: false},
 	{key: 0x0A12, src: 'slime/snakeSlime_dead', collision: true, toolbox: false},
 
-	{key: 0x0A1A, src: 'frog/frog', collision: true, type: 'enemy'},
+	{key: 0x0A1A, src: 'frog/frog', collision: true, type: 'frog'},
 	{key: 0x0A1B, src: 'frog/frog_move', collision: true, toolbox: false},
 	{key: 0x0A1C, src: 'frog/frog_dead', collision: true, toolbox: false},
 

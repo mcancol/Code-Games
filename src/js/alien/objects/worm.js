@@ -20,7 +20,7 @@ function Worm()
   this.gravity = 0.3;
 
   this.sprite = 0;
-
+  this.alive = true;
   this.transform = false;
 
 
@@ -55,6 +55,17 @@ function Worm()
   {
     this.x = this.baseX;
     this.y = this.baseY;
+    this.alive = true;
+
+    this.height = 32;
+    this.width = 32;
+    this.transform = false;
+  }
+
+
+  this.kill = function()
+  {
+    this.alive = false;
   }
 
 
@@ -119,11 +130,15 @@ function Worm()
 
     var collision = collisionCheckX(this, player);
 
-    if(collision) {
-      var distanceY = this.y + this.height - player.y;
+    if(collision && this.alive) {
+      if(collisionCheckY(this, player)) {
+        player.kill("worm/" + this.name);
+      } else {
+        var distanceY = this.y + this.height - player.y;
 
-      this.transform = true;
-      this.transformHeight = (distanceY>32)?distanceY:32;
+        this.transform = true;
+        this.transformHeight = (distanceY>32)?distanceY:32;
+      }
     } else {
       this.transform = false;
     }
@@ -146,7 +161,11 @@ function Worm()
       var height = lerp(this.height, 32, 0.1);
       this.y += (this.height - height);
       this.height = height;
-      this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
+
+      if(this.alive)
+        this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
+      else
+        this.parent.spriteManager.drawSprite(context, this, this.sprite + 1, 0);
     }
   }
 }
