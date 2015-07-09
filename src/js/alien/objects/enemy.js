@@ -108,6 +108,9 @@ function Enemy()
   {
     var player = this.parent.getObject("player_1");
 
+    if(!player)
+      throw new Error("Could not find object player_1");
+
     var player_underneath =
       player.x + player.width / 2 >= this.x &&
       player.x + player.width / 2 <= this.x + this.width &&

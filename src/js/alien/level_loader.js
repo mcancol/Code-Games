@@ -151,7 +151,6 @@ function LevelLoader(game)
       height: (level.getHeight() - 2) * spriteSize
     });
   };
-
 }
 
 
@@ -173,8 +172,8 @@ function upgradeLevelVersion1(data)
    * Scans the level for special items, such as the player and enemies,
    * adds them to a list and removes them from the level.
    */
-  var i_player = 0;
-  var i_enemy = 0;
+  var i_player = 1;
+  var i_enemy = 1;
 
   for(var x = 0; x < data.level[0].length; x++) {
     for(var y = 0; y < data.level.length; y++) {
@@ -207,9 +206,9 @@ function upgradeLevelVersion1(data)
   }
 
   // Add default player if none are found
-  if(i_player == 0) {
+  if(i_player == 1) {
     data.objects.push({
-      name: 'player_0',
+      name: 'player_1',
       type: 'player',
       x: spriteSize, y: 4 * spriteSize
     });
