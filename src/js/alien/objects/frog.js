@@ -56,6 +56,7 @@ function Frog()
   {
     this.x = this.baseX;
     this.y = this.baseY;
+    this.alive = true;
 
     // Find worms
     var names = this.parent.getObjectNames();
@@ -139,7 +140,10 @@ function Frog()
     // Move when being pushed by the player
     var collision = collisionCheck(this, this.player);
 
-    if(collision)
+    if(collision.axis == 'y')
+      this.alive = false;
+
+    if(this.alive && collision && collision.axis == 'x')
       this.x += collision.normal.x;
   }
 
@@ -151,7 +155,11 @@ function Frog()
    */
   this.draw = function(context)
   {
-    this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
+    if(this.alive) {
+      this.parent.spriteManager.drawSprite(context, this, this.sprite, 0);
+    } else {
+      this.parent.spriteManager.drawSprite(context, this, this.sprite + 2, 0);
+    }
   }
 }
 
