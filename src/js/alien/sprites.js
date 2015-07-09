@@ -145,7 +145,7 @@ var spriteTable = [
 	{key: 0x014E, src: 'sand/sandHalfMid', collision: 'topHalf'},
 	{key: 0x014F, src: 'sand/sandHalfRight', collision: 'topHalf'},
 
-
+	{key: 0x0115, src: 'sand/sand_liquid', collision: 'water'},
 	{key: 0x0114, src: 'metalCenter', collision: true},
 
 	{key: 0x0204, src: 'water/no_waves_top', frames: 7, collision: 'water'},
