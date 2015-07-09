@@ -35,6 +35,18 @@ BaseObject.prototype.update = function(keyboard)
 
 
 /**
+ * Called when the object collides with another
+ *
+ * @param {String} name - Name of the other object
+ * @param {BaseObject} object - Object that we collided with
+ * @param {Object} details - Details of the collision
+ */
+BaseObject.prototype.onCollision = function(name, object, details)
+{
+}
+
+
+/**
  * Draw the current node.
  *
  * @param {Context} context - Context to draw to
@@ -67,7 +79,7 @@ BaseObject.prototype.getEngine = function()
  */
 BaseObject.prototype.getObjectNames = function()
 {
-	return Object.keys(this.objects);
+	return Object.keys(this.children);
 }
 
 
@@ -80,8 +92,8 @@ BaseObject.prototype.getObjectNames = function()
 BaseObject.prototype.addObject = function(name, object)
 {
 	object.parent = this;
-	this.objects[name] = object;
-	this.objects[name].reset();
+	this.children[name] = object;
+	this.children[name].reset();
 };
 
 
@@ -93,7 +105,7 @@ BaseObject.prototype.addObject = function(name, object)
  */
 BaseObject.prototype.hasObject = function(name)
 {
-  return name in this.objects;
+  return name in this.children;
 };
 
 
@@ -105,7 +117,7 @@ BaseObject.prototype.hasObject = function(name)
  */
 BaseObject.prototype.getObject = function(name)
 {
-	return this.objects[name];
+	return this.children[name];
 };
 
 
@@ -116,7 +128,7 @@ BaseObject.prototype.getObject = function(name)
  */
 BaseObject.prototype.deleteObject = function(name)
 {
-	delete this.objects[name];
+	delete this.children[name];
 };
 
 
@@ -125,7 +137,7 @@ BaseObject.prototype.deleteObject = function(name)
  */
 BaseObject.prototype.deleteAllObjects = function()
 {
-	this.objects = {};
+	this.children = {};
 };
 
 
@@ -134,8 +146,8 @@ BaseObject.prototype.deleteAllObjects = function()
  */
 BaseObject.prototype.resetChildren = function()
 {
-  for(var key in this.objects)
-    this.objects[key].reset();
+  for(var key in this.children)
+    this.children[key].reset();
 };
 
 
@@ -146,8 +158,8 @@ BaseObject.prototype.resetChildren = function()
  */
 BaseObject.prototype.updateChildren = function(keyboard)
 {
-  for(var key in this.objects)
-    this.objects[key].update(keyboard);
+  for(var key in this.children)
+    this.children[key].update(keyboard);
 };
 
 
@@ -158,6 +170,6 @@ BaseObject.prototype.updateChildren = function(keyboard)
  */
 BaseObject.prototype.drawChildren = function(context)
 {
-  for(var key in this.objects)
-		this.objects[key].draw(context);
+  for(var key in this.children)
+		this.children[key].draw(context);
 };

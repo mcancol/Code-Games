@@ -14,8 +14,10 @@ function Engine()
 Engine.prototype.initializeEngine = function(element, width, height, game)
 {
 	this.canvas = document.getElementById(element);
-	if(!this.canvas)
+	if(!this.canvas) {
+		console.log("getElementById(" + element + ") returned " + this.canvas);
 		throw new Error("Canvas element passed to engine initialization is invalid.");
+	}
 
 	this.context = this.canvas.getContext("2d");
 	if(!this.context)
@@ -85,7 +87,7 @@ Engine.prototype.update = function(timestamp)
 	/**
 	 * Redraw entire scene
 	 */
-	this.context.save()
+	this.context.save()	
 	this.game.draw(this.context);
 	this.context.restore()
 

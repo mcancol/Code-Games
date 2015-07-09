@@ -17,6 +17,7 @@
 		<script src="js/common/url.js"></script>
 		<script src="js/common/sink.js"></script>
 		<script src="js/common/engine.js"></script>
+		<script src="js/common/base_object.js"></script>
 
 		<script src="js/maze/game.js"></script>
 		<script src="js/maze/fullscreen.js"></script>
@@ -71,6 +72,8 @@
 		</div>
 
 		<script>
+			var canvas_id = "game-canvas";
+
 			// Global variables
 			var widthwall = 2;
 			var widthspace = 44;
@@ -98,7 +101,13 @@
 				// Everything is fine, start the game
 				$("#game-canvas").show();
 
-				var game = new Game("game-canvas", 32 * 24, 32 * 8);
+				var engine = new Engine();
+				var game = new Game();
+
+				engine.initializeEngine(canvas_id,
+					(widthspace + widthwall) * 27 + widthwall,
+					(widthspace + widthwall) * 16 + widthwall, game);
+
 				var level = new Level();
 				game.addObject("level", level);
 				game.addObject("player", new Player());
