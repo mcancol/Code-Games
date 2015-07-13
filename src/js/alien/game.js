@@ -28,7 +28,7 @@ Game.prototype = new BaseObject();
 Game.prototype.reset = function()
 {
   this.resetChildren();
-}
+};
 
 
 Game.prototype.update = function(keyboard)
@@ -39,7 +39,7 @@ Game.prototype.update = function(keyboard)
     return;
 
   this.updateChildren(keyboard);
-}
+};
 
 
 Game.prototype.draw = function(context)
@@ -48,7 +48,7 @@ Game.prototype.draw = function(context)
     throw new Error("Game: Engine object is invalid");
 
   var width = this.engine.getWidth();
-  var height = this.engine.getHeight()
+  var height = this.engine.getHeight();
 
   //context.imageSmoothingEnabled = true;
   //context.scale(0.25, 0.25);
@@ -57,7 +57,7 @@ Game.prototype.draw = function(context)
   context.translate(-this.scroll.x, -this.scroll.y);
 
   this.drawChildren(context);
-}
+};
 
 
 /**
@@ -68,7 +68,7 @@ Game.prototype.draw = function(context)
 Game.prototype.setLevelBounds = function(bounds)
 {
 	this.levelBounds = bounds;
-}
+};
 
 
 /**
@@ -79,7 +79,7 @@ Game.prototype.gameover = function()
 {
   // Reset all objects to their default states
   this.reset();
-}
+};
 
 
 /**
@@ -92,7 +92,7 @@ Game.prototype.startEditMode = function()
 	// Reset all objects to their default states
 	for(var key in this.objects)
 		this.objects[key].setup();
-}
+};
 
 
 /**
@@ -144,4 +144,4 @@ Game.prototype.updateTranslation = function()
 
   // Not used in maze
 	this.scroll.y = this.levelBounds.y;
-}
+};

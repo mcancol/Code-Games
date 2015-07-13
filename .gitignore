@@ -3,6 +3,12 @@ doc
 !doc/*.bat
 !doc/*.sh
 
+# Node modules
+node_modules/*
+
+# Built Javascript files
+src/js/build/*
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

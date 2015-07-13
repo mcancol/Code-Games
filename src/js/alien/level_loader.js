@@ -36,7 +36,7 @@ function LevelLoader(game)
           for(var i = 0; i < data.objects.length; i++) {
             var object = data.objects[i];
 
-            if(!object.type in constructors)
+            if(!(object.type in constructors))
               throw new Error("Invalid type: " + object.type);
 
             var constructor = constructors[object.type];
@@ -56,7 +56,7 @@ function LevelLoader(game)
           reject(error);
         });
       }.bind(this));
-  }
+  };
 
 
   this.saveLevel = function(name)
@@ -83,7 +83,7 @@ function LevelLoader(game)
     }
 
     return this.saveLevelToServer(name, data);
-  }
+  };
 
 
   /**
@@ -215,4 +215,4 @@ function upgradeLevelVersion1(data)
   }
 
   return data;
-};
+}

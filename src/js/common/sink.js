@@ -33,11 +33,11 @@ function Sink(sinkAddress)
     this.buffer[this.id] = data;
     this.id++;
 
-    if(this.transmitAutomatically && (this.id % this.transmitEvery) == 0)
+    if(this.transmitAutomatically && (this.id % this.transmitEvery) === 0)
       this.transmitData();
 
     return data.id;
-  }
+  };
 
 
   /**
@@ -68,5 +68,5 @@ function Sink(sinkAddress)
     }.bind(this)).fail(function() {
       this.sendingInProgress = false;
     }.bind(this));
-  }
+  };
 }

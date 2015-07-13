@@ -38,7 +38,7 @@ Engine.prototype.initializeEngine = function(element, width, height, game)
 
 	//this.game.initialize();
 	this.game.reset();
-}
+};
 
 
 /**
@@ -47,7 +47,7 @@ Engine.prototype.initializeEngine = function(element, width, height, game)
 Engine.prototype.getWidth = function()
 {
 	return this.canvas.width;
-}
+};
 
 
 /**
@@ -56,7 +56,7 @@ Engine.prototype.getWidth = function()
 Engine.prototype.getHeight = function()
 {
 	return this.canvas.height;
-}
+};
 
 
 /**
@@ -87,9 +87,9 @@ Engine.prototype.update = function(timestamp)
 	/**
 	 * Redraw entire scene
 	 */
-	this.context.save()	
+	this.context.save();
 	this.game.draw(this.context);
-	this.context.restore()
+	this.context.restore();
 
 	window.requestAnimationFrame(this.update.bind(this));
 };

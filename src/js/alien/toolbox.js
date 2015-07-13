@@ -20,14 +20,14 @@ function SpriteBox(element, editor, spriteTable)
 	{
 		for(var i = 0; i < spriteTable.length; i++) {
 			if(this.images[i] == target) {
-				var key = spriteTable[i]['key'];
+				var key = spriteTable[i].key;
 				this.images[i].setAttribute("class", "selected");
 				editor.setSprite(key);
 			} else {
 				this.images[i].setAttribute("class", "sprite");
 			}
 		}
-	}
+	};
 
 
 	var currentKey = spriteTable[0].key & 0xFF00;
@@ -42,7 +42,7 @@ function SpriteBox(element, editor, spriteTable)
 		}
 
 		this.images[i] = document.createElement("img");
-		var src = spriteTable[i]['src'];
+		var src = spriteTable[i].src;
 
 		if ('frames' in spriteTable[i])
 			src += '_1';
@@ -55,7 +55,7 @@ function SpriteBox(element, editor, spriteTable)
 		}.bind(this);
 
 		// Do not show if toolbox is set to false
-		if('toolbox' in spriteTable[i] && spriteTable[i].toolbox == false)
+		if('toolbox' in spriteTable[i] && spriteTable[i].toolbox === false)
 			continue;
 
 		this.element.appendChild(this.images[i]);

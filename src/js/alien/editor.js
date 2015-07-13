@@ -41,7 +41,7 @@ Editor.prototype.reset = function()
 		this.setupMouse(engine.canvas);
 		this.setupDone = true;
 	}
-}
+};
 
 
 /**
@@ -56,7 +56,7 @@ Editor.prototype.update = function(input)
 
 	if(this.game.scroll.x < 0)
 		this.game.scroll.x = 0;
-}
+};
 
 /**
  * Change the currently active sprite
@@ -66,7 +66,7 @@ Editor.prototype.update = function(input)
 Editor.prototype.setSprite = function(sprite)
 {
 	this.currentSprite = sprite;
-}
+};
 
 
 Editor.prototype.draw = function(context)
@@ -80,7 +80,7 @@ Editor.prototype.draw = function(context)
 		context.strokeStyle = 'red';
 		context.stroke();
 	}
-}
+};
 
 
 /************************************
@@ -111,7 +111,7 @@ Editor.prototype.generateName = function(base)
 	}
 
 	return base + "_" + (max_i + 1);
-}
+};
 
 
 /**

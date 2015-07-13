@@ -84,7 +84,7 @@ function collisionCheck(objectA, objectB)
 	var collideX = collisionCheckX(objectA, objectB);
 	var collideY = collisionCheckY(objectA, objectB);
 
-	if(collideX == false || collideY == false)
+	if(collideX === false || collideY === false)
 		return false;
 
 	var ci = {
@@ -102,16 +102,18 @@ function collisionCheck(objectA, objectB)
 
 function detectCollisionArray(objectA, objectsB, callback, offset)
 {
+	var box;
+
 	for(var key in objectsB) {
 		if(offset) {
 			// Copy box for collision detection
-			var box = {x: objectsB[key].x + offset.x,
+			box = {x: objectsB[key].x + offset.x,
 					   y: objectsB[key].y + offset.y,
 					   width: objectsB[key].width,
 					   height: objectsB[key].height,
 					   type: objectsB[key].type};
 		} else {
-			var box = objectsB[key];
+			box = objectsB[key];
 		}
 
 		var ci = collisionCheck(objectA, box);

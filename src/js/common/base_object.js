@@ -20,7 +20,7 @@ function BaseObject()
 BaseObject.prototype.reset = function()
 {
   this.resetChildren();
-}
+};
 
 
 /**
@@ -31,7 +31,7 @@ BaseObject.prototype.reset = function()
 BaseObject.prototype.update = function(keyboard)
 {
   this.updateChildren(keyboard);
-}
+};
 
 
 /**
@@ -43,7 +43,7 @@ BaseObject.prototype.update = function(keyboard)
  */
 BaseObject.prototype.onCollision = function(name, object, details)
 {
-}
+};
 
 
 /**
@@ -54,7 +54,7 @@ BaseObject.prototype.onCollision = function(name, object, details)
 BaseObject.prototype.draw = function(context)
 {
   this.drawChildren(context);
-}
+};
 
 
 /**
@@ -62,11 +62,11 @@ BaseObject.prototype.draw = function(context)
  */
 BaseObject.prototype.getEngine = function()
 {
-  if(this.parent == undefined)
+  if(this.parent === undefined)
     return this.engine;
 
   return this.parent.getEngine();
-}
+};
 
 
 // //////////////////////////// //
@@ -80,7 +80,7 @@ BaseObject.prototype.getEngine = function()
 BaseObject.prototype.getObjectNames = function()
 {
 	return Object.keys(this.children);
-}
+};
 
 
 /**

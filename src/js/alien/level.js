@@ -31,29 +31,29 @@ function Level(levelMap)
 	this.reset = function()
 	{
 		for(var i = 0; i < spriteTable.length; i++) {
-			var key = spriteTable[i]['key'];
-			this.collisionTypes[key] = spriteTable[i]['collision'];
+			var key = spriteTable[i].key;
+			this.collisionTypes[key] = spriteTable[i].collision;
 		}
 
 		this.cacheLevelGeometry();
-	}
+	};
 
 
 	this.fromArray = function(array)
 	{
 		this.levelMap = array;
-	}
+	};
 
 
 	this.toArray = function()
 	{
 		return this.levelMap;
-	}
+	};
 
 
 	this.update = function(input)
 	{
-	}
+	};
 
 
 	/**
@@ -65,7 +65,7 @@ function Level(levelMap)
 			x: Math.floor(worldCoord.x / spriteSize),
 			y: Math.floor(worldCoord.y / spriteSize)
 		};
-	}
+	};
 
 
 	/**
@@ -139,7 +139,7 @@ function Level(levelMap)
 		}
 
 		return result;
-	}
+	};
 
 
 	/**
@@ -197,7 +197,7 @@ function Level(levelMap)
 
 		// We did not hit anything, return false
 		return { type: false };
-	}
+	};
 
 
 	/*********************
@@ -212,7 +212,7 @@ function Level(levelMap)
 	{
 		var deltaT = this.getEngine().timestamp / 140;
 		return base + Math.floor(1 + deltaT % frames);
-	}
+	};
 
 
 	/**
@@ -227,7 +227,7 @@ function Level(levelMap)
 		var frame = (this.getEngine().timestamp >> 7) % frameCount;
 
 		return this.parent.spriteManager.drawSprite(context, box, sprite, frame);
-	}
+	};
 
 
 	/**
@@ -261,7 +261,7 @@ function Level(levelMap)
 					});
 			}
 		}
-	}
+	};
 
 
 	/**
@@ -274,7 +274,7 @@ function Level(levelMap)
 		for(var i = 0; i < this.lines.length; i++)
 			this.drawLine(context, this.lines[i].a, this.lines[i].b, this.lines[i].color);
 		this.lines = [];
-	}
+	};
 
 
 	/**
@@ -293,7 +293,7 @@ function Level(levelMap)
 		context.closePath();
 		context.strokeStyle = color;
 		context.stroke();
-	}
+	};
 
 
 	/**
@@ -311,7 +311,7 @@ function Level(levelMap)
 		}
 
 		this.drawDebugLines(context);
-	}
+	};
 }
 
 
@@ -326,7 +326,7 @@ Level.prototype = new BaseObject();
 Level.prototype.getHeight = function()
 {
 	return this.levelMap.length;
-}
+};
 
 
 /**
@@ -337,7 +337,7 @@ Level.prototype.getHeight = function()
 Level.prototype.getWidth = function()
 {
 	return this.levelMap[0].length;
-}
+};
 
 
 /**
@@ -372,4 +372,4 @@ Level.prototype.setSprite = function(coords, sprite)
 	this.levelMap[coords.y][coords.x] = sprite;
 
 	this.cacheLevelGeometry();
-}
+};

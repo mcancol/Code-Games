@@ -25,7 +25,7 @@ function SpriteManager()
 		imageMap['player_jump_right_' + i] = 'tiles/sara/jump/r/' + i + '.png';
 	}
 
-	for(name in imageMap) {
+	for(var name in imageMap) {
 		if(typeof imageMap[name] == 'array') {
 			for(var i = 0; i < imageMap[name].length; i++) {
 				imageMap[name].length
