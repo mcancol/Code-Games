@@ -1,26 +1,42 @@
 module.exports = function(grunt) {
 
+  var concat_options = {
+    // Replace all 'use strict' statements in the code with a single one at the top
+    banner: "'use strict';\n",
+    process: function(src, filepath) {
+      return '// Source: ' + filepath + '\n' +
+        src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
+    },
+  };
+
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
-
-
-    jshint: {
-      alienjs: {
-        src: ["src/js/common/*.js", "src/js/alien/*.js"],
-        options: { browser: true, globalstrict: true, devel: true, jquery: true }
-      }
-    },
 
 
     concat: {
       alienjs: {
         src: ["src/js/common/*.js", "src/js/alien/*.js", "src/js/alien/objects/*.js"],
-        dest: "src/js/build/alien.js"
+        dest: "src/js/build/alien.js",
+        options: concat_options
       },
 
       mazejs: {
         src: ["src/js/common/*.js", "src/js/maze/*.js"],
-        dest: "src/js/build/maze.js"
+        dest: "src/js/build/maze.js",
+        options: concat_options
+      }
+    },
+
+
+    jshint: {
+      alienjs: {
+        src: ["src/js/build/alien.js", "src/js/build/maze.js"],
+        options: {
+          browser: true,
+          globalstrict: true,
+          devel: true,
+          jquery: true
+        }
       }
     },
 
@@ -42,5 +58,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-jshint");
 
-  grunt.registerTask("default", ["jshint", "concat", "uglify"]);
+  grunt.registerTask("default", ["concat", "jshint", "uglify"]);
 }
