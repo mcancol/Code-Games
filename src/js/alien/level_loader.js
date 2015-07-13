@@ -11,6 +11,10 @@ function LevelLoader(game)
 {
   this.game = game;
 
+  this.Sprite_Player = 0x0002;
+  this.Sprite_Enemy_Fly = 0x0A00;
+  this.Sprite_Enemy_Bee = 0x0A03;
+  this.Sprite_Enemy_Bat = 0x0A06;
 
   /**
    * Loads the level from the list and sets up the game
@@ -23,14 +27,27 @@ function LevelLoader(game)
     return new Promise(function(resolve, reject) {
       this.game.deleteAllObjects();
       this.getLevelFromServer(name).then(
-        function(level) {
-          var locations = this.markSpecialLocations(level);
+        function(data) {
+          var level = new Level(data.level);
 
           this.setLevelBounds(level);
           this.game.addObject('level', level);
 
-          this.setupPlayers(locations.players);
-          this.setupEnemies(locations.enemies);
+          for(var i = 0; i < data.objects.length; i++) {
+            var object = data.objects[i];
+
+            if(!(object.type in constructors))
+              throw new Error("Invalid type: " + object.type);
+
+            var constructor = constructors[object.type];
+
+            if(!constructor) {
+              console.log("Skipping object: ", object);
+              continue;
+            }
+
+            this.game.addObject(object.name, constructor(object));
+          }
 
           resolve();
         }.bind(this),
@@ -39,56 +56,34 @@ function LevelLoader(game)
           reject(error);
         });
       }.bind(this));
-  }
+  };
 
 
-  /**
-   * Construct enemies and add them to the game
-   *
-   * @param {Array} enemies - List of enemies to setup
-   */
-  this.setupEnemies = function(enemies)
+  this.saveLevel = function(name)
   {
-    var spriteManager = this.game.spriteManager;
-    var Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
+    var data = {
+        'version': 2,
+        'level': null,
+        'objects': []
+      };
 
-    if(this.game.editMode)
-      return;
+    var names = this.game.getObjectNames();
 
-    for(var i = 0; i < enemies.length; i++) {
-      var enemy = new Enemy();
+    for(var i = 0; i < names.length; i++) {
+      var object = this.game.getObject(names[i]);
+      var array = object.toArray();
 
-      enemy.setStartingPosition(enemies[i].x, enemies[i].y);
-      enemy.setBaseSprite(enemies[i].type);
+      if(names[i] == 'level') {
+        data.level = array;
+        continue;
+      }
 
-      if(enemies[i].type == Sprite_Enemy_Bee)
-        enemy.setAggressionLevel(0);
-      else
-        enemy.setAggressionLevel(1);
-
-      this.game.addObject('enemy_' + i, enemy);
+      array.name = names[i];
+      data.objects.push( array );
     }
-  }
 
-
-  /**
-   * Create player objects
-   *
-   * @param {Array} players - List of players to setup
-   */
-  this.setupPlayers = function(players)
-  {
-    if(this.game.editMode)
-      return;
-
-    // Default location if no players have been found
-    if(players.length == 0)
-      players.push({ x: 32, y: 128 });
-
-    var player = new Player();
-    player.setStartingPosition(players[0].x, players[0].y);
-    this.game.addObject('player', player);
-  }
+    return this.saveLevelToServer(name, data);
+  };
 
 
   /**
@@ -106,11 +101,38 @@ function LevelLoader(game)
   			url: server + "ldb/get_level.php?name=" + name,
   			dataType: 'json'
   		}).done(function(data) {
-        var level = new Level(data);
 
-  			resolve(level);
+        if($.isArray(data))
+          data = upgradeLevelVersion1(data);
+
+  			resolve(data);
   		}).fail(function(response) {
         console.log("LevelLoader.getLevelFromServer() failed " + response);
+  			reject(response.responseText);
+  		});
+  	});
+  };
+
+
+  /**
+  * Save the level to the server
+  *
+  * @param {String} name - Name of the level to save
+  */
+  this.saveLevelToServer = function(name, level)
+  {
+  	return new Promise(function(resolve, reject) {
+  		if(typeof(server) == 'undefined' || !server)
+  			reject();
+
+  		jQuery.ajax({
+  			url: server + "ldb/set_level.php?name=" + name,
+  			data: JSON.stringify(level),
+  			contentType: 'text/plain',
+  			method: 'POST'
+  		}).done(function(data) {
+  			resolve();
+  		}.bind(level)).fail(function(response) {
   			reject(response.responseText);
   		});
   	});
@@ -123,55 +145,74 @@ function LevelLoader(game)
   this.setLevelBounds = function(level)
   {
     this.game.setLevelBounds({
-      x: 32,
-      y: 32,
-      width: level.getWidth() * 32 - 64,
-      height: level.getHeight() * 32 - 64
+      x: spriteSize,
+      y: spriteSize,
+      width: (level.getWidth() - 2) * spriteSize,
+      height: (level.getHeight() - 2) * spriteSize
     });
   };
+}
 
+
+/**
+ * Upgrade level from version 1 to version 2.
+ *
+ * @param {Array} data - Version 1 level returned from server
+ */
+function upgradeLevelVersion1(data)
+{
+  // Convert format
+  data = {
+    'version': 2,
+    'level': data,
+    'objects': [],
+  };
 
   /**
    * Scans the level for special items, such as the player and enemies,
    * adds them to a list and removes them from the level.
    */
-  this.markSpecialLocations = function(level)
-  {
-    var locations = {
-      players: [],
-      enemies: []
-    };
+  var i_player = 1;
+  var i_enemy = 1;
 
-    var Sprite_Player = SpriteManager.keyToInteger([0, 2]);
-    var Sprite_Enemy_Fly = SpriteManager.keyToInteger([10, 0]);
-    var Sprite_Enemy_Bee = SpriteManager.keyToInteger([10, 3]);
-    var Sprite_Enemy_Bat = SpriteManager.keyToInteger([10, 6]);
+  for(var x = 0; x < data.level[0].length; x++) {
+    for(var y = 0; y < data.level.length; y++) {
 
-    for(var x = 0; x < level.getWidth(); x++) {
-      for(var y = 0; y < level.getHeight(); y++) {
+      // Extract location of player objects
+      if(data.level[y][x] == 2) {
+        data.objects.push({
+          name: 'player_' + (i_player++),
+          type: 'player',
+          x: x * spriteSize,
+          y: y * spriteSize - 12
+        });
 
-        // Mark location of player objects
-        if(level.levelMap[y][x] == Sprite_Player) {
-          locations.players.push({ x: x * 32, y: y * 32 });
+        data.level[y][x] = 0;
+      }
 
-          if(!this.game.editMode)
-            level.levelMap[y][x] = 0;
-        }
+      // Extract location of enemy objects
+      if(isEnemy(data.level[y][x])) {
+        data.objects.push({
+          name: 'enemy_' + (i_enemy++),
+          sprite: data.level[y][x],
+          type: 'enemy',
+          x: x * spriteSize, y: y * spriteSize,
+          aggressionLevel: (data.level[y][x] == 0x0A03)?0:1
+        });
 
-        // Mark location of enemy objects
-        if(level.levelMap[y][x] == Sprite_Enemy_Bee ||
-           level.levelMap[y][x] == Sprite_Enemy_Bat ||
-           level.levelMap[y][x] == Sprite_Enemy_Fly) {
-
-          locations.enemies.push({ type: level.levelMap[y][x], x: x * 32, y: y * 32 });
-
-          if(!this.game.editMode)
-            level.levelMap[y][x] = 0;
-        }
+        data.level[y][x] = 0;
       }
     }
+  }
 
-    return locations;
-  };
+  // Add default player if none are found
+  if(i_player == 1) {
+    data.objects.push({
+      name: 'player_1',
+      type: 'player',
+      x: spriteSize, y: 4 * spriteSize
+    });
+  }
 
+  return data;
 }

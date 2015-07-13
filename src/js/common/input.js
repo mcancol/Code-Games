@@ -70,7 +70,7 @@ function Keyboard()
 	};
 
 	document.body.addEventListener("keydown", this.keydown.bind(this));
-	document.body.addEventListener("keyup", this.keyup.bind(this));;
+	document.body.addEventListener("keyup", this.keyup.bind(this));
 }
 
 
@@ -85,16 +85,17 @@ function Keyboard()
  *
  * @returns {CustomEvent} Custom event to dispatch
  */
-function createMoveEvent(name, type, event, canvas)
+function createMoveEvent(name, type, event, canvas, down)
 {
-	var rect = canvas.getBoundingClientRect()
+	var rect = canvas.getBoundingClientRect();
 
 	return new CustomEvent(name, {
 		detail: {
 			type: type,
 			x: event.clientX - rect.left,
 			y: event.clientY - rect.top,
-			buttons: event.buttons
+			buttons: event.buttons,
+			down: down
 		},
 
 		bubbles: false,
@@ -112,29 +113,33 @@ function createMoveEvent(name, type, event, canvas)
  */
 function Mouse(canvas)
 {
+	// Make sure canvas is defined
+	if(canvas === undefined)
+		throw new Error("Parameter 'canvas' is undefined in Mouse() constructor.");
+
 	this.canvas = canvas;
 
 	this.mouseclick = function(event)
 	{
-		var evt = createMoveEvent("game-move", "mouse", event, this.canvas);
+		var evt = createMoveEvent("game-move", "mouse", event, this.canvas, true);
 		this.canvas.dispatchEvent(evt);
 		event.preventDefault();
-	}
+	};
 
 	this.mousemove = function(event) {
-		var evt = createMoveEvent("game-move", "mouse", event, this.canvas);
+		var evt = createMoveEvent("game-move", "mouse", event, this.canvas, false);
 		this.canvas.dispatchEvent(evt);
 		event.preventDefault();
-	}
+	};
 
 	this.touchmove = function(event) {
 		var first = event.changedTouches[0];
 		first.buttons = 0;
 
-		var evt = createMoveEvent("game-move", "touch", first, this.canvas);
+		var evt = createMoveEvent("game-move", "touch", first, this.canvas, false);
 		this.canvas.dispatchEvent(evt);
 		event.preventDefault();
-	}
+	};
 
 	this.element = this.canvas;
 

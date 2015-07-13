@@ -1,4 +1,4 @@
-function A = waves(image_size, tile_size, phase, water_level, amplitude, band_size)
+function A = waves(image_size, tile_size, phase, water_level, amplitude, band_size, cfg)
 %
 % Creates an image composed of wave tiles
 %  image_size - Size of image
@@ -9,10 +9,21 @@ function A = waves(image_size, tile_size, phase, water_level, amplitude, band_si
 %  band_size - Size of the banding in pixels
 %
 
-    % Alternating colors
-    C1 = [139 225 235] / 255;
-    C2 = [162 231 238] / 255;
-    C3 = [255 255 255] / 255;
+    if(nargin < 7)
+        cfg = struct();
+    end
+    
+    if(~isfield(cfg, 'c1'))
+        cfg.c1 = [139 225 235] / 255;
+    end
+    
+    if(~isfield(cfg, 'c2'))
+        cfg.c2 = [162 231 238] / 255;
+    end
+    
+    if(~isfield(cfg, 'c3'))
+        cfg.c3 = [255 255 255] / 255;
+    end    
 
     % Create blank image
     A = ones([image_size 3]);
@@ -39,12 +50,12 @@ function A = waves(image_size, tile_size, phase, water_level, amplitude, band_si
             value = floor((y - water_level) / band_size);
         
             if(y <= water_level)
-                C = C3;
+                C = cfg.c3;
             else            
                 if(mod(value, 2) == 0)            
-                    C = C1;
+                    C = cfg.c1;
                 else
-                    C = C2;
+                    C = cfg.c2;
                 end
             end
 

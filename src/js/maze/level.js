@@ -22,7 +22,7 @@ function Level()
 	if(getQueryField("player") == 3)
 		this.levelMap = level3;
 
-	this.setup = function()
+	this.reset = function()
 	{
 		this.bombImage = new Image();
 		this.bombImage.src = "images/bomb.png";
@@ -88,6 +88,9 @@ function Level()
 }
 
 
+Level.prototype = new BaseObject();
+
+
 Level.prototype.getHeight = function()
 {
 	return this.levelMap.length;
@@ -149,7 +152,7 @@ Level.prototype.resetLevel = function(width, height)
 		}
 	}
 
-	this.setup();
+	this.reset();
 }
 
 
@@ -163,7 +166,7 @@ Level.prototype.loadLevel = function(name)
 		dataType: 'json'
 	}).done(function(data) {
 		this.levelMap = data;
-		this.setup();
+		this.reset();
 	}.bind(this));
 }
 

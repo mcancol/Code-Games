@@ -6,27 +6,57 @@
  *
  * @class
  * @classdesc Level editor for alien girl game.
- * @param {String} element - Name of canvas element to draw to
- * @param {number} width - Required width of canvas element
- * @param {number} height - Required height of canvas element
  */
-function Editor(element, width, height)
+function Editor(game)
 {
-	this.game = new Game(element, width, height);
+	this.game = game;
 	this.game.startEditMode();
 
-	this.canvas = this.game.canvas;
-	this.context = this.game.context;
+	this.offset = {x: 0, y: 0};
 
-	this.game.spriteManager = new SpriteManager();
-
-	this.mouse = new Mouse(this.canvas);
-
+	this.selectedObject = false;
 	this.currentSprite = 'l';
 
-	this.setupMouse();
+	this.setupDone = false;
+
+	this.types = {};
+	for(var i = 0; i < spriteTable.length; i++) {
+		if('type' in spriteTable[i]) {
+			var key = spriteTable[i].key;
+			this.types[key] = spriteTable[i].type;
+		}
+	}
 }
 
+
+Editor.prototype = new BaseObject();
+
+
+Editor.prototype.reset = function()
+{
+	var engine = this.getEngine();
+
+	if(!this.setupDone && engine) {
+		this.game.engine = engine;
+		this.setupMouse(engine.canvas);
+		this.setupDone = true;
+	}
+};
+
+
+/**
+ * Handle keyboard input, scroll on arrow keys
+ */
+Editor.prototype.update = function(input)
+{
+	if(input.keys[input.KEY_LEFT])
+		this.game.scroll.x -= 8;
+	if(input.keys[input.KEY_RIGHT])
+		this.game.scroll.x += 8;
+
+	if(this.game.scroll.x < 0)
+		this.game.scroll.x = 0;
+};
 
 /**
  * Change the currently active sprite
@@ -36,12 +66,52 @@ function Editor(element, width, height)
 Editor.prototype.setSprite = function(sprite)
 {
 	this.currentSprite = sprite;
-}
+};
+
+
+Editor.prototype.draw = function(context)
+{
+	this.game.draw(context);
+
+	if(this.selectedObject) {
+		context.beginPath();
+		context.rect(this.selectedObject.x, this.selectedObject.y, this.selectedObject.width, this.selectedObject.height);
+		context.lineWidth = 1;
+		context.strokeStyle = 'red';
+		context.stroke();
+	}
+};
 
 
 /************************************
  * Handle mouse movement and clicks *
  ************************************/
+
+
+/**
+ * Generate unique name for new object given a base name
+ *
+ * @param {String} base - Initial part of the name
+ * @return {String} Unique identifier that contains the base name
+ */
+Editor.prototype.generateName = function(base)
+{
+	var keys = this.game.getObjectNames();
+	var max_i = 0;
+
+	for(var i = 0; i < keys.length; i++) {
+		var first = keys[i].slice(0, base.length + 1);
+
+		if(first == base + "_") {
+			var last = parseInt(keys[i].slice(base.length + 1));
+
+			if(last > max_i)
+				max_i = last;
+		}
+	}
+
+	return base + "_" + (max_i + 1);
+};
 
 
 /**
@@ -54,13 +124,77 @@ Editor.prototype.setSprite = function(sprite)
  */
 Editor.prototype.mouseMove = function(event)
 {
-	var coords = {x: Math.floor((this.game.scroll.x + event.detail.x) / 32),
-	 			  y: Math.floor(event.detail.y / 32)};
+	var keys = this.game.getObjectNames();
+	var coords = { x: this.game.scroll.x + event.detail.x, y: event.detail.y };
 
-	if(event.detail.buttons & 1)
-		this.game.getObject("level").setSprite(coords, this.currentSprite);
-	else if(event.detail.buttons & 2)
-		this.game.getObject("level").setSprite(coords, 0);
+	/**
+	 * Move selected object if we are dragging it
+	 */
+	if(this.dragging && !event.detail.down) {
+		if(event.detail.buttons == 1) {
+			this.selectedObject.x = coords.x - this.offset.x;
+			this.selectedObject.y = coords.y - this.offset.y;
+		} else {
+			this.dragging = false;
+		}
+
+		return;
+	}
+
+	/**
+	 * Check whether an object has been clicked or dragging of an
+	 * object has been initiated. We start with the latest object
+	 * because that one will be renderen on-top of everything else.
+	 */
+	if(event.detail.down) {
+		for(var i = keys.length - 1; i >= 0; i--) {
+			var object = this.game.getObject(keys[i]);
+
+			if(inBox(coords.x, coords.y, object)) {
+				this.selectedObject = object;
+
+				if(event.detail.buttons & 1) {
+					this.dragging = true;
+
+					this.offset.x = coords.x - object.x;
+					this.offset.y = coords.y - object.y;
+				} else if(event.detail.buttons & 2) {
+					this.game.deleteObject(keys[i]);
+				}
+
+				return;
+			}
+		}
+	}
+
+	/**
+	 * The level itself has been clicked, deselect all objects
+	 */
+	if(event.detail.down)
+		this.selectedObject = false;
+
+	if(this.currentSprite in this.types) {
+		if(event.detail.down && event.detail.buttons & 1) {
+			var type = this.types[this.currentSprite];
+
+			var object = constructors[type]({ x: coords.x, y: coords.y, sprite: this.currentSprite});
+
+			var object_name = this.generateName(type);
+			this.game.addObject(object_name, object);
+		}
+	} else {
+
+		/**
+	 	 * Put the (normal) sprite into the level
+	 	 */
+		coords.x = Math.floor(coords.x / 32);
+		coords.y = Math.floor(coords.y / 32);
+
+		if(event.detail.buttons & 1)
+			this.game.getObject("level").setSprite(coords, this.currentSprite);
+		else if(event.detail.buttons & 2)
+			this.game.getObject("level").setSprite(coords, 0);
+	}
 }
 
 
@@ -69,9 +203,9 @@ Editor.prototype.mouseMove = function(event)
  *
  * @private
  */
-Editor.prototype.setupMouse = function()
+Editor.prototype.setupMouse = function(canvas)
 {
-	var canvas = this.canvas;
+	this.mouse = new Mouse(canvas);
 
 	/**
 	 * Disable context-menu on right click
@@ -82,5 +216,5 @@ Editor.prototype.setupMouse = function()
 			return false;
 		}, false);
 
-	this.canvas.addEventListener("game-move", this.mouseMove.bind(this));
+	canvas.addEventListener("game-move", this.mouseMove.bind(this));
 }

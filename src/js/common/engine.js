@@ -8,43 +8,63 @@
  */
 function Engine()
 {
-
-	Engine.prototype.initializeEngine = function(element, width, height)
-	{
-		this.canvas = document.getElementById(element);
-		this.context = this.canvas.getContext("2d");
-
-		this.setSize(width, height);
-
-		window.requestAnimationFrame(this.update.bind(this));
-
-		this.input = new Keyboard();
-  	this.mouse = new Mouse(this.canvas);
-		this.objects = {};
-
-		this.scroll = {x: 0, y: 0};
-		this.deadzone = {w: 128};
-
-		this.levelBounds = {x: 0, y: 0, width: 32, height: 32 };
-
-		this.editMode = false;
-		this.debugMode = false;
-	}
 }
 
-Engine.prototype.gameover = function()
+
+Engine.prototype.initializeEngine = function(element, width, height, game)
 {
+	this.canvas = document.getElementById(element);
+	if(!this.canvas) {
+		console.log("getElementById(" + element + ") returned " + this.canvas);
+		throw new Error("Canvas element passed to engine initialization is invalid.");
+	}
+
+	this.context = this.canvas.getContext("2d");
+	if(!this.context)
+		throw new Error("Could not create 2d context during engine initialization.");
+
+	this.game = game;
+	this.game.engine = this;
+
+	this.setSize(width, height);
+
+	this.input = new Keyboard();
+	this.mouse = new Mouse(this.canvas);
+
+	this.editMode = false;
+	this.debugMode = false;
+
+	window.requestAnimationFrame(this.update.bind(this));
+
+	//this.game.initialize();
+	this.game.reset();
 };
 
-Engine.prototype.startEditMode = function()
+
+/**
+ * Returns width of the game window
+ */
+Engine.prototype.getWidth = function()
 {
-	this.editMode = true;
+	return this.canvas.width;
+};
 
-	// Reset all objects to their default states
-	for(var key in this.objects)
-		this.objects[key].setup();
-}
 
+/**
+ * Returns height of the game window
+ */
+Engine.prototype.getHeight = function()
+{
+	return this.canvas.height;
+};
+
+
+/**
+ * Set size of the game window.
+ *
+ * @param {Number} width - Width of the game window
+ * @param {Number} height - Height of the game window
+ */
 Engine.prototype.setSize = function(width, height)
 {
 	this.canvas.width = width;
@@ -52,133 +72,24 @@ Engine.prototype.setSize = function(width, height)
 };
 
 
-Engine.prototype.setLevelBounds = function(bounds)
-{
-	this.levelBounds = bounds;
-}
-
-
 /**
- * Updates translation offset in canvas when the player exits the dead-zone.
+ * Update game state and then render frame
  */
-Engine.prototype.updateTranslation = function()
-{
-	// Do not use player to scroll in edit mode
-	if(this.editMode) {
-		if(this.input.keys[this.input.KEY_LEFT])
-			this.scroll.x -= 8;
-		if(this.input.keys[this.input.KEY_RIGHT])
-			this.scroll.x += 8;
-
-		if(this.scroll.x < 0)
-			this.scroll.x = 0;
-
-		return;
-	}
-
-	if(!this.objects['player'])
-		return;
-
-	var playerX = this.objects['player'].x;
-
-	if(this.canvas.width >= this.levelBounds.width) {
-    // DIFF: this.levelBounds.x not used in maze
-		this.scroll.x = (this.canvas.width - this.levelBounds.width) / 2 - this.levelBounds.x;
-	} else {
-		// Compute boundaries of dead-zone in screen coordinates
-		var deadzone_x_min = (this.canvas.width - this.deadzone.w) / 2;
-		var deadzone_x_max = (this.canvas.width + this.deadzone.w) / 2;
-
-		// Computer player position in screen coordinates
-		var player_x_game = playerX - this.scroll.x;
-
-		// Update scrolling
-		if(player_x_game > deadzone_x_max) {
-			this.scroll.x += player_x_game - deadzone_x_max;
-		} else if(player_x_game < deadzone_x_min) {
-			this.scroll.x += player_x_game - deadzone_x_min;
-		}
-
-		// Make sure we do not scroll past beginning/end of level
-		if(this.scroll.x < this.levelBounds.x)
-			this.scroll.x = this.levelBounds.x;
-		if(this.scroll.x > (this.levelBounds.x + this.levelBounds.width) - this.canvas.width)
-			this.scroll.x = (this.levelBounds.x + this.levelBounds.width) - this.canvas.width;
-	}
-
-  // Not used in maze
-	this.scroll.y = this.levelBounds.y;
-}
-
-
-/**
- * Scrolls the screen
- */
-Engine.prototype.applyTranslation = function()
-{
-	this.context.translate(-this.scroll.x, -this.scroll.y)
-}
-
-
 Engine.prototype.update = function(timestamp)
 {
 	this.timestamp = timestamp;
 
-
 	/**
 	 * Handle input, update physics and scrolling
 	 */
-	if(!this.editMode)
-	{
-		for(var key in this.objects)
-			this.objects[key].update(this.input);
-	}
-
-	this.updateTranslation();
-
+	this.game.update(this.input);
 
 	/**
 	 * Redraw entire scene
 	 */
-	this.context.save()
-	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-  // Not used in maze game!
-	this.applyTranslation();
-
-	for(var key in this.objects)
-		this.objects[key].draw(this.context);
-
-	this.context.restore()
+	this.context.save();
+	this.game.draw(this.context);
+	this.context.restore();
 
 	window.requestAnimationFrame(this.update.bind(this));
-};
-
-
-/******************************
- * Adding objects to the game *
- ******************************/
-
-Engine.prototype.addObject = function(name, object)
-{
-	object.game = this;
-	this.objects[name] = object;
-	this.objects[name].setup();
-};
-
-Engine.prototype.getObject = function(name)
-{
-	return this.objects[name];
-};
-
-
-Engine.prototype.deleteObject = function(name)
-{
-	delete this.objects[name];
-};
-
-
-Engine.prototype.deleteAllObjects = function()
-{
-	this.objects = {};
 };

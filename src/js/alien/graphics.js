@@ -25,7 +25,7 @@ function SpriteManager()
 		imageMap['player_jump_right_' + i] = 'tiles/sara/jump/r/' + i + '.png';
 	}
 
-	for(name in imageMap) {
+	for(var name in imageMap) {
 		if(typeof imageMap[name] == 'array') {
 			for(var i = 0; i < imageMap[name].length; i++) {
 				imageMap[name].length
@@ -62,6 +62,9 @@ function SpriteManager()
 	{
 		var sprite = this.sprites[name];
 
+		if(!sprite)
+			throw new Error("Could not find sprite " + name + " " + name.toString(16));
+
 		if(frame in sprite)
 			sprite = sprite[frame];
 
@@ -77,12 +80,6 @@ function SpriteManager()
 			context.drawImage(sprite, box.x, box.y, box.width, box.height);
 		}
 	}
-}
-
-
-SpriteManager.keyToInteger = function(key)
-{
-	return key[0] * 256 + key[1];
 }
 
 
@@ -133,7 +130,7 @@ SpriteManager.prototype.loadFromSpriteTable =  function(spriteTable)
 {
 	/** Load sprites from sprite table **/
 	for(var i = 0; i < spriteTable.length; i++) {
-		var key = SpriteManager.keyToInteger(spriteTable[i]['key']);
+		var key = spriteTable[i]['key'];
 
 		if('frames' in spriteTable[i]) {
 			var sprite_array = [];
