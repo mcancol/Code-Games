@@ -16,9 +16,9 @@ tile_size = 4 * target_size;
 image_size = [2 1] .* tile_size;
 
 % Names of waves
-wave_name = {'normal_waves', 'big_waves', 'no_waves'};
-wave_amplitude = [0.1429 0.2858 0.05];
-wave_water_level = 0.5 - wave_amplitude;
+wave_name = {'normal_waves2', 'big_waves2', 'no_waves2'};
+wave_amplitude = [0.1 0.3 0.01];
+wave_water_level = [0.4 0.5 0.2] - wave_amplitude;
 wave_band_size = [35 35 35];
 wave_frames = [6 3 7];
 

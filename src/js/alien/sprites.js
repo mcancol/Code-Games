@@ -109,6 +109,68 @@ var spriteTable = [
 
 
 	/* Planet */
+<<<<<<< HEAD
+	{key: [1, 48], src: 'planet/planetLeft', collision: true},
+	{key: [1, 49], src: 'planet/planetMid', collision: true},
+	{key: [1, 50], src: 'planet/planetRight', collision: true},
+	{key: [1, 51], src: 'planet/planetCenter', collision: true},
+	{key: [1, 52], src: 'planet/planetCliff_left', collision: true},
+	{key: [1, 53], src: 'planet/planetCliff_right', collision: true},
+	{key: [1, 54], src: 'planet/planetCliffAlt_left', collision: true},
+	{key: [1, 55], src: 'planet/planetCliffAlt_right', collision: true},
+	{key: [1, 56], src: 'planet/planetCorner_left', collision: true},
+	{key: [1, 57], src: 'planet/planetCorner_right', collision: true},
+	{key: [1, 58], src: 'planet/planetHill_left', collision: 'hillUp'},
+	{key: [1, 59], src: 'planet/planetHill_right', collision: 'hillDown'},
+	{key: [1, 60], src: 'planet/planetHalf', collision: 'topHalf'},
+	{key: [1, 61], src: 'planet/planetHalf_left', collision: 'topHalf'},
+	{key: [1, 62], src: 'planet/planetHalf_mid', collision: 'topHalf'},
+	{key: [1, 63], src: 'planet/planetHalf_right', collision: 'topHalf'},
+
+
+	{key: [1, 20], src: 'metalCenter', collision: true},
+
+	{key: [2, 1], src: 'water/normal_waves2_top', frames: 6, collision: 'water'},
+	{key: [2, 2], src: 'water/normal_waves2_body', frames: 6, collision: 'waterBody'},
+
+	{key: [2, 3], src: 'water/big_waves2_top', frames: 3, collision: 'water'},
+	{key: [2, 4], src: 'water/no_waves2_top', frames: 7, collision: 'water'},
+
+	{key: [2, 5], src: 'water/big_waves2_body', frames: 3, collision: 'waterBody'},
+	{key: [2, 6], src: 'water/no_waves2_body', frames: 7, collision: 'waterBody'},
+
+	{key: [3, 1], src: 'plant', collision: false},
+	{key: [3, 2], src: 'pineSapling', collision: false},
+	{key: [3, 3], src: 'pineSaplingAlt', collision: false},
+	{key: [3, 4], src: 'cactus', collision: false},
+
+	{key: [4, 1], src: 'spikes', collision: 'water'},
+	{key: [4, 2], src: 'doorOpen', collision: 'Door'},
+	{key: [4, 3], src: 'doorOpenTop', collision: false},
+
+
+	{key: [5, 4], src: 'signRight', collision: false},
+	{key: [5, 5], src: 'signExit', collision: 'exit'},
+
+	{key: [6, 1], src: 'cloud1-left', collision: true},
+	{key: [6, 2], src: 'cloud1-right', collision: true},
+
+	{key: [9, 1], src: 'numbers/1', collision: true},
+	{key: [9, 2], src: 'numbers/2', collision: true},
+	{key: [9, 3], src: 'numbers/3', collision: true},
+	{key: [9, 4], src: 'numbers/4', collision: true},
+	{key: [9, 5], src: 'numbers/5', collision: true},
+
+	{key: [10, 0], src: 'fly/fly', frames: 2, collision: 'Fly'},
+	{key: [10, 1], src: 'fly/fly_dead', collision: true},
+
+	{key: [10, 3], src: 'bee/bee', frames: 2, collision: 'Bee'},
+	{key: [10, 4], src: 'bee/bee_dead', collision: true},
+
+	{key: [10, 6], src: 'bat/bat', frames: 2, collision: 'Bat'},
+	{key: [10, 7], src: 'bat/bat_dead', collision: true},
+	{key: [10, 8], src: 'bat/bat_hang', collision: true},
+=======
 	{key: 0x0130, src: 'planet/planetLeft', collision: true},
 	{key: 0x0131, src: 'planet/planetMid', collision: true},
 	{key: 0x0132, src: 'planet/planetRight', collision: true},
@@ -217,4 +279,5 @@ var spriteTable = [
 
 	{key: 0x0A20, src: 'snail/snail', frames: 2, collision: true, type: 'enemy'},
 	{key: 0x0A21, src: 'snail/snail', frames: 2, collision: true, type: 'enemy'},
+>>>>>>> origin/master
 ];
