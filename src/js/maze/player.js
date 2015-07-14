@@ -17,10 +17,10 @@ function Player()
 	/**
 	 * Sets up the player object
 	 */
-	this.setup = function()
+	this.reset = function()
 	{
 		// Find player start position
-		var level = this.game.getObject("level");
+		var level = this.parent.getObject("level");
 
 		for(var i = 0; i < level.levelMap.length; i++) {
 			for(var j = 0; j < level.levelMap[0].length; j++) {
@@ -71,7 +71,7 @@ function Player()
 	 */
 	this.move = function(x, y)
 	{
-		var level = this.game.getObject("level");
+		var level = this.parent.getObject("level");
 
 		var delta = Math.abs(this.x - x) + Math.abs(this.y - y);
 
@@ -151,3 +151,6 @@ function Player()
 		context.restore();
 	}
 }
+
+
+Player.prototype = new BaseObject();

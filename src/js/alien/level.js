@@ -1,8 +1,7 @@
 /** @module Alien **/
 "use strict";
 
-var spriteWidth = 32;
-var spriteHeight = 32;
+var spriteSize = 32;
 
 /**
  * Creates a new level object.
@@ -22,23 +21,39 @@ function Level(levelMap)
 	// Variable that contains coordinates and IDs for animated sprites
 	this.dynamicLevelGeometry = [];
 
+	// Contains debugging lines to draw
 	this.lines = [];
 
 
-	this.setup = function()
+	/**
+	 * Reset level
+	 */
+	this.reset = function()
 	{
 		for(var i = 0; i < spriteTable.length; i++) {
-			var key = spriteTable[i]['key'];
-			this.collisionTypes[key[0] * 256 + key[1]] = spriteTable[i]['collision'];
+			var key = spriteTable[i].key;
+			this.collisionTypes[key] = spriteTable[i].collision;
 		}
 
 		this.cacheLevelGeometry();
-	}
+	};
+
+
+	this.fromArray = function(array)
+	{
+		this.levelMap = array;
+	};
+
+
+	this.toArray = function()
+	{
+		return this.levelMap;
+	};
 
 
 	this.update = function(input)
 	{
-	}
+	};
 
 
 	/**
@@ -47,10 +62,10 @@ function Level(levelMap)
 	this.worldToLevelCoords = function(worldCoord)
 	{
 		return {
-			x: Math.floor(worldCoord.x / spriteWidth),
-			y: Math.floor(worldCoord.y / spriteHeight)
+			x: Math.floor(worldCoord.x / spriteSize),
+			y: Math.floor(worldCoord.y / spriteSize)
 		};
-	}
+	};
 
 
 	/**
@@ -63,42 +78,41 @@ function Level(levelMap)
 	 */
 	this.sensor = function(origin, dir, length, func)
 	{
+		if(isNaN(origin.x) || isNaN(origin.y))
+			throw new Error("Sensor: Origin is set to NaN (" + origin.x + ", " + origin.y + ")");
+
+		if(isNaN(dir.x) || isNaN(dir.y))
+			throw new Error("Sensor: Direction is set to NaN (" + dir.x + ", " + dir.y + ")");
+
 		var o = this.worldToLevelCoords(origin);
 
-		var result = this.spriteSensor(o, dir, length / 32, function(hit)
+		var result = this.spriteSensor(o, dir, length / spriteSize, function(hit)
 		{
-			// Coordinates of top left corner
-			hit.x = hit.sx * 32;
-			hit.y = hit.sy * 32;
-
-			// Fix the x coordinate for vertical sensors
-			if(dir.x == 0) hit.x = origin.x;
-
-			// Fix the y coordinate for horizontal sensors
-			if(dir.y == 0) hit.y = origin.y;
+			if(dir.x == 0) hit.x = origin.x; else	hit.x = hit.sx * spriteSize;
+			if(dir.y == 0) hit.y = origin.y; else	hit.y = hit.sy * spriteSize;
 
 			// Collide with right most edge for leftward sensors
-			if(dir.x < 0) hit.x += 32;
+			if(dir.x < 0) hit.x += spriteSize;
 
 			// Collide with bottom edge for upward sensors
-			if(dir.y < 0)	hit.y += 32;
+			if(dir.y < 0)	hit.y += spriteSize;
 
 			// Half blocks
 			if(hit.type == 'topHalf') {
 				if(dir.y < 0) hit.y -= 14;
-				if(dir.x != 0 && origin.y - hit.sy * 32 > 18) return false;
+				if(dir.x != 0 && origin.y - hit.sy * spriteSize > (18/32)*spriteSize) return false;
 			}
 
 			// Ramp down
 			if(hit.type == 'hillDown') {
-				if(dir.y == 0) hit.x += (hit.sy * 32 - origin.y) + 32;
-				if(dir.x == 0) hit.y += (hit.sx * 32 - origin.x) + 32;
+				if(dir.y == 0) hit.x += (hit.sy * spriteSize - origin.y) + spriteSize;
+				if(dir.x == 0) hit.y += (hit.sx * spriteSize - origin.x) + spriteSize;
 			}
 
 			// Ramp up
 			if(hit.type == 'hillUp') {
-				if(dir.y == 0) hit.x -= (hit.sy * 32 - origin.y) + 32;
-				if(dir.x == 0) hit.y -= (hit.sx * 32 - origin.x);
+				if(dir.y == 0) hit.x -= (hit.sy * spriteSize - origin.y) + spriteSize;
+				if(dir.x == 0) hit.y -= (hit.sx * spriteSize - origin.x);
 			}
 
 			// Compute difference
@@ -109,9 +123,6 @@ function Level(levelMap)
 			if(dir.x != 0 && dir.x * hit.dx <= 0)
 				return false;
 
-			//if(dir.y != 0 && dir.y * hit.dy <= 0)
-			//	return false;
-
 			// Invoke callback
 			hit = func(hit);
 
@@ -120,7 +131,7 @@ function Level(levelMap)
 		});
 
 		// Draw result
-		if(this.game.debugMode) {
+		if(this.getEngine().debugMode) {
 			if(dir.x != 0)
 				this.lines.push({ a: origin, b: result, color: 'blue' });
 			else
@@ -128,27 +139,7 @@ function Level(levelMap)
 		}
 
 		return result;
-	}
-
-	this.drawDebugLines = function()
-	{
-		for(var i = 0; i < this.lines.length; i++)
-			this.drawLine(this.lines[i].a, this.lines[i].b, this.lines[i].color);
-		this.lines = [];
-	}
-
-
-	this.drawLine = function(a, b, color)
-	{
-		var ctx = this.game.context;
-
-		ctx.beginPath();
-		ctx.moveTo(a.x, a.y);
-		ctx.lineTo(b.x, b.y);
-		ctx.closePath();
-		ctx.strokeStyle = color;
-		ctx.stroke();
-	}
+	};
 
 
 	/**
@@ -161,6 +152,12 @@ function Level(levelMap)
 	 */
 	this.spriteSensor = function(origin, dir, length, func)
 	{
+		if(isNaN(origin.x) || isNaN(origin.y))
+			throw new Error("SpriteSensor: Origin is set to NaN (" + origin.x + ", " + origin.y + ")");
+
+		if(isNaN(dir.x) || isNaN(dir.y))
+			throw new Error("SpriteSensor: Direction is set to NaN (" + dir.x + ", " + dir.y + ")");
+
 		for(var i = 0; i < Math.ceil(length); i++)
 		{
 			var l = {
@@ -171,12 +168,15 @@ function Level(levelMap)
 			/**
 			 * Out of bounds, return 'Bounds'
 			 */
-			if(l.sy < 0 || l.sy >= this.getHeight() || l.sx < 0 || l.sx >= this.getWidth())
+			if(l.sx < 0 || l.sx >= this.getWidth() ||
+				 l.sy < 0 || l.sy >= this.getHeight())
+			{
 				return {
 					type: 'Bounds',
 					sx: clamp(l.sx, 0, this.getWidth()),
 					sy: clamp(l.sy, 0, this.getHeight())
 				};
+			}
 
 			// Get sprite number
 			var sprite = this.levelMap[l.sy][l.sx];
@@ -197,7 +197,12 @@ function Level(levelMap)
 
 		// We did not hit anything, return false
 		return { type: false };
-	}
+	};
+
+
+	/*********************
+	 * Drawing functions *
+	 *********************/
 
 
 	/**
@@ -205,9 +210,9 @@ function Level(levelMap)
 	 */
 	this.animate = function(base, frames)
 	{
-		var deltaT = this.game.timestamp / 140;
+		var deltaT = this.getEngine().timestamp / 140;
 		return base + Math.floor(1 + deltaT % frames);
-	}
+	};
 
 
 	/**
@@ -215,14 +220,14 @@ function Level(levelMap)
 	 */
 	this.drawSprite = function(context, x, y, sprite, frameCount)
 	{
-		if(sprite == 1 && this.game && !this.game.editMode)
+		if(sprite == 1 && !this.parent.editMode)
 			return;
 
-		var box = {x: x * 32, y: y * 32, width: 32, height: 32};
-		var frame = (this.game.timestamp >> 7) % frameCount;
+		var box = {x: x * spriteSize, y: y * spriteSize, width: spriteSize, height: spriteSize};
+		var frame = (this.getEngine().timestamp >> 7) % frameCount;
 
-		return this.game.spriteManager.drawSprite(context, box, sprite, frame);
-	}
+		return this.parent.spriteManager.drawSprite(context, box, sprite, frame);
+	};
 
 
 	/**
@@ -232,8 +237,8 @@ function Level(levelMap)
 	 */
 	this.cacheLevelGeometry = function()
 	{
-		this.staticLevelCanvas.width = this.getWidth() * spriteWidth;
-		this.staticLevelCanvas.height = this.getHeight() * spriteHeight;
+		this.staticLevelCanvas.width = this.getWidth() * spriteSize;
+		this.staticLevelCanvas.height = this.getHeight() * spriteSize;
 
 		this.dynamicLevelGeometry = new Array();
 		var context = this.staticLevelCanvas.getContext("2d");
@@ -241,10 +246,10 @@ function Level(levelMap)
 		for(var i = 0; i < this.levelMap.length; i++) {
 			for(var j = 0; j < this.levelMap[0].length; j++) {
 				var sprite = this.levelMap[i][j];
-				var frameCount =  this.game.spriteManager.getFrameCount(sprite);
+				var frameCount =  this.parent.spriteManager.getFrameCount(sprite);
 
 				// Ignore invalid sprites (that the sprite manager doesn't know about)
-				if(!this.game.spriteManager.isSpriteValid(sprite))
+				if(!this.parent.spriteManager.isSpriteValid(sprite))
 					continue;
 
 				// Sprites with 1 frame are static, more than one dynamic
@@ -256,11 +261,45 @@ function Level(levelMap)
 					});
 			}
 		}
-	}
+	};
 
 
 	/**
-	 * Draw entire level
+	 * Draw debug lines (from this.lines).
+	 *
+	 * @param {Context} context - Context to draw to.
+	 */
+	this.drawDebugLines = function(context)
+	{
+		for(var i = 0; i < this.lines.length; i++)
+			this.drawLine(context, this.lines[i].a, this.lines[i].b, this.lines[i].color);
+		this.lines = [];
+	};
+
+
+	/**
+	 * Draw a line to the context.
+	 *
+	 * @param {Context} context - Context to draw to.
+	 * @param {Object} a - Starting coordinate of the line.
+	 * @param {Object} b - Final coordinate of the line.
+	 * @param {Object} color - Color of the line.
+	 */
+	this.drawLine = function(context, a, b, color)
+	{
+		context.beginPath();
+		context.moveTo(a.x, a.y);
+		context.lineTo(b.x, b.y);
+		context.closePath();
+		context.strokeStyle = color;
+		context.stroke();
+	};
+
+
+	/**
+	 * Draw entire level.
+	 *
+	 * @param {Context} context - Context to draw to.
 	 */
 	this.draw = function(context)
 	{
@@ -271,31 +310,41 @@ function Level(levelMap)
 			this.drawSprite(context, item.x, item.y, item.sprite, item.frameCount);
 		}
 
-		this.drawDebugLines();
-	}
+		this.drawDebugLines(context);
+	};
 }
 
 
+Level.prototype = new BaseObject();
+
+
 /**
- * Returns the height of the level in sprites
+ * Returns the height of the level in sprites.
+ *
+ * @return {Number} Height of the level.
  */
 Level.prototype.getHeight = function()
 {
 	return this.levelMap.length;
-}
+};
 
 
 /**
- * Returns the width of the level in sprites
+ * Returns the width of the level in sprites.
+ *
+ * @return {Number} Width of the level.
  */
 Level.prototype.getWidth = function()
 {
 	return this.levelMap[0].length;
-}
+};
 
 
 /**
- * Sets the sprite at a specific block
+ * Sets the sprite at a specific block.
+ *
+ * @param {Object} coords - Coordinates.
+ * @param {Number} sprite - Number of the sprite to set.
  */
 Level.prototype.setSprite = function(coords, sprite)
 {
@@ -323,29 +372,4 @@ Level.prototype.setSprite = function(coords, sprite)
 	this.levelMap[coords.y][coords.x] = sprite;
 
 	this.cacheLevelGeometry();
-}
-
-
-/**
-* Save the level to the server
-*/
-Level.prototype.saveLevel = function(name)
-{
-	var level = this;
-
-	return new Promise(function(resolve, reject) {
-		if(typeof(server) == 'undefined' || !server)
-			reject();
-
-		jQuery.ajax({
-			url: server + "ldb/set_level.php?name=" + name,
-			data: JSON.stringify(level.levelMap),
-			contentType: 'text/plain',
-			method: 'POST'
-		}).done(function(data) {
-			resolve();
-		}.bind(level)).fail(function(response) {
-			reject(response.responseText);
-		});
-	});
-}
+};

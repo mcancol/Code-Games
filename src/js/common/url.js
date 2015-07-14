@@ -68,16 +68,17 @@ function updateQueryString(updates, url)
 
 	// Extract all field-value pairs
   var fieldValues = getQueryFields(url);
+	var field;
 
 	// Copy updates into fieldValues object
-	for(var field in updates) {
+	for(field in updates) {
 		fieldValues[field] = updates[field];
 	}
 
 	var queryString = getAddress(url);
 	var first = true;
 
-	for(var field in fieldValues) {
+	for(field in fieldValues) {
 		queryString += (first?"?":"&") + field + "=" + fieldValues[field];
 		first = false;
 	}

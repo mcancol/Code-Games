@@ -15,11 +15,11 @@
 }
 
 img.sprite {
-  height: 32px;
-  border: 2px solid white;
+  height: 24px;
+  border: 1px solid white;
 }
 
 img.selected {
-  height: 32px;
-  border: 2px solid red;
+  height: 24px;
+  border: 1px solid red;
 }

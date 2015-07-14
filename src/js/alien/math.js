@@ -26,42 +26,75 @@ function findGround(player, level)
 	return null;
 }
 
+
 /**
- * Checks whether two objects are colliding and returns
- * a possible resolution strategy.
+ * Checks whether the X coordaintes of two objects collide
+ *
+ * @param {Object} objectA - First object
+ * @param {Object} objectB - Second object
+ * @return {false|Object} False if they do not collide
  */
-function collisionCheck(objectA, objectB)
+function collisionCheckX(objectA, objectB)
 {
 	var gapXA = objectA.x - (objectB.x + objectB.width);
 	var gapXB = objectB.x - (objectA.x + objectA.width);
 
+	if(gapXA >= 0 || gapXB >= 0)
+		return false;
+
+	return {
+		type: objectB.type,
+		normal: (gapXA < gapXB)?gapXB:-gapXA
+	};
+}
+
+
+/**
+ * Checks whether the Y coordaintes of two objects collide
+ *
+ * @param {Object} objectA - First object
+ * @param {Object} objectB - Second object
+ * @return {false|Object} False if they do not collide
+ */
+function collisionCheckY(objectA, objectB)
+{
 	var gapYA = objectA.y - (objectB.y + objectB.height);
 	var gapYB = objectB.y - (objectA.y + objectA.height);
 
-
-	// Touching or no collision
-	if(gapXA >= 0 || gapXB >= 0 || gapYA >= 0 || gapYB >= 0)
+	if(gapYA >= 0 || gapYB >= 0)
 		return false;
 
-	// Collision information object
-	var ci = {normal: {x: 0, y: 0}};
-	ci.type = objectB.type;
+	return {
+		type: objectB.type,
+		normal: (gapYA < gapYB)?gapYB:-gapYA
+	};
+}
 
-	// Compute collision normal in X
-	if(gapXA < gapXB) {
-		ci.normal['x'] = gapXB;
-	} else {
-		ci.normal['x'] = -gapXA;
-	}
 
-	// Compute collision normal in Y
-	if(gapYA < gapYB) {
-		ci.normal['y'] = gapYB;
-	} else {
-		ci.normal['y'] = -gapYA;
-	}
+/**
+ * Checks whether two objects are colliding and returns
+ * a possible resolution strategy.
+ *
+ * @param {Object} objectA - First object
+ * @param {Object} objectB - Second object
+ * @return {false|Object} False if they do not collide
+ */
+function collisionCheck(objectA, objectB)
+{
+	var collideX = collisionCheckX(objectA, objectB);
+	var collideY = collisionCheckY(objectA, objectB);
 
-	ci.axis = Math.abs(ci.normal.x) < Math.abs(ci.normal.y)?'x':'y';
+	if(collideX === false || collideY === false)
+		return false;
+
+	var ci = {
+		type: objectB.type,
+		normal: {
+			x: collideX.normal,
+			y: collideY.normal
+		},
+		axis: (Math.abs(collideX.normal) < Math.abs(collideY.normal))?'x':'y'
+	};
 
 	return ci;
 }
@@ -69,16 +102,18 @@ function collisionCheck(objectA, objectB)
 
 function detectCollisionArray(objectA, objectsB, callback, offset)
 {
+	var box;
+
 	for(var key in objectsB) {
 		if(offset) {
 			// Copy box for collision detection
-			var box = {x: objectsB[key].x + offset.x,
+			box = {x: objectsB[key].x + offset.x,
 					   y: objectsB[key].y + offset.y,
 					   width: objectsB[key].width,
 					   height: objectsB[key].height,
 					   type: objectsB[key].type};
 		} else {
-			var box = objectsB[key];
+			box = objectsB[key];
 		}
 
 		var ci = collisionCheck(objectA, box);
@@ -92,6 +127,18 @@ function detectCollisionArray(objectA, objectsB, callback, offset)
 			callback(ci);
 		}
 	}
+}
+
+
+/**
+ * Checks whether a given position is within a box
+ */
+function inBox(x, y, box)
+{
+	if(x >= box.x && x <= box.x + box.width &
+		 y >= box.y && y <= box.y + box.height)
+			return true;
+	return false;
 }
 
 

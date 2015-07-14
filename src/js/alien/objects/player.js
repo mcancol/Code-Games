@@ -13,6 +13,7 @@ function Player()
 	// Depends on sprite
 	this.width = 32;
 	this.height = 46;
+	this.type = 'player';
 
 	this.baseX = 0;
 	this.baseY = 0;
@@ -26,8 +27,10 @@ function Player()
 	this.events = [];
 
 
-	this.setup = function()
+	this.reset = function()
 	{
+		this.engine = this.getEngine();
+
 		// Position
 		this.x = this.baseX;
 		this.y = this.baseY;
@@ -63,6 +66,28 @@ function Player()
 
 		this.events.push("RESTART");
 	}
+
+
+	/**
+   * Serialize state to array
+   */
+  this.toArray = function()
+  {
+    return {
+      'x': this.x,
+      'y': this.y,
+			'type': 'player'
+    };
+  }
+
+
+  /**
+   * Unserialize state from array
+   */
+  this.fromArray = function(array)
+  {
+    this.setStartingPosition(array.x, array.y);
+  }
 
 
 	/**
@@ -115,7 +140,7 @@ function Player()
 		var x = Math.floor(this.x / 32);
 		var y = Math.floor(this.y / 32);
 
-		var level = this.game.getObject("level");
+		var level = this.parent.getObject("level");
 		var code = level.levelMap[0][x] - 2304;
 
 		return {
@@ -148,9 +173,9 @@ function Player()
 		if(input.keys[input.KEY_UP] && input.keys[input.KEY_DOWN])
 		{
 			// Allow wait at least 200ms before next flip
-			if(permitted.walk_upside_down && (!this.lastFlip || this.game.timestamp - this.lastFlip > 200))
+			if(permitted.walk_upside_down && (!this.lastFlip || this.engine.timestamp - this.lastFlip > 200))
 			{
-				this.lastFlip = this.game.timestamp
+				this.lastFlip = this.engine.timestamp
 				this.gravity *= -1;
 
 				if(this.gravity < 0)
@@ -173,16 +198,14 @@ function Player()
 		}
 
 		// Move to the left
-		if(input.keys[input.KEY_LEFT]) {
-			if(this.velX > -this.speed)
-				this.velX--;
-		}
+		if(input.keys[input.KEY_LEFT] && this.velX > -this.speed)
+			this.velX--;
 
 		// Move to the right
-		if(input.keys[input.KEY_RIGHT]) {
-			if(this.velX < this.speed)
-				this.velX++;
-		} else if(this.ground.slippery && !input.keys[input.KEY_DOWN]) {
+		if(input.keys[input.KEY_RIGHT] && this.velX < this.speed)
+			this.velX++;
+
+		if(this.ground.slippery && !input.keys[input.KEY_DOWN]) {
 			if(this.ground.type == 'hillDown')
 				if(this.velX > 0.5 * -this.speed)
 					this.velX -= 0.25;
@@ -191,7 +214,7 @@ function Player()
 					this.velX += 0.25;
 		}
 
-		// Change friction when pressing down
+		// Change friction when pressing down / ground is slippery
 		if(input.keys[input.KEY_DOWN]) {
 			this.friction = this.frictionDown;
 			this.speed = this.speedDefault;
@@ -243,6 +266,9 @@ function Player()
 	}
 
 
+	/**************************************************************/
+
+
 	this.collideVerticalDown = function(level)
 	{
 		var permitted = this.getPermittedActions();
@@ -250,13 +276,15 @@ function Player()
 		var dirY = Math.sign(this.gravity);
 		var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
 
-		var hit_left = level.sensor(
-			{ x: this.x + this.sensor_left, y: oriY },
-			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
+		var hit_left = level.sensor({
+			x: this.x + this.sensor_left,
+			y: oriY
+		}, { x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
-		var hit_right = level.sensor(
-			{ x: this.x + this.sensor_right, y: oriY },
-			{ x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
+		var hit_right = level.sensor({
+			x: this.x + this.sensor_right,
+			y: oriY
+		}, { x: 0, y: dirY }, 256, this.sensorCallback.bind(this));
 
 		var combined = this.combineSensors([hit_left, hit_right]);
 
@@ -327,24 +355,38 @@ function Player()
 
 	this.collideHorizontal = function(level)
 	{
-		var hit = level.sensor(
-			{ x: this.x + this.width - 10, y: this.y + this.height - 20 },
-			{ x: 1, y: 0 }, 256, this.sensorCallback.bind(this));
+		// To the right
+		var hit = level.sensor({
+			x: this.x + this.width - 10,
+			y: this.y + this.height - 20
+		}, {
+			x: 1,
+			y: 0
+		}, 256, this.sensorCallback.bind(this));
+
 
 		if(hit && hit.type && hit.dx < 10) {
 			this.velX = 0;
 			this.x = this.x + hit.dx - 10;
 		}
 
-		var hit = level.sensor(
-			{ x: this.x + 10, y: this.y + this.height - 20 },
-			{ x: -1, y: 0 }, 256, this.sensorCallback.bind(this));
+		// To the left
+		var hit = level.sensor({
+			x: this.x + 10,
+			y: this.y + this.height - 20
+		}, {
+			x: -1,
+			y: 0
+		}, 256, this.sensorCallback.bind(this));
 
 		if(hit && hit.type && hit.dx > -10) {
 			this.velX = 0;
 			this.x = this.x + hit.dx + 10;
 		}
 	}
+
+
+	/*****************************************************************/
 
 
 	/**
@@ -359,7 +401,7 @@ function Player()
 		var oriY = this.y;
 
 		var permitted = this.getPermittedActions();
-		var level = this.game.getObject("level");
+		var level = this.parent.getObject("level");
 
 		this.velX *= this.friction;
 		this.velY += this.gravity;
@@ -380,7 +422,7 @@ function Player()
 
 	this.findTeleportDestination = function(x, y)
 	{
-		var map = this.game.getObject('level').levelMap;
+		var map = this.parent.getObject('level').levelMap;
 
 		for(var j = 0; j < map.length; j++) {
 			for(var i = Math.floor(x / 32); i < map[0].length; i++) {
@@ -409,7 +451,7 @@ function Player()
 
 		if(!this.alive && Math.abs(this.scale) < 0.01) {
 			// Recreate character after it died
-			this.game.gameover();
+			this.parent.gameover();
 		}
 	}
 
@@ -420,13 +462,49 @@ function Player()
 	this.animate = function(base, frames)
 	{
 		if(this.animationBase != base) {
-			this.animationStart = this.game.timestamp;
+			this.animationStart = this.engine.timestamp;
 			this.animationBase = base;
 		}
 
-		var deltaT = (this.game.timestamp - this.animationStart) / 120;
+		var deltaT = (this.engine.timestamp - this.animationStart) / 120;
 
 		return base + Math.floor(1 + deltaT % frames);
+	}
+
+
+	/**
+	 * Draws the dead message to the context
+	 *
+	 * @private
+	 * @param {Context} context - Context to draw to
+	 */
+	this.drawDeadMessage = function(context)
+	{
+		context.save();
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.font = 'bold 20px Arial';
+		context.textAlign = 'center';
+		context.fillText("Oops, you died...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
+		context.restore();
+	}
+
+
+	/**
+	 * Draws the finished message to the context
+	 *
+	 * @private
+	 * @param {Context} context - Context to draw to
+	 */
+	this.drawFinishedMessage = function(context)
+	{
+		context.save();
+
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.font = 'bold 20px Arial';
+		context.textAlign = 'center';
+		context.fillText("Congratulations, you have finished the game...", this.engine.getWidth() / 2, this.engine.getHeight() / 2);
+
+		context.restore();
 	}
 
 
@@ -443,27 +521,11 @@ function Player()
 			this.scale = lerp(this.scale, 0, 0.05);
 		}
 
-		if(!this.alive) {
-			context.save();
+		if(!this.alive)
+			this.drawDeadMessage(context);
 
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.font = 'bold 20px Arial';
-			context.textAlign = 'center';
-			context.fillText("Oops, you died...", this.game.canvas.width / 2, this.game.canvas.height / 2);
-
-			context.restore();
-		}
-
-		if(this.finished) {
-			context.save();
-
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.font = 'bold 20px Arial';
-			context.textAlign = 'center';
-			context.fillText("Congratulations, you have finished the game...", this.game.canvas.width / 2, this.game.canvas.height / 2);
-
-			context.restore();
-		}
+		if(this.finished)
+			this.drawFinishedMessage(context);
 
 		if(this.velX > 0.3) {
 			sprite = this.animate('player_walk_right_', 3);
@@ -475,7 +537,7 @@ function Player()
 			sprite = this.animate('player_idle_left_', 3);
 		}
 
-		this.game.spriteManager.drawSprite(context, this, sprite, 0, function(context) {
+		this.parent.spriteManager.drawSprite(context, this, sprite, 0, function(context) {
 			context.scale(1, this.scale);
 		}.bind(this));
 	}

@@ -26,10 +26,10 @@ function Controls()
 	this.modeWedge = true;
 
 
-  this.setup = function()
+  this.reset = function()
   {
-    this.game.canvas.addEventListener("game-move", this.mousemove.bind(this));
-    this.player = this.game.getObject("player");
+    this.getEngine().canvas.addEventListener("game-move", this.mousemove.bind(this));
+    this.player = this.parent.getObject("player");
   }
 
 
@@ -243,3 +243,6 @@ function Controls()
     }
   }
 }
+
+
+Controls.prototype = new BaseObject();

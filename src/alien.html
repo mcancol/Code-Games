@@ -16,7 +16,7 @@
 		<script src="js/common/input.js"></script>
 		<script src="js/common/sink.js"></script>
 		<script src="js/common/engine.js"></script>
-		
+
 		<script src="js/common/base_object.js"></script>
 
 		<script src="js/alien/game.js"></script>
@@ -27,8 +27,12 @@
 
 		<script src="js/alien/level_loader.js"></script>
 
-		<script src="js/alien/player.js"></script>
-		<script src="js/alien/enemy.js"></script>
+		<script src="js/alien/objects/player.js"></script>
+		<script src="js/alien/objects/enemy.js"></script>
+		<script src="js/alien/objects/frog.js"></script>
+		<script src="js/alien/objects/bomb.js"></script>
+		<script src="js/alien/objects/rock.js"></script>
+		<script src="js/alien/objects/worm.js"></script>
 
 		<script src="js/alien/level.js"></script>
 		<script src="js/alien/sprites.js"></script>
@@ -65,9 +69,7 @@
 
 				$("#status").html("Saving level, please wait...");
 
-				editor.game
-					.getObject("level")
-					.saveLevel(level_name)
+				loader.saveLevel(level_name)
 					.then(
 						function() { $("#status").html("Level saved..."); },
 						function(error) { $("#status").html("Error saving level: " + error); }
@@ -114,7 +116,23 @@
 					Unable to load the specified level
 				</div>
 			</div>
+
+			<div class="panel panel-danger" id="level-selector">
+				<div class="panel-heading">
+					Level not specified
+				</div>
+				<div class="panel-body">
+					Please select the level you wish to load:
+
+					<p>
+						<ul id="level-list">
+						</ul>
+					</p>
+				</div>
+			</div>
 		</div>
+	</div>
+
 
 
 		<div class="container">
@@ -128,6 +146,28 @@
 		<script>
 			var server = "http://www.ivarclemens.nl/platform_game/";
 			var gameStart = false;
+
+			$("#level-selector").hide();
+
+
+			/**
+			 * Load list of levels from the server
+			 */
+			jQuery.ajax(server + "ldb/list_levels.php", { dataType: 'json'}).done(function(result) {
+				for(var i = 0; i < result.length; i++) {
+					var list = $("#level-list");
+
+					var li = $("<li/>")
+						.appendTo(list);
+
+					var a = $("<a />")
+						.appendTo(li)
+						.attr("href", updateQueryString({ level: result[i].name }))
+						.text(result[i].name[0].toUpperCase() + result[i].name.slice(1));
+				}
+
+	    }.bind(this));
+
 
 			(function() {
 				/**
@@ -166,8 +206,14 @@
 				 */
 				var levelName = getQueryField("level");
 
-				if(!levelName || levelName == "")
-					levelName = "level1";
+				if(!levelName || levelName == "") {
+					$("nav").hide();
+					$("#loading-screen").fadeOut(500, function() {
+						$("#level-selector").fadeIn(250);
+					});
+
+					return;
+				}
 
 				$("#level_name").val(levelName);
 
@@ -177,20 +223,27 @@
 				$("#" + canvas_id).width((width * 32) + "px");
 
 				/**
-				 * Initialize game
+				 * Hide menu bar when playing the game
 				 */
-				if(editMode) {
-					editor = new Editor(canvas_id, 32 * width, 32 * (height + 2));
-					var game = editor.game;
-					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
-				} else {
+				if(!editMode)
 					$("nav").hide();
 
-					var game = new Game(canvas_id, 32 * width, 32 * height);
-					game.debugMode = debugMode;
-					game.spriteManager = new SpriteManager();
+				/**
+				 * Initialize game
+				 */
+				var engine = new Engine();
+				var game = new Game();
+				var main = game;
+
+				if(editMode) {
+					editor = new Editor(game);
+					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
+
+					main = editor;
 				}
 
+				engine.initializeEngine(canvas_id, 32 * width, 32 * (height + 2 * (editMode?1:0)), main);
+				engine.debugMode = debugMode;
 
 				loader = new LevelLoader(game);
 

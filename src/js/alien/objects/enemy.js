@@ -21,12 +21,40 @@ function Enemy()
   this.aggressionLevel = 0;
 
   this.sprite = 0;
+  this.frameCount = 1;
+
+  /**
+   * Serialize state to array
+   */
+  this.toArray = function()
+  {
+    return {
+      'x': this.x,
+      'y': this.y,
+      'type': 'enemy',
+      'sprite': this.sprite,
+      'aggressionLevel': this.aggressionLevel
+    };
+  }
+
+
+  /**
+   * Unserialize state from array
+   */
+  this.fromArray = function(array)
+  {
+    if('aggressionLevel' in array)
+      this.setAggressionLevel(array.aggressionLevel);
+
+    this.setStartingPosition(array.x, array.y);
+    this.setBaseSprite(array.sprite);
+  }
 
 
   /**
    * Setups the enemy at the start of the game
    */
-  this.setup = function()
+  this.reset = function()
   {
     this.targetX = this.baseX;
     this.targetY = this.baseY;
@@ -35,6 +63,8 @@ function Enemy()
     this.y = this.baseY;
 
     this.alive = true;
+
+    this.frameCount = this.parent.spriteManager.getFrameCount(this.sprite);
   }
 
 
@@ -50,10 +80,10 @@ function Enemy()
 
 
   /**
-	 * Update stating position of the player
+	 * Update stating position of the enemy
 	 *
-	 * @param {number} x - X coordinate of player starting location
-   * @param {number} y - Y coordinate of player starting location
+	 * @param {number} x - X coordinate of enemy starting location
+   * @param {number} y - Y coordinate of enemy starting location
    */
 	this.setStartingPosition = function(x, y)
 	{
@@ -76,7 +106,10 @@ function Enemy()
    */
   this.updateHunting = function()
   {
-    var player = this.game.getObject("player");
+    var player = this.parent.getObject("player_1");
+
+    if(!player)
+      throw new Error("Could not find object player_1");
 
     var player_underneath =
       player.x + player.width / 2 >= this.x &&
@@ -127,14 +160,25 @@ function Enemy()
    */
   this.updateDying = function()
   {
-    var level = this.game.getObject("level");
+    var level = this.parent.getObject("level");
 
     var dirY = Math.sign(this.gravity);
     var oriY = this.y + 10 + (dirY == 1) * (this.height - 20);
 
+    /**
+     * Make sure hitting spikes or water causes the enemy to touch the surface
+     */
+    var callback = function(hit) {
+      if(hit.type == 'water') {
+        hit.y += 24;
+        hit.dy += 24;
+      }
+      return hit;
+    }
+
     var hit = level.sensor(
       { x: this.x + this.width / 2, y: oriY },
-      { x: 0, y: dirY }, 256, function(hit) { return hit; });
+      { x: 0, y: dirY }, 256, callback);
 
     if(dirY > 0 && hit && hit.dy < 10) {
       this.y = hit.y - this.height;
@@ -168,13 +212,12 @@ function Enemy()
    */
   this.draw = function(context)
   {
-    var frame = Math.floor((this.game.timestamp / 120) % 2);
+    var frame = Math.floor((this.getEngine().timestamp / 120) % this.frameCount);
 
     if(this.alive) {
-      //sprite = SpriteManager.keyToInteger([10, 3]);
-      this.game.spriteManager.drawSprite(context, this, this.sprite, frame);
+      this.parent.spriteManager.drawSprite(context, this, this.sprite, frame);
     } else {
-      this.game.spriteManager.drawSprite(context, this, this.sprite + 1, 0, function(context) {
+      this.parent.spriteManager.drawSprite(context, this, this.sprite + 1, 0, function(context) {
         context.rotate(this.rotation);
       }.bind(this));
     }
