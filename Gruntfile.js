@@ -7,6 +7,7 @@ module.exports = function(grunt) {
       return '// Source: ' + filepath + '\n' +
         src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
     },
+    sourceMap: true
   };
 
   grunt.initConfig({
