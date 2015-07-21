@@ -1299,7 +1299,7 @@ function Level(levelMap)
 				var hit = func(l);
 
 				// If we hit something, return it, otherwise continue
-				if(hit)
+				if(hit && hit.type !== false)
 					return hit;
 			}
 		}
