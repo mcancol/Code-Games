@@ -98,8 +98,9 @@ function Frog()
   /**
    * Updates the frog
    */
-  this.update = function()
+  this.update = function(keyboard)
   {
+    var push_key = keyboard.keys[keyboard.KEY_P];
     var level = this.parent.getObject("level");
 
     var dirY = Math.sign(this.gravity);
@@ -137,14 +138,21 @@ function Frog()
         this.worms[i].kill();
     }
 
-    // Move when being pushed by the player
+
     var collision = collisionCheck(this, this.player);
 
-    if(collision.axis == 'y')
-      this.alive = false;
+    if(!collision)
+      return;
 
-    if(this.alive && collision && collision.axis == 'x')
-      this.x += collision.normal.x;
+    // Move when being pushed by the player
+    if(push_key && this.alive) {
+      if(collision.axis == 'x' && Math.abs(collision.normal.x) < 5)
+        this.x += collision.normal.x;
+    }
+
+    // Kill frog when jumped on it from the top
+    if(collision.axis == 'y' && this.player.velY > 4)
+      this.alive = false;
   }
 
 
