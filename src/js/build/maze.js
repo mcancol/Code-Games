@@ -529,10 +529,24 @@ function getAddress(url)
  * Returns the value of a field from the query string
  *
  * @param {String} field - Name of the field
+ * @param {String} default - Optional default value
  * @param {String} url - Optional string containing the URL to parse
  * @returns {String} Value of the field or false if the key was not found.
  */
 function getQueryField(field, url) {
+	return getQueryFieldWithDefault(field, undefined, url);
+}
+
+
+/**
+ * Returns the value of a field from the query string
+ *
+ * @param {String} field - Name of the field
+ * @param {String} default - Optional default value
+ * @param {String} url - Optional string containing the URL to parse
+ * @returns {String} Value of the field or false if the key was not found.
+ */
+function getQueryFieldWithDefault(field, deflt, url) {
 	if(typeof url === 'undefined')
 		url = window.location.href;
 
@@ -541,7 +555,7 @@ function getQueryField(field, url) {
 	if(field in fieldValues)
 		return fieldValues[field];
 
-	return false;
+	return deflt;
 }
 
 

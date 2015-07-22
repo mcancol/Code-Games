@@ -529,10 +529,24 @@ function getAddress(url)
  * Returns the value of a field from the query string
  *
  * @param {String} field - Name of the field
+ * @param {String} default - Optional default value
  * @param {String} url - Optional string containing the URL to parse
  * @returns {String} Value of the field or false if the key was not found.
  */
 function getQueryField(field, url) {
+	return getQueryFieldWithDefault(field, undefined, url);
+}
+
+
+/**
+ * Returns the value of a field from the query string
+ *
+ * @param {String} field - Name of the field
+ * @param {String} default - Optional default value
+ * @param {String} url - Optional string containing the URL to parse
+ * @returns {String} Value of the field or false if the key was not found.
+ */
+function getQueryFieldWithDefault(field, deflt, url) {
 	if(typeof url === 'undefined')
 		url = window.location.href;
 
@@ -541,7 +555,7 @@ function getQueryField(field, url) {
 	if(field in fieldValues)
 		return fieldValues[field];
 
-	return false;
+	return deflt;
 }
 
 
@@ -593,6 +607,45 @@ function updateQueryString(updates, url)
 	}
 
 	return queryString;
+}
+
+// Source: src/js/alien/alien.js
+
+/**
+ * Loads the list of levels into a form element.
+ * @param {String} element <select> Element to insert levelnames into.
+ * @param {String} selected Selected item.
+ */
+function updateLevelSelector(element, selected)
+{
+  jQuery.ajax(server + "ldb/list_levels.php", { dataType: 'json'}).done(function(result) {
+    for(var i = 0; i < result.length; i++) {
+      var list = $(element);
+
+      var li = $("<option/>")
+        .appendTo(list)
+        .attr('value', result[i].name)
+        .text(result[i].name[0].toUpperCase() + result[i].name.slice(1));
+
+      if(selected == result[i].name)
+        li.attr('selected', 'selected');
+    }
+  }.bind(this));
+}
+
+
+/**
+ * Returns an object with options from the query string.
+ */
+function getOptionsFromQuery()
+{
+  return {
+    editMode:  getQueryField("edit"),
+    debugMode: getQueryField("debug"),
+    gameStart: getQueryField("game"),
+    levelName: getQueryField("level"),
+    userId:    getQueryField("user")
+  }
 }
 
 // Source: src/js/alien/editor.js
@@ -2663,7 +2716,7 @@ function Frog()
         this.x += collision.normal.x;
     }
 
-    // Kill frog when jumped on it from the top    
+    // Kill frog when jumped on it from the top
     if(collision.axis == 'y' && this.player.velY > 4)
       this.alive = false;
   }
@@ -2708,7 +2761,7 @@ function Player()
 	this.sensor_left = 6;
 	this.sensor_right = 23;
 
-	this.sink = new Sink(server + "/sink.php?game=" + gameStart + "&level=" + $("#level_name"));
+	this.sink = new Sink(server + "/sink.php?game=" + options.gameStart + "&level=" + options.levelName + "&user=" + options.userId);
 	this.sink.transmitEvery = 20;
 
 	this.events = [];
