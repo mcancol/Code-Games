@@ -5,6 +5,17 @@ Games
 This is a collection of games intended to be used in experiments on group dynamics. The games share some code that handles [input](src/js/common/input.js) (keyboard, mouse, and touch), [data buffering](src/js/common/sink.js), [browser compatibility](src/js/common/compat.js), and [manipulates URLs](src/js/common/url.js). The main [rendering loop](src/js/common/engine.js) is also shared between games.
 
 
+Building
+--------
+
+First install Grunt and its dependencies:
+    npm install -g grunt-cli
+    npm install
+
+Then run Grunt to concatenate and minify Javascripts:
+    grunt
+
+
 Platform game
 -------------
 
