@@ -35,7 +35,7 @@
 		if($info['game_id'] == 'AG')
 			fprintf($fid, "Move, Timestamp, X, Y, Event\n");
 		elseif($info['game_id'] == 'MG')
-			fprintf($fid, "Player, Move, Timestamp, X, Y\n");
+			fprintf($fid, "Move, Timestamp, X, Y\n");
 	}
 	
 	
@@ -55,8 +55,8 @@
 				$item['id'], $timestamp, 
 				$item['x'], $item['y'], $item['event']);
 		} elseif($info['game_id'] == 'MG') {
-			fprintf($fid, "%d, %d, %s, %d, %d\n", 
-				$info['level_id'], $item['id'], $timestamp, 
+			fprintf($fid, "%d, %s, %d, %d\n", 
+				$item['id'], $timestamp, 
 				$item['x'], $item['y']);
 		}
 	}
