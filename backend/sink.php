@@ -46,7 +46,7 @@
 		
 		// Format timestamp
 		$timestamp = date('Y-m-d\TH:i:s.', $item['timestamp']) .
-			floor($milli) .
+			sprintf('%03d', floor($milli)) .
 			date('P', $item['timestamp']);
 		
 		// Write data based on game type
@@ -55,7 +55,7 @@
 				$item['id'], $timestamp, 
 				$item['x'], $item['y'], $item['event']);
 		} elseif($info['game_id'] == 'MG') {
-			fprintf($fid, "%d, %d, %.2f, %d, %d\n", 
+			fprintf($fid, "%d, %d, %s, %d, %d\n", 
 				$info['level_id'], $item['id'], $timestamp, 
 				$item['x'], $item['y']);
 		}
