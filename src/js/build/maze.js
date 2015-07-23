@@ -1153,7 +1153,9 @@ function Player()
 	this.width = 32;
 	this.height = 46;
 
-	this.sink = new Sink(datasink + "?game=" + gameStart + "&level=" + playerId + "&user=" + userId);
+	var sessionId = parseInt(gameStart).toString(36 | 0).toUpperCase();
+
+	this.sink = new Sink(datasink + "?game=MG&session=" + sessionId + "&level=" + playerId + "&user=" + userId + "&debug=false");
 
 
 	/**
