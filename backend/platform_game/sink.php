@@ -4,7 +4,7 @@
 	
 	function get_filename($info)
 	{
-		return sprintf('datasets/%s_%s_%s_%s.log', $info['game_id'], $info['user_id'], $info['level_name'], $info['debug'] == 'true'?'1':'0');
+		return sprintf('datasets/%s_%s_%s_%s_%s.log', $info['game_id'], $info['session_id'], $info['user_id'], $info['level_name'], $info['debug'] == 'true'?'1':'0');
 	}
 	
 	
@@ -13,12 +13,14 @@
 		fprintf($fid, 
 				"# Alien girl game\n" .
 				"# Game: %s\n" .
+				"# Session: %s\n" .
 				"# User: %s\n" .
 				"# Level: %s\n" .
 				"# Debug: %s\n" .
 				"# Timestamp: %s\n" . 
 				"# Source: %s\n\n",
 			$info['game_id'],
+			$info['session_id'],
 			$info['user_id'],
 			$info['level_name'],
 			$info['debug'],

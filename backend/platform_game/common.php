@@ -32,15 +32,17 @@
 				continue;
 						
 			$game = strtok($dentry, "_");
+			$session = strtok("_");
 			$user = strtok("_");
 			$level = strtok("_");
 			$debug = strtok(".");
 			
-			$timestamp = base_convert($game, 36, 10);
+			$timestamp = base_convert($session, 36, 10);
 			
 			$entries[] = array(
 					'timestamp' => $timestamp, 
 					'game' => $game,
+					'session' => $session,
 					'user' => $user,
 					'level' => $level,
 					'debug' => $debug,
@@ -62,6 +64,7 @@
 			
 		// Get IDs from server		
 		$info['game_id']    = filter_input(INPUT_GET, 'game', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z0-9]+)$/')));
+		$info['session_id'] = filter_input(INPUT_GET, 'session', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z0-9]+)$/')));
 		$info['user_id']    = filter_input(INPUT_GET, 'user', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z0-9]+)$/')));
 		$info['level_name'] = filter_input(INPUT_GET, 'level', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z0-9]+)$/')));
 		$info['debug']      = filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z]+)$/')));
@@ -72,6 +75,11 @@
 			return;
 		}
 
+		if($info['session_id'] == null) {
+			echo(json_encode(array("error" => "No or invalid session specified")));
+			return;
+		}		
+		
 		if($info['user_id'] == null) {
 			echo(json_encode(array("error" => "No or invalid user specified")));
 			return;
