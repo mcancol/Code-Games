@@ -9,6 +9,18 @@
 		return 0;
 	}
 	
+	
+	function format_size($size) {
+		$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
+		
+		$pow = floor(($size ? log($size) : 0) / log(1024));
+		$pow = min($pow, count($units) - 1);
+		
+		$size /= pow(1024, $pow);
+		
+		return round($size, 2) . ' ' . $units[$pow];
+	}
+	
 
 	function find_datasets($directory)
 	{
@@ -18,19 +30,27 @@
 		while($dentry = readdir($did)) {
 			if($dentry[0] == '.')
 				continue;
+						
+			$game = strtok($dentry, "_");
+			$user = strtok("_");
+			$level = strtok("_");
+			$debug = strtok(".");
 			
-			$timestamp = strtok($dentry, "_");
-			$player = strtok("_");
+			$timestamp = base_convert($game, 36, 10);
 			
 			$entries[] = array(
 					'timestamp' => $timestamp, 
-					'player' => $player,
+					'game' => $game,
+					'user' => $user,
+					'level' => $level,
+					'debug' => $debug,
+					'size' => filesize($directory . '/' . $dentry),
 					'filename' => $dentry
 			);
 		}
 		
 		// Sort by timestamp
-		usort($entries, compare_timestamps);
+		usort($entries, 'compare_timestamps');
 		
 		return $entries;		
 	}
@@ -40,20 +60,29 @@
 	{
 		header("Access-Control-Allow-Origin: *");
 			
-		// Get level and game ids
-		if(!array_key_exists('level', $_GET)) {
-			echo(json_encode(array("error" => "No level specified")));
+		// Get IDs from server		
+		$info['game_id']    = filter_input(INPUT_GET, 'game', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z0-9]+)$/')));
+		$info['user_id']    = filter_input(INPUT_GET, 'user', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z0-9]+)$/')));
+		$info['level_name'] = filter_input(INPUT_GET, 'level', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z0-9]+)$/')));
+		$info['debug']      = filter_input(INPUT_GET, 'debug', FILTER_VALIDATE_REGEXP, array("options" => array('regexp' => '/^([A-Za-z]+)$/')));
+		
+		// Make sure correct values were passed
+		if($info['game_id'] == null) {
+			echo(json_encode(array("error" => "No or invalid game specified")));
 			return;
 		}
-	
-		if(!array_key_exists('game', $_GET)) {
-			echo(json_encode(array("error" => "No game specified")));
-			return;
-		}
-	
-		$info['level_id'] = intval($_GET['level']);
-		$info['game_id'] = intval($_GET['game']);
 
+		if($info['user_id'] == null) {
+			echo(json_encode(array("error" => "No or invalid user specified")));
+			return;
+		}
+		
+		if($info['level_name'] == null) {
+			echo(json_encode(array("error" => "No or invalid level specified")));
+			return;
+		}		
+		
+		
 		// Decode input			
 		if($request == null) {
 			echo(json_encode(array("error" => "Invalid JSON")));
