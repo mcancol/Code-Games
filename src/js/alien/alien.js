@@ -23,15 +23,34 @@ function updateLevelSelector(element, selected)
 
 
 /**
+ * Parses a string into a boolean, leaving undefined and boolean values alone
+ */
+function parseBool(str)
+{
+  if(str === undefined || str === true || str === false)
+    return str;
+
+  str = str.toLowerCase();
+
+  if(str == 'true' || str == 'yes' || str == 'on' || str == '1')
+    return true;
+
+  return false;
+}
+
+
+/**
  * Returns an object with options from the query string.
  */
 function getOptionsFromQuery()
 {
-  return {
-    editMode:  getQueryField("edit"),
-    debugMode: getQueryField("debug"),
-    gameStart: getQueryField("game"),
+  var options = {
+    editMode:  parseBool(getQueryField("edit")),
+    debugMode: parseBool(getQueryField("debug")),
     levelName: getQueryField("level"),
+    gameId:    getQueryField("game"),
     userId:    getQueryField("user")
   }
+
+  return options;
 }

@@ -1153,7 +1153,7 @@ function Player()
 	this.width = 32;
 	this.height = 46;
 
-	this.sink = new Sink(datasink + "?game=" + gameStart + "&level=" + playerId);
+	this.sink = new Sink(datasink + "?game=" + gameStart + "&level=" + playerId + "&user=" + userId);
 
 
 	/**

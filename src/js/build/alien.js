@@ -635,17 +635,36 @@ function updateLevelSelector(element, selected)
 
 
 /**
+ * Parses a string into a boolean, leaving undefined and boolean values alone
+ */
+function parseBool(str)
+{
+  if(str === undefined || str === true || str === false)
+    return str;
+
+  str = str.toLowerCase();
+
+  if(str == 'true' || str == 'yes' || str == 'on' || str == '1')
+    return true;
+
+  return false;
+}
+
+
+/**
  * Returns an object with options from the query string.
  */
 function getOptionsFromQuery()
 {
-  return {
-    editMode:  getQueryField("edit"),
-    debugMode: getQueryField("debug"),
-    gameStart: getQueryField("game"),
+  var options = {
+    editMode:  parseBool(getQueryField("edit")),
+    debugMode: parseBool(getQueryField("debug")),
     levelName: getQueryField("level"),
+    gameId:    getQueryField("game"),
     userId:    getQueryField("user")
   }
+
+  return options;
 }
 
 // Source: src/js/alien/editor.js
@@ -2761,7 +2780,12 @@ function Player()
 	this.sensor_left = 6;
 	this.sensor_right = 23;
 
-	this.sink = new Sink(server + "/sink.php?game=" + options.gameStart + "&level=" + options.levelName + "&user=" + options.userId);
+	this.sink = new Sink(server + "/sink.php" +
+			"?game=" + options.gameId +
+			"&user=" + options.userId +
+			"&level=" + options.levelName +
+			"&debug=" + (options.debugMode?"true":"false"));
+
 	this.sink.transmitEvery = 20;
 
 	this.events = [];

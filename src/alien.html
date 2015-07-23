@@ -10,7 +10,7 @@
 		<link rel="stylesheet" href="css/game.css">
 
 		<script>
-			var server = "http://www.ivarclemens.nl/platform_game/";
+			var server = "http://www.ivarclemens.nl/games/backend/platform_game/";
 			var options;
 		</script>
 
@@ -23,7 +23,7 @@
 			var loader = null;
 
 			function load() {
-				var level_name = $("#level_name").val();
+				var level_name = $("#level-name").val();
 
 				if(level_name == "") {
 					alert("Please specify the name of the level to load...");
@@ -36,12 +36,12 @@
 				loader.loadLevel(level_name)
 					.then(
 						function() { $("#status").html("Level loaded..."); },
-						function(error) { $("#status").html("Error loading level: " + error); }
+						function(error) { $("#status").html("Error loading level (" + level_name + "): " + error); }
 					);
 			}
 
 			function save() {
-				var level_name = $("#level_name").val();
+				var level_name = $("#level-name").val();
 
 				if(level_name == "") {
 					alert("Please specify the name of the level to load...");
@@ -62,7 +62,7 @@
 				var updates = {
 					level: $("#level-list").val(),
 					user: $("#user-id").val(),
-					game: options.gameStart
+					game: options.gameId
 				};
 
 				if(updates.user == "") {
@@ -122,36 +122,56 @@
 			<!-- Level details -->
 			<div class="panel panel-primary" id="level-selector">
 				<div class="panel-heading">
-					<b>Game parameters</b>
+					<b>Alien girl: Game parameters</b>
 				</div>
 				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-6">
+							<p>The game identifier can be used by the researcher to
+								uniquely idenfity the present session.</p>
 
-					<div class="col-md-4">
-						<p>The (automatically generated) game identifier and the user identifier
-							uniquely identify the present session. Both keys are required
-							when recovering the data at a later point in time.</p>
+							<div class="form-group">
+								<label>Game identifier</label>
+								<span id="game-id" disabled class="form-control"></span>
+							</div>
 
-						<div class="form-group">
-							<label>Game identifier</label>
-							<span id="game-id" class="form-control"></span>
+							<p>Please enter your the user identifier the researcher
+								has given you in the field below. We use this identifier
+								to link all your results during analysis.</p>
+
+							<div class="form-group">
+								<label for="user-id">User identifier</label>
+								<input type="text" class="form-control" id="user-id" />
+							</div>
 						</div>
 
-						<div class="form-group">
-							<label for="user-id">User identifier</label>
-							<input type="text" class="form-control" id="user-id" />
+						<div class="col-md-6">
+
+							<p>The researcher will provide you with the name of the level
+								to load, please make sure the correct level is selected below.</p>
+
+							<div class="form-group">
+								<label for="level-name">Level</label>
+								<select id="level-list" class="form-control" name="level-selector"></select>
+							</div>
+
+							<p>The option below can be used to mark maintenance and testing sessions
+								such that their data is not included in final analysis.</p>
+
+							<div class="checkbox">
+								<label>
+									<input id="debug-mode" type="checkbox" /> Debugging mode
+								</label>
+							</div>
 						</div>
+					</div>
+					<hr />
+					<div class="row">
+						<div class="col-md-8">
+							<p>Wait for the researcher to signal the start of the game.</p>
 
-						<p>The researcher will provide you with the name of the level
-							to load, please make sure the correct level is selected below.</p>
-
-						<div class="form-group">
-							<label for="level-name">Level:</label>
-							<select id="level-list" class="form-control" name="level-selector"></select>
+							<button class="btn btn-default" onclick="updateOptions()">Start game</button>
 						</div>
-
-						<p>The researcher will tell you when to start the game.</p>
-
-						<button class="btn btn-default" onclick="updateOptions()">Start game</button>
 					</div>
 				</div>
 			</div>
@@ -190,19 +210,33 @@
 				options = getOptionsFromQuery();
 
 				var showDetails =
-					options.gameStart === undefined ||
-					options.levelName === undefined ||
-					options.userId === undefined;
+					(options.gameId === undefined ||
+					 options.userId === undefined ||
+					 options.levelName === undefined) && !options.editMode;
 
-				if(options.gameStart === undefined)
-					options.gameStart = Math.floor(Date.now() / 1000);
+				if(options.levelName !== undefined)
+					$("#level-list").prop('disabled', true);
+
+				if(options.debugMode !== undefined)
+					$("#debug-mode").prop('disabled', true);
+
+				/**
+				 * Assign a game identifier
+				 */
+				if(options.gameId === undefined) {
+					var timeStamp = Math.floor(Date.now() / 1000);
+					options.gameId = parseInt(timeStamp).toString(36 | 0).toUpperCase();
+				}
+
 
 				if(options.levelName === undefined)
 					options.levelName = "demo";
 
-				$("#game-id").text(parseInt(options.gameStart).toString(36 | 0).toUpperCase());
+				$("#game-id").text(options.gameId);
 				$("#user-id").val(options.userId);
 				$("#level-name").val(options.levelName);
+
+				$("#debug-mode").prop('checked', options.debugMode);
 
 
 				/**
@@ -270,7 +304,9 @@
 		</script>
 
 		<p class="text-center">
-			<small>Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23</small>
+			<small>
+				Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23
+			</small>
 		</p>
 	</body>
 </html>
