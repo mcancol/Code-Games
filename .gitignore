@@ -3,6 +3,9 @@ doc
 !doc/*.bat
 !doc/*.sh
 
+# Python
+*.pyc
+
 # Node modules
 node_modules/*
 
