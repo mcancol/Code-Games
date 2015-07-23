@@ -11,9 +11,9 @@
 	function write_header($fid, $info) 
 	{
 		if($info['game_id'] == 'AG')
-			fprintf($fid, '# Alien girl game\n');
+			fprintf($fid, "# Alien girl game\n");
 		elseif($info['game_id'] == 'MG')
-			fprintf($fid, '# Maze game\n');		
+			fprintf($fid, "# Maze game\n");		
 		
 		fprintf($fid, 
 				"# Game: %s\n" .
