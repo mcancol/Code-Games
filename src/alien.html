@@ -23,7 +23,7 @@
 			var loader = null;
 
 			function load() {
-				var level_name = $("#level_name").val();
+				var level_name = $("#level-name").val();
 
 				if(level_name == "") {
 					alert("Please specify the name of the level to load...");
@@ -36,12 +36,12 @@
 				loader.loadLevel(level_name)
 					.then(
 						function() { $("#status").html("Level loaded..."); },
-						function(error) { $("#status").html("Error loading level: " + error); }
+						function(error) { $("#status").html("Error loading level (" + level_name + "): " + error); }
 					);
 			}
 
 			function save() {
-				var level_name = $("#level_name").val();
+				var level_name = $("#level-name").val();
 
 				if(level_name == "") {
 					alert("Please specify the name of the level to load...");
@@ -190,9 +190,9 @@
 				options = getOptionsFromQuery();
 
 				var showDetails =
-					options.gameStart === undefined ||
+					(options.gameStart === undefined ||
 					options.levelName === undefined ||
-					options.userId === undefined;
+					options.userId === undefined) && !options.editMode;
 
 				if(options.gameStart === undefined)
 					options.gameStart = Math.floor(Date.now() / 1000);
