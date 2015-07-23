@@ -10,7 +10,7 @@
 		<link rel="stylesheet" href="css/game.css">
 
 		<script>
-			var server = "http://www.ivarclemens.nl/platform_game/";
+			var server = "http://www.ivarclemens.nl/games/backend/platform_game/";
 			var options;
 		</script>
 
@@ -62,7 +62,7 @@
 				var updates = {
 					level: $("#level-list").val(),
 					user: $("#user-id").val(),
-					game: options.gameStart
+					game: options.gameId
 				};
 
 				if(updates.user == "") {
@@ -210,9 +210,9 @@
 				options = getOptionsFromQuery();
 
 				var showDetails =
-					(options.gameStart === undefined ||
-					options.levelName === undefined ||
-					options.userId === undefined) && !options.editMode;
+					(options.gameId === undefined ||
+					 options.userId === undefined ||
+					 options.levelName === undefined) && !options.editMode;
 
 				if(options.levelName !== undefined)
 					$("#level-list").prop('disabled', true);
@@ -220,13 +220,19 @@
 				if(options.debugMode !== undefined)
 					$("#debug-mode").prop('disabled', true);
 
-				if(options.gameStart === undefined)
-					options.gameStart = Math.floor(Date.now() / 1000);
+				/**
+				 * Assign a game identifier
+				 */
+				if(options.gameId === undefined) {
+					var timeStamp = Math.floor(Date.now() / 1000);
+					options.gameId = parseInt(timeStamp).toString(36 | 0).toUpperCase();
+				}
+
 
 				if(options.levelName === undefined)
 					options.levelName = "demo";
 
-				$("#game-id").text(parseInt(options.gameStart).toString(36 | 0).toUpperCase());
+				$("#game-id").text(options.gameId);
 				$("#user-id").val(options.userId);
 				$("#level-name").val(options.levelName);
 
@@ -298,7 +304,9 @@
 		</script>
 
 		<p class="text-center">
-			<small>Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23</small>
+			<small>
+				Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23
+			</small>
 		</p>
 	</body>
 </html>

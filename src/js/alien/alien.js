@@ -47,8 +47,8 @@ function getOptionsFromQuery()
   var options = {
     editMode:  parseBool(getQueryField("edit")),
     debugMode: parseBool(getQueryField("debug")),
-    gameStart: getQueryField("game"),
     levelName: getQueryField("level"),
+    gameId:    getQueryField("game"),
     userId:    getQueryField("user")
   }
 
