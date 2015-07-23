@@ -10,8 +10,12 @@
 	
 	function write_header($fid, $info) 
 	{
+		if($info['game_id'] == 'AG')
+			fprintf($fid, '# Alien girl game\n');
+		elseif($info['game_id'] == 'MG')
+			fprintf($fid, '# Maze game\n');		
+		
 		fprintf($fid, 
-				"# Alien girl game\n" .
 				"# Game: %s\n" .
 				"# Session: %s\n" .
 				"# User: %s\n" .
@@ -28,7 +32,10 @@
 			$_SERVER['REMOTE_ADDR']
 		);
 		
-		fprintf($fid, "Move, Timestamp, X, Y, Event\n");
+		if($info['game_id'] == 'AG')
+			fprintf($fid, "Move, Timestamp, X, Y, Event\n");
+		elseif($info['game_id'] == 'MG')
+			fprintf($fid, "Player, Move, Timestamp, X, Y\n");
 	}
 	
 	
@@ -36,14 +43,22 @@
 	{
 		// Extract milliseconds
 		$milli = ($item['timestamp'] - floor($item['timestamp'])) * 1000;
+		
+		// Format timestamp
 		$timestamp = date('Y-m-d\TH:i:s.', $item['timestamp']) .
 			floor($milli) .
 			date('P', $item['timestamp']);
 		
-		
-		fprintf($fid, "%d, %s, %.2f, %.2f, %s\n", 
-			$item['id'], $timestamp, 
-			$item['x'], $item['y'], $item['event']);		
+		// Write data based on game type
+		if($info['game_id'] == 'AG') {
+			fprintf($fid, "%d, %s, %.2f, %.2f, %s\n", 
+				$item['id'], $timestamp, 
+				$item['x'], $item['y'], $item['event']);
+		} elseif($info['game_id'] == 'MG') {
+			fprintf($fid, "%d, %d, %.2f, %d, %d\n", 
+				$info['level_id'], $item['id'], $timestamp, 
+				$item['x'], $item['y']);
+		}
 	}
 
 
