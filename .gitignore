@@ -3,11 +3,15 @@ doc
 !doc/*.bat
 !doc/*.sh
 
+# Python
+*.pyc
+
 # Node modules
 node_modules/*
 
 # Built Javascript files
-src/js/build/*
+src/js/build/*min*
+src/js/build/*map*
 
 # Windows image file caches
 Thumbs.db

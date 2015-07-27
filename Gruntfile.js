@@ -45,12 +45,14 @@ module.exports = function(grunt) {
     uglify: {
       alienjs: {
         src: "src/js/build/alien.js",
-        dest: "src/js/build/alien.min.js"
+        dest: "src/js/build/alien.min.js",
+        options: { sourceMap: true }
       },
 
       mazejs: {
         src: "src/js/build/maze.js",
-        dest: "src/js/build/maze.min.js"
+        dest: "src/js/build/maze.min.js",
+        options: { sourceMap: true }
       }
     }
   });
@@ -59,5 +61,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-jshint");
 
-  grunt.registerTask("default", ["concat", "jshint", "uglify"]);
+  grunt.registerTask("default", ["concat", "uglify"]);
 }

@@ -9,40 +9,21 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="css/game.css">
 
+		<script>
+			var server = "http://www.ivarclemens.nl/games/backend/";
+			var options;
+		</script>
+
 		<script src="js/vendor/jquery-2.1.3.min.js"></script>
-
-		<script src="js/common/compat.js"></script>
-		<script src="js/common/url.js"></script>
-		<script src="js/common/input.js"></script>
-		<script src="js/common/sink.js"></script>
-		<script src="js/common/engine.js"></script>
-
-		<script src="js/common/base_object.js"></script>
-
-		<script src="js/alien/game.js"></script>
-		<script src="js/alien/editor.js"></script>
-		<script src="js/alien/toolbox.js"></script>
-		<script src="js/alien/math.js"></script>
-		<script src="js/alien/graphics.js"></script>
-
-		<script src="js/alien/level_loader.js"></script>
-
-		<script src="js/alien/objects/player.js"></script>
-		<script src="js/alien/objects/enemy.js"></script>
-		<script src="js/alien/objects/frog.js"></script>
-		<script src="js/alien/objects/bomb.js"></script>
-		<script src="js/alien/objects/rock.js"></script>
-		<script src="js/alien/objects/worm.js"></script>
-
-		<script src="js/alien/level.js"></script>
-		<script src="js/alien/sprites.js"></script>
+		<script src="js/build/alien.js"></script>
+		<script src="js/alien/alien.js"></script>
 
 		<script>
 			var editor = null;
 			var loader = null;
 
 			function load() {
-				var level_name = $("#level_name").val();
+				var level_name = $("#level-name").val();
 
 				if(level_name == "") {
 					alert("Please specify the name of the level to load...");
@@ -55,12 +36,12 @@
 				loader.loadLevel(level_name)
 					.then(
 						function() { $("#status").html("Level loaded..."); },
-						function(error) { $("#status").html("Error loading level: " + error); }
+						function(error) { $("#status").html("Error loading level (" + level_name + "): " + error); }
 					);
 			}
 
 			function save() {
-				var level_name = $("#level_name").val();
+				var level_name = $("#level-name").val();
 
 				if(level_name == "") {
 					alert("Please specify the name of the level to load...");
@@ -75,6 +56,22 @@
 						function(error) { $("#status").html("Error saving level: " + error); }
 					);
 			}
+
+
+			function updateOptions() {
+				var updates = {
+					level: $("#level-list").val(),
+					user: $("#user-id").val(),
+					game: options.gameId
+				};
+
+				if(updates.user == "") {
+					alert("Invalid username");
+					return;
+				}
+
+				window.location.href = updateQueryString(updates);
+			}
 		</script>
 	</head>
 
@@ -88,7 +85,7 @@
 
 				<form class="navbar-form navbar-left">
 					<div class="form-group">
-						<input id="level_name" type="text" class="form-control" value="demo" placeholder="Level name">
+						<input id="level-name" type="text" class="form-control" value="demo" placeholder="Level name">
 					</div>
 					<button type="button" onclick="load()" class="btn btn-warning">Load</button>
 					<button type="button" onclick="save()" class="btn btn-danger">Save</button>
@@ -99,6 +96,8 @@
 		</nav>
 
 		<div class="container">
+
+			<!-- Loading screen -->
 			<div class="panel panel-primary" id="loading-screen">
 				<div class="panel-heading">
 					Loading
@@ -108,6 +107,8 @@
 				</div>
 			</div>
 
+
+			<!-- Error message -->
 			<div class="panel panel-danger" id="level-error">
 				<div class="panel-heading">
 					Could not load level
@@ -117,57 +118,78 @@
 				</div>
 			</div>
 
-			<div class="panel panel-danger" id="level-selector">
+
+			<!-- Level details -->
+			<div class="panel panel-primary" id="level-selector">
 				<div class="panel-heading">
-					Level not specified
+					<b>Alien girl: Game parameters</b>
 				</div>
 				<div class="panel-body">
-					Please select the level you wish to load:
+					<div class="row">
+						<div class="col-md-6">
+							<p>The game identifier can be used by the researcher to
+								uniquely idenfity the present session.</p>
 
-					<p>
-						<ul id="level-list">
-						</ul>
-					</p>
+							<div class="form-group">
+								<label>Game identifier</label>
+								<span id="game-id" disabled class="form-control"></span>
+							</div>
+
+							<p>Please enter your the user identifier the researcher
+								has given you in the field below. We use this identifier
+								to link all your results during analysis.</p>
+
+							<div class="form-group">
+								<label for="user-id">User identifier</label>
+								<input type="text" class="form-control" id="user-id" />
+							</div>
+						</div>
+
+						<div class="col-md-6">
+
+							<p>The researcher will provide you with the name of the level
+								to load, please make sure the correct level is selected below.</p>
+
+							<div class="form-group">
+								<label for="level-name">Level</label>
+								<select id="level-list" class="form-control" name="level-selector"></select>
+							</div>
+
+							<p>The option below can be used to mark maintenance and testing sessions
+								such that their data is not included in final analysis.</p>
+
+							<div class="checkbox">
+								<label>
+									<input id="debug-mode" type="checkbox" /> Debugging mode
+								</label>
+							</div>
+						</div>
+					</div>
+					<hr />
+					<div class="row">
+						<div class="col-md-8">
+							<p>Wait for the researcher to signal the start of the game.</p>
+
+							<button class="btn btn-default" onclick="updateOptions()">Start game</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-
 
 
 		<div class="container">
 			<canvas id="game-canvas" class="center-block"></canvas>
 		</div>
 
+
 		<div class="container">
 			<div id="spriteBox" class="col-lg-8"></div>
 		</div>
 
+
 		<script>
-			var server = "http://www.ivarclemens.nl/platform_game/";
-			var gameStart = false;
-
 			$("#level-selector").hide();
-
-
-			/**
-			 * Load list of levels from the server
-			 */
-			jQuery.ajax(server + "ldb/list_levels.php", { dataType: 'json'}).done(function(result) {
-				for(var i = 0; i < result.length; i++) {
-					var list = $("#level-list");
-
-					var li = $("<li/>")
-						.appendTo(list);
-
-					var a = $("<a />")
-						.appendTo(li)
-						.attr("href", updateQueryString({ level: result[i].name }))
-						.text(result[i].name[0].toUpperCase() + result[i].name.slice(1));
-				}
-
-	    }.bind(this));
-
 
 			(function() {
 				/**
@@ -184,29 +206,45 @@
 
 				/****************************************************/
 
-				/**
-				 * Determine whether edit- and/or debug-mode is enabled
-				 */
-				var editMode = getQueryField("edit");
-				var debugMode = getQueryField("debug");
+
+				options = getOptionsFromQuery();
+
+				var showDetails =
+					(options.gameId === undefined ||
+					 options.userId === undefined ||
+					 options.levelName === undefined) && !options.editMode;
+
+				if(options.levelName !== undefined)
+					$("#level-list").prop('disabled', true);
+
+				if(options.debugMode !== undefined)
+					$("#debug-mode").prop('disabled', true);
 
 				/**
-				 * Determine unique ID used to save data
+				 * Assign a game identifier
 				 */
-				gameStart = getQueryField("game");
-				if(!gameStart && !editMode) {
-					gameStart = Math.floor(Date.now() / 1000);
-					document.location.href = updateQueryString({game: gameStart});
-
-					return;
+				if(options.gameId === undefined) {
+					var timeStamp = Math.floor(Date.now() / 1000);
+					options.gameId = parseInt(timeStamp).toString(36 | 0).toUpperCase();
 				}
 
-				/**
-				 * Determine name of level to load
-				 */
-				var levelName = getQueryField("level");
 
-				if(!levelName || levelName == "") {
+				if(options.levelName === undefined)
+					options.levelName = "demo";
+
+				$("#game-id").text(options.gameId);
+				$("#user-id").val(options.userId);
+				$("#level-name").val(options.levelName);
+
+				$("#debug-mode").prop('checked', options.debugMode);
+
+
+				/**
+				 * Show details if one of the fields was missing
+				 */
+				if(showDetails) {
+					updateLevelSelector("#level-list", options.levelName);
+
 					$("nav").hide();
 					$("#loading-screen").fadeOut(500, function() {
 						$("#level-selector").fadeIn(250);
@@ -215,7 +253,6 @@
 					return;
 				}
 
-				$("#level_name").val(levelName);
 
 				/**
 				 * Set canvas dimensions
@@ -225,7 +262,7 @@
 				/**
 				 * Hide menu bar when playing the game
 				 */
-				if(!editMode)
+				if(!options.editMode)
 					$("nav").hide();
 
 				/**
@@ -235,15 +272,15 @@
 				var game = new Game();
 				var main = game;
 
-				if(editMode) {
+				if(options.editMode) {
 					editor = new Editor(game);
 					var spriteBox = new SpriteBox("spriteBox", editor, spriteTable);
 
 					main = editor;
 				}
 
-				engine.initializeEngine(canvas_id, 32 * width, 32 * (height + 2 * (editMode?1:0)), main);
-				engine.debugMode = debugMode;
+				engine.initializeEngine(canvas_id, 32 * width, 32 * (height + 2 * (options.editMode?1:0)), main);
+				engine.debugMode = options.debugMode;
 
 				loader = new LevelLoader(game);
 
@@ -251,7 +288,7 @@
 				/**
 			 	 * Initialize level and player objects
 			 	 */
-				loader.loadLevel(levelName).then(function(response) {
+				loader.loadLevel(options.levelName).then(function(response) {
 					$("#loading-screen").fadeOut(500, function() {
 						$("#game-canvas").fadeIn(250);
 					});
@@ -267,7 +304,9 @@
 		</script>
 
 		<p class="text-center">
-			<small>Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23</small>
+			<small>
+				Using graphics by <a href="http://www.kenney.nl">Kenney</a> and creek23
+			</small>
 		</p>
 	</body>
 </html>

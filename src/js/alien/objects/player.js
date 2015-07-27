@@ -21,7 +21,12 @@ function Player()
 	this.sensor_left = 6;
 	this.sensor_right = 23;
 
-	this.sink = new Sink(server + "/sink.php?game=" + gameStart + "&level=" + $("#level_name"));
+	this.sink = new Sink(server + "/sink.php?game=AG" +
+			"&session=" + options.gameId +
+			"&user=" + options.userId +
+			"&level=" + options.levelName +
+			"&debug=" + (options.debugMode?"true":"false"));
+
 	this.sink.transmitEvery = 20;
 
 	this.events = [];
