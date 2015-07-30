@@ -23,7 +23,8 @@
 			{
 				var updates = {
 					user: $("#user-id").val(),
-					player: $("#level-list").val()
+					player: $("#level-list").val(),
+					control: $("#control-mode").val()
 				};
 
 				window.location.href = updateQueryString(updates);
@@ -77,11 +78,21 @@
 							to load, please make sure the correct level is selected below.</p>
 
 						<div class="form-group">
-							<label for="level-name">Level:</label>
+							<label for="level-name">Level</label>
 							<select id="level-list" class="form-control">
 								<option value="1">Level 1</option>
 								<option value="2">Level 2</option>
 								<option value="3">Level 3</option>
+							</select>
+						</div>
+
+
+						<div class="form-group">
+							<label>Control mode</label>
+							<select class="form-control" id="control-mode">
+									<option value="coord">Precise</option>
+									<option value="direction">Drag in direction</option>
+									<option value="control">Control circle</option>
 							</select>
 						</div>
 
@@ -111,15 +122,18 @@
 			var gameStart = false;
 			var playerId = false;
 			var userId = false;
+			var controlMode = "direction";
 
 			(function() {
 				gameStart = getQueryField("game");
 				playerId = getQueryField("player");
 				userId = getQueryField("user");
+				controlMode = getQueryField("control");
 
 				$("#game-id").text(parseInt(gameStart).toString(36 | 0).toUpperCase());
 				$("#user-id").val(userId);
 				$("#level-list").val(playerId);
+				$("#control-mode").val(controlMode);
 
 				// If the game has not been assigned an identifier yet, do so now
 				if(!gameStart) {

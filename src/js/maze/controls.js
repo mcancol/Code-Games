@@ -22,12 +22,19 @@ function Controls()
   this.repeatInterval = 400;
 
   // Mouse movement mode
-	this.mode = "control";
+	this.mode = "direction";
 	this.modeWedge = true;
 
 
   this.reset = function()
   {
+    this.mode = getQueryField("control");
+
+    if(!this.mode)
+      this.mode = 'direction';
+
+    console.log("Using control mode: " + this.mode);
+
     this.getEngine().canvas.addEventListener("game-move", this.mousemove.bind(this));
     this.player = this.parent.getObject("player");
   }
